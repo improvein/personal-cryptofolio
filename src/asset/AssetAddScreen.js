@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Button, Picker, StyleSheet, Text, View,
 } from 'react-native';
+import DataStorage from '../data/DataStorage';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,13 +22,41 @@ export default class AssetAddScreen extends React.Component {
     super(props);
     // on pres event handler
     this.state = {
-      selectedCoin: 'btc',
+      selectedCoin: null,
+      coins: [],
     };
   }
 
+  componentWillMount() {
+    DataStorage.getCoins().then((coins) => {
+      console.log('Loading the coins.');
+      const stateCoins = [];
+      coins.forEach((coin) => {
+        stateCoins.push(coin);
+      });
+      // add the coins to the state
+      this.setState(prevState => ({
+        ...prevState,
+        coins: stateCoins,
+      }));
+    });
+  }
+
+  loadCoins = () => {
+    const coinPickerItems = [];
+    this.state.coins.forEach((coin) => {
+      const itemDescription = `${coin.ticker.toUpperCase()} - ${coin.name}`;
+      coinPickerItems.push(
+        <Picker.Item key={coin.picker} label={itemDescription} value={coin} />,
+      );
+    });
+
+    return coinPickerItems;
+  };
+
   onConfirm = () => {
     const { navigate } = this.props.navigation;
-    console.log('Acepted!');
+    console.log('Selected coin', this.state.selectedCoin);
     navigate('AssetListScreen');
   };
 
@@ -38,14 +67,13 @@ export default class AssetAddScreen extends React.Component {
         <Picker
           selectedValue={this.state.selectedCoin}
           style={styles.picker}
-          onValueChange={itemValue => this.setState({ selectedCoin: itemValue })}
+          onValueChange={itemValue => this.setState(prevState => ({
+            ...prevState,
+            selectedCoin: itemValue,
+          }))
+          }
         >
-          <Picker.Item label="BTC (Bitcoin)" value="btc" />
-          <Picker.Item label="BCH (Bitcoin Cash)" value="bch" />
-          <Picker.Item label="ETH (Ethereum)" value="eth" />
-          <Picker.Item label="IOTA (IOTA)" value="iota" />
-          <Picker.Item label="LTC (Litecoin)" value="ltc" />
-          <Picker.Item label="XMR (Monero)" value="xmr" />
+          {this.loadCoins()}
         </Picker>
         <Button onPress={this.onConfirm} title="Add" />
       </View>

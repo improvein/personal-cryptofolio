@@ -1,6 +1,6 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import AssetItem from './AssetItem';
+import { AssetItem } from './index';
 import FAB from '../components/FloatingActionButton';
 import coins from '../assets';
 

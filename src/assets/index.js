@@ -1,9 +1,9 @@
 const btcLogo = require('./images/coin_btc.png');
 const ethLogo = require('./images/coin_eth.png');
 
-const coins = {
+const coinsLogos = {
   btc: btcLogo,
   eth: ethLogo,
 };
 
-export default coins;
+export default coinsLogos;
