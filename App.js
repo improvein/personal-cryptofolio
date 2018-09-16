@@ -1,7 +1,7 @@
 import React from 'react';
 // import { StyleSheet, Text, View } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
-import { AssetAddScreen, AssetListScreen } from './src/asset';
+import { AssetAddScreen, AssetListScreen, AssetScreen } from './src/asset';
 import DataStorage from './src/data/DataStorage';
 
 const RouteNav = createStackNavigator(
@@ -11,6 +11,9 @@ const RouteNav = createStackNavigator(
     },
     AssetAddScreen: {
       screen: AssetAddScreen,
+    },
+    AssetScreen: {
+      screen: AssetScreen,
     },
   },
   {

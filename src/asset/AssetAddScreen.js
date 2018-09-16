@@ -29,7 +29,6 @@ export default class AssetAddScreen extends React.Component {
 
   componentWillMount() {
     DataStorage.getCoins().then((coins) => {
-      console.log('Loading the coins.');
       const stateCoins = [];
       coins.forEach((coin) => {
         stateCoins.push(coin);
@@ -42,22 +41,17 @@ export default class AssetAddScreen extends React.Component {
     });
   }
 
-  loadCoins = () => {
-    const coinPickerItems = [];
-    this.state.coins.forEach((coin) => {
-      const itemDescription = `${coin.ticker.toUpperCase()} - ${coin.name}`;
-      coinPickerItems.push(
-        <Picker.Item key={coin.picker} label={itemDescription} value={coin} />,
-      );
-    });
-
-    return coinPickerItems;
-  };
-
   onConfirm = () => {
-    const { navigate } = this.props.navigation;
-    console.log('Selected coin', this.state.selectedCoin);
-    navigate('AssetListScreen');
+    const coinToAdd = this.state.selectedCoin;
+    if (coinToAdd !== null) {
+      DataStorage.addAsset(coinToAdd).then(() => {
+        console.log(`Asset added ${coinToAdd.ticker}`);
+      });
+
+      // go back to the list
+      const { navigate } = this.props.navigation;
+      navigate('AssetListScreen');
+    }
   };
 
   render() {
@@ -73,7 +67,13 @@ export default class AssetAddScreen extends React.Component {
           }))
           }
         >
-          {this.loadCoins()}
+          {this.state.coins.map(coin => (
+            <Picker.Item
+              label={`${coin.ticker.toUpperCase()} - ${coin.name}`}
+              value={coin}
+              key={coin.ticker}
+            />
+          ))}
         </Picker>
         <Button onPress={this.onConfirm} title="Add" />
       </View>

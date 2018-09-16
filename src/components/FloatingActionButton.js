@@ -4,15 +4,15 @@ import { TouchableOpacity, StyleSheet, Text } from 'react-native';
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#FF0000',
-    paddingVertical: 5,
-    paddingHorizontal: 5,
     borderRadius: 25,
-    position: 'absolute',
-    zIndex: 30,
-    bottom: 10,
-    right: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 50,
     height: 50,
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
@@ -21,8 +21,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#FFFFFF',
     textAlign: 'center',
-    width: 50,
-    height: 50,
+    fontSize: 35,
   },
 });
 
@@ -31,7 +30,7 @@ class FAB extends React.Component {
     // const textColor = this.props.selected ? "red" : "black"
     return (
       <TouchableOpacity style={styles.button} onPress={this.props.onPress}>
-        <Text style={styles.buttonText}>Add</Text>
+        <Text style={styles.buttonText}>{this.props.text}</Text>
       </TouchableOpacity>
     );
   }

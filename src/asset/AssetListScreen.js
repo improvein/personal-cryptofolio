@@ -2,11 +2,14 @@ import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { AssetItem } from './index';
 import FAB from '../components/FloatingActionButton';
-import coins from '../assets';
+import DataStorage from '../data/DataStorage';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  list: {
+    elevation: 1,
   },
 });
 
@@ -15,40 +18,44 @@ export default class AssetListScreen extends React.Component {
     title: 'Assets',
   };
 
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+    // on pres event handler
+    this.state = {
+      assets: [],
+    };
+  }
+
+  componentWillMount() {
+    // load assets from storage
+    DataStorage.getAssets().then((assets) => {
+      console.log('Assets loaded', assets);
+      // add the assets to the state
+      this.setState(prevState => ({
+        ...prevState,
+        assets,
+      }));
+    });
+  }
 
   onPressItem = (item) => {
-    console.log(`Item pressed: ${item.ticker}`);
+    const { navigate } = this.props.navigation;
+    navigate('AssetScreen', { asset: item });
   };
 
   render() {
     const { navigate } = this.props.navigation;
-    const assetsData = [
-      {
-        id: 1,
-        ticker: 'BTC',
-        name: 'Bitcoin',
-        logo: coins.btc,
-      },
-      {
-        id: 2,
-        ticker: 'ETH',
-        name: 'Ethereum',
-        logo: coins.eth,
-      },
-      { id: 3, ticker: 'XMR', name: 'Monero' },
-    ];
 
     return (
       <View styles={styles.container}>
         <FlatList
-          data={assetsData}
+          style={styles.list}
+          data={Object.values(this.state.assets)}
           keyExtractor={item => item.ticker}
           renderItem={({ item }) => <AssetItem asset={item} onPressItem={this.onPressItem} />}
         />
         <FAB
+          text="+"
           onPress={() => {
             navigate('AssetAddScreen');
           }}

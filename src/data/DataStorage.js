@@ -1,8 +1,9 @@
 import { AsyncStorage } from 'react-native';
 import coinsLogos from '../assets';
 
-const DATA_COINS = '@Data:assets';
+const DATA_COINS = '@Data:coins';
 const DATA_ASSETS = '@Data:assets';
+const DATA_ASSET_HIST = '@Data:assethist_';
 
 class DataStorage {
   /**
@@ -28,12 +29,25 @@ class DataStorage {
   static getAssets = async () => {
     let returnedValue = null;
     try {
-      returnedValue = await AsyncStorage.getItem(DATA_ASSETS);
-      if (returnedValue !== null) {
-        returnedValue = JSON.parse(returnedValue);
-      } else {
-        returnedValue = [];
-      }
+      returnedValue = (await AsyncStorage.getItem(DATA_ASSETS)) || '{}';
+      returnedValue = JSON.parse(returnedValue);
+    } catch (error) {
+      throw error;
+    }
+    return returnedValue;
+  };
+
+  /**
+   * Get the assets in the portfolio
+   * @param {object} asset Asset to get the history from
+   * @returns List of asset transactions history
+   */
+  static getAssetHistory = async (asset) => {
+    const { ticker } = asset;
+    let returnedValue = null;
+    try {
+      returnedValue = (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '[]';
+      returnedValue = JSON.parse(returnedValue);
     } catch (error) {
       throw error;
     }
@@ -44,24 +58,22 @@ class DataStorage {
    * Add an asset to the portfolio
    * @param {object} coin
    */
-  static addAsset = (coin) => {
-    const assets = DataStorage.getAssets();
+  static addAsset = async (coin) => {
+    const assets = await DataStorage.getAssets();
+    console.log('Existing assets: ', assets);
     // initialize new asset
     assets[coin.ticker] = {
       coin,
       amount: 0,
     };
-    // store asset
-    const storedData = async () => {
-      try {
-        await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
-      } catch (error) {
-        // Error saving data
-        throw error;
-      }
-    };
-
-    return storedData;
+    try {
+      // store asset
+      console.log('To save: ', assets);
+      await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
   };
 
   /**

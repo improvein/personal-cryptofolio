@@ -41,11 +41,14 @@ class AssetItem extends React.Component {
       <TouchableOpacity onPress={this.onPress}>
         <View style={styles.item}>
           <View style={styles.logo}>
-            <Image source={this.props.asset.logo} style={styles.logoImage} />
+            <Image source={this.props.asset.coin.logo} style={styles.logoImage} />
           </View>
           <View style={styles.itemContent}>
-            <Text>{this.props.asset.ticker}</Text>
-            <Text>{this.props.asset.name}</Text>
+            <Text>{this.props.asset.coin.ticker}</Text>
+            <Text>{this.props.asset.coin.name}</Text>
+          </View>
+          <View>
+            <Text>{this.props.asset.amount}</Text>
           </View>
         </View>
       </TouchableOpacity>
