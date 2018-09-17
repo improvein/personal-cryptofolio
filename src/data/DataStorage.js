@@ -1,7 +1,6 @@
 import { AsyncStorage } from 'react-native';
 import coinsLogos from '../assets';
 
-const DATA_COINS = '@Data:coins';
 const DATA_ASSETS = '@Data:assets';
 const DATA_ASSET_HIST = '@Data:assethist_';
 
@@ -11,15 +10,23 @@ class DataStorage {
    * @returns List of assets
    */
   static getCoins = async () => {
-    let returnedValue = null;
-    try {
-      returnedValue = (await AsyncStorage.getItem(DATA_COINS)) || '[]';
-      returnedValue = JSON.parse(returnedValue);
-    } catch (error) {
-      console.error('Getting coins', error);
-      throw error;
-    }
-    return returnedValue;
+    const coins = [
+      {
+        ticker: 'BTC',
+        name: 'Bitcoin',
+        logo: coinsLogos.btc,
+      },
+      { ticker: 'BCH', name: 'Bitcoin Cash' },
+      {
+        ticker: 'ETH',
+        name: 'Ethereum',
+        logo: coinsLogos.eth,
+      },
+      { ticker: 'IOTA', name: 'IOTA' },
+      { ticker: 'LTC', name: 'Litecoin' },
+      { ticker: 'XMR', name: 'Monero' },
+    ];
+    return coins;
   };
 
   /**
@@ -60,15 +67,13 @@ class DataStorage {
    */
   static addAsset = async (coin) => {
     const assets = await DataStorage.getAssets();
-    console.log('Existing assets: ', assets);
     // initialize new asset
     assets[coin.ticker] = {
       coin,
       amount: 0,
     };
     try {
-      // store asset
-      console.log('To save: ', assets);
+      // store updated assets
       await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
     } catch (error) {
       // Error saving data
@@ -76,41 +81,17 @@ class DataStorage {
     }
   };
 
-  /**
-   * Initialize data for the app
-   */
-  static initialize = () => {
-    // --- initialize coins
-    DataStorage.getCoins().then((coinsFound) => {
-      if (coinsFound === null || coinsFound.length === 0) {
-        const coins = [
-          {
-            ticker: 'BTC',
-            name: 'Bitcoin',
-            logo: coinsLogos.btc,
-          },
-          { ticker: 'BCH', name: 'Bitcoin Cash' },
-          {
-            ticker: 'ETH',
-            name: 'Ethereum',
-            logo: coinsLogos.eth,
-          },
-          { ticker: 'IOTA', name: 'IOTA' },
-          { ticker: 'LTC', name: 'Litecoin' },
-          { ticker: 'XMR', name: 'Monero' },
-        ];
-        // save default coins
-        const storedData = async () => {
-          try {
-            await AsyncStorage.setItem(DATA_COINS, JSON.stringify(coins));
-          } catch (error) {
-            // Error saving data
-            throw error;
-          }
-        };
-        storedData().then(() => console.log('Coins saved'));
-      }
-    });
+  static removeAsset = async (ticker) => {
+    const assets = await DataStorage.getAssets();
+    // clear the asset
+    delete assets[ticker];
+    try {
+      // store updated assets
+      await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
   };
 }
 

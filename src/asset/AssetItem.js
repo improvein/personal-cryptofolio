@@ -28,17 +28,23 @@ const styles = StyleSheet.create({
 });
 
 class AssetItem extends React.Component {
-  constructor(props) {
-    super(props);
-    // on pres event handler
-    this.onPress = () => {
-      props.onPressItem(props.asset);
-    };
-  }
+  /**
+   * Press event handler
+   */
+  onPress = () => {
+    this.props.onPressItem(this.props.asset);
+  };
+
+  /**
+   * Long press event handler
+   */
+  onLongPress = () => {
+    console.log('Long press');
+  };
 
   render() {
     return (
-      <TouchableOpacity onPress={this.onPress}>
+      <TouchableOpacity onPress={this.onPress} onLongPress={this.onLongPress}>
         <View style={styles.item}>
           <View style={styles.logo}>
             <Image source={this.props.asset.coin.logo} style={styles.logoImage} />

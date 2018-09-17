@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { AssetItem } from './index';
-import FAB from '../components/FloatingActionButton';
+import { FloatingActionButton } from '../components';
 import DataStorage from '../data/DataStorage';
 
 const styles = StyleSheet.create({
@@ -29,7 +29,6 @@ export default class AssetListScreen extends React.Component {
   componentWillMount() {
     // load assets from storage
     DataStorage.getAssets().then((assets) => {
-      console.log('Assets loaded', assets);
       // add the assets to the state
       this.setState(prevState => ({
         ...prevState,
@@ -51,10 +50,10 @@ export default class AssetListScreen extends React.Component {
         <FlatList
           style={styles.list}
           data={Object.values(this.state.assets)}
-          keyExtractor={item => item.ticker}
+          keyExtractor={item => item.coin.ticker}
           renderItem={({ item }) => <AssetItem asset={item} onPressItem={this.onPressItem} />}
         />
-        <FAB
+        <FloatingActionButton
           text="+"
           onPress={() => {
             navigate('AssetAddScreen');
