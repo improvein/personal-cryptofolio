@@ -1,7 +1,6 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { AssetItem } from './index';
-import { FloatingActionButton } from '../components';
+import { FloatingActionButton, AssetItem } from '../components';
 import DataStorage from '../data/DataStorage';
 
 const styles = StyleSheet.create({
