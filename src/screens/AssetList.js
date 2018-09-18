@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class AssetListScreen extends React.Component {
+export default class AssetList extends React.Component {
   static navigationOptions = {
     title: 'Assets',
   };

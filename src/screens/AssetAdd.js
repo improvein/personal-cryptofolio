@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class AssetAddScreen extends React.Component {
+export default class AssetAdd extends React.Component {
   static navigationOptions = {
     title: 'Add Asset',
   };
