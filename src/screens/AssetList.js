@@ -1,7 +1,13 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { FloatingActionButton, AssetItem } from '../components';
+import {
+  FlatList,
+  StyleSheet,
+  View,
+  Text,
+} from 'react-native';
+import { FloatingActionButton, AssetItem, Header } from '../components';
 import DataStorage from '../data/DataStorage';
+import { colors } from '../utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -10,11 +16,26 @@ const styles = StyleSheet.create({
   list: {
     elevation: 1,
   },
+  totalAmount: {
+    color: colors.WHITE,
+    fontSize: 40,
+    alignSelf: 'center',
+    letterSpacing: 2,
+  },
+  totalAmountText: {
+    fontSize: 20,
+    color: colors.WHITE,
+    alignSelf: 'center',
+  },
 });
 
 export default class AssetList extends React.Component {
   static navigationOptions = {
-    title: 'Assets',
+    header:
+      <Header title="CryptoFolio">
+        <Text style={styles.totalAmount}>$ 1,234.00</Text>
+        <Text style={styles.totalAmountText}>Total Amount</Text>
+      </Header>,
   };
 
   constructor(props) {
