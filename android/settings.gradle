@@ -1,0 +1,3 @@
+rootProject.name = 'personalcryptofolio'
+
+include ':app'
