@@ -56,24 +56,13 @@ export default class AssetList extends React.Component {
 
   componentDidMount() {
     // load assets from storage
-    // DataStorage.getAssets().then((assets) => {
-    //   // add the assets to the state
-    //   this.setState(prevState => ({
-    //     ...prevState,
-    //     assets,
-    //   }));
-    // });
-    const assets = [
-      {
-        coin: {
-          name: 'Bicoin',
-          ticker: 1,
-          logo: coinsLogos.btc,
-        },
-        amount: 1000,
-      },
-    ];
-    this.setState({ assets });
+    DataStorage.getAssets().then((assets) => {
+      // add the assets to the state
+      this.setState(prevState => ({
+        ...prevState,
+        assets,
+      }));
+    });
   }
 
   onPressItem = (item) => {
