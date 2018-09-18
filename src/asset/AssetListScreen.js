@@ -46,7 +46,7 @@ export default class AssetListScreen extends React.Component {
     const { navigate } = this.props.navigation;
 
     return (
-      <View styles={styles.container}>
+      <View style={styles.container}>
         <FlatList
           style={styles.list}
           data={Object.values(this.state.assets)}
