@@ -10,4 +10,6 @@ const hp = (percent) => {
   return (percent * height) / 100;
 };
 
-export default { hp, wp };
+const utils = { hp, wp };
+
+export default utils;
