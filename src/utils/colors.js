@@ -1,0 +1,13 @@
+const PRIMARY_COLOR = '#00B9BD';
+const PRIMARY_COLOR_DARKER = '#00585B';
+const PRIMARY_COLOR_LIGHTER = '#00B9BD';
+const WHITE = '#FFF';
+
+const colors = {
+  PRIMARY_COLOR,
+  PRIMARY_COLOR_DARKER,
+  PRIMARY_COLOR_LIGHTER,
+  WHITE,
+};
+
+export default colors;
