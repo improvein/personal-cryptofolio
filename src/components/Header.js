@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { screen, colors } from '../utils';
 
 const styles = StyleSheet.create({
@@ -29,10 +30,10 @@ class Header extends Component {
 
   render() {
     return (
-      <View
-        // start={[0, 0]}
-        // end={[1, 1]}
-        // colors={[colors.PRIMARY_COLOR_LIGHTER, colors.PRIMARY_COLOR_DARKER]}
+      <LinearGradient
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        colors={[colors.PRIMARY_COLOR_LIGHTER, colors.PRIMARY_COLOR_DARKER]}
         style={styles.container}
       >
         <Text style={styles.headerTitle}>
@@ -41,7 +42,7 @@ class Header extends Component {
         <View style={styles.contentContainer}>
           {this.props.children}
         </View>
-      </View>
+      </LinearGradient>
     );
   }
 }
