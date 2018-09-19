@@ -5,17 +5,24 @@ import {
   View,
   Text,
 } from 'react-native';
-import { FloatingActionButton, AssetItem, Header } from '../components';
-import DataStorage from '../data/DataStorage';
+import { AssetItem, Header, AddCoinButton } from '../components';
+// import DataStorage from '../data/DataStorage';
 import { colors } from '../utils';
 import coinsLogos from '../assets';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.WHITE,
+  },
+  contentContainerStyle: {
+    flex: 1,
+    width: '100%',
+    alignSelf: 'center',
+    alignItems: 'center',
   },
   list: {
-    elevation: 1,
+    flex: 1,
   },
   totalAmount: {
     color: colors.WHITE,
@@ -29,10 +36,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   listContentContainer: {
-    width: '95%',
+    width: '100%',
     alignItems: 'center',
     alignSelf: 'center',
     marginTop: 30,
+  },
+  footerContainer: {
+    paddingTop: 10,
+    paddingBottom: 20,
+    width: '90%',
+    alignSelf: 'center',
   },
 });
 
@@ -56,13 +69,32 @@ export default class AssetList extends React.Component {
 
   componentDidMount() {
     // load assets from storage
-    DataStorage.getAssets().then((assets) => {
-      // add the assets to the state
-      this.setState(prevState => ({
-        ...prevState,
-        assets,
-      }));
-    });
+    // DataStorage.getAssets().then((assets) => {
+    //   // add the assets to the state
+    //   this.setState(prevState => ({
+    //     ...prevState,
+    //     assets,
+    //   }));
+    // });
+    const assets = [
+      {
+        amount: 1,
+        coin: {
+          ticker: 'BTC',
+          name: 'Bitcoin',
+          logo: coinsLogos.btc,
+        },
+      },
+      {
+        amount: 1,
+        coin: {
+          ticker: 'ETH',
+          name: 'Ethereum',
+          logo: coinsLogos.eth,
+        },
+      },
+    ];
+    this.setState({ assets });
   }
 
   onPressItem = (item) => {
@@ -71,23 +103,20 @@ export default class AssetList extends React.Component {
   };
 
   render() {
-    const { navigate } = this.props.navigation;
-
     return (
       <View style={styles.container}>
-        <FlatList
-          style={styles.list}
-          contentContainerStyle={styles.listContentContainer}
-          data={Object.values(this.state.assets)}
-          keyExtractor={item => item.coin.ticker}
-          renderItem={({ item }) => <AssetItem asset={item} onPressItem={this.onPressItem} />}
-        />
-        <FloatingActionButton
-          text="+"
-          onPress={() => {
-            navigate('AssetAddScreen');
-          }}
-        />
+        <View style={styles.contentContainerStyle}>
+          <FlatList
+            style={styles.list}
+            contentContainerStyle={styles.listContentContainer}
+            data={Object.values(this.state.assets)}
+            keyExtractor={item => item.coin.ticker}
+            renderItem={({ item }) => <AssetItem asset={item} onPressItem={this.onPressItem} />}
+          />
+        </View>
+        <View style={styles.footerContainer}>
+          <AddCoinButton onPress={() => this.props.navigation.navigate('AssetAddScreen')} />
+        </View>
       </View>
     );
   }
