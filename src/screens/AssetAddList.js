@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  TextInput, StyleSheet, Text, View, FlatList, Image, TouchableOpacity
+  TextInput, StyleSheet, Text, View, FlatList, Image, TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import DataStorage from '../data/DataStorage';
@@ -95,7 +95,7 @@ export default class AssetAddList extends React.Component {
   }
 
   renderCoinItem = ({ item }) => (
-    <TouchableOpacity style={styles.itemContainer} onPress={() => this.onTap(item)}>
+    <TouchableOpacity style={styles.itemContainer} onPress={() => this.props.navigation.navigate('AssetAddDetailScreen')}>
       {/* TODO REMOVE THIS CONDITION WHEN ALL COINS HAVE LOGO */}
       <View style={styles.logoContianer}>
         {item.logo
@@ -115,18 +115,18 @@ export default class AssetAddList extends React.Component {
     </TouchableOpacity>
   );
 
-  onTap = () => {
-    const coinToAdd = this.state.selectedCoin;
-    if (coinToAdd !== null) {
-      DataStorage.addAsset(coinToAdd).then(() => {
-        console.log(`Asset added ${coinToAdd.ticker}`);
-      });
+  // onTap = () => {
+  //   const coinToAdd = this.state.selectedCoin;
+  //   if (coinToAdd !== null) {
+  //     DataStorage.addAsset(coinToAdd).then(() => {
+  //       console.log(`Asset added ${coinToAdd.ticker}`);
+  //     });
 
-      // go back to the list
-      const { navigate } = this.props.navigation;
-      navigate('AssetListScreen');
-    }
-  };
+  //     // go back to the list
+  //     const { navigate } = this.props.navigation;
+  //     navigate('AssetListScreen');
+  //   }
+  // };
 
   render() {
     return (
