@@ -1,6 +1,8 @@
 import React from 'react';
 import { createStackNavigator } from 'react-navigation';
-import { AssetAddList, AssetList, Asset } from './src/screens';
+import {
+  AssetAddList, AssetAddDetail, AssetList, Asset,
+} from './src/screens';
 
 const RouteNav = createStackNavigator(
   {
@@ -9,6 +11,9 @@ const RouteNav = createStackNavigator(
     },
     AssetAddScreen: {
       screen: AssetAddList,
+    },
+    AssetAddDetailScreen: {
+      screen: AssetAddDetail,
     },
     AssetScreen: {
       screen: Asset,
