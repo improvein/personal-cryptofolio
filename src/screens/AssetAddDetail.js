@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { colors } from '../utils';
+import { SecondaryButton } from '../components';
 
 const styles = StyleSheet.create({
   container: {
@@ -44,6 +45,10 @@ const styles = StyleSheet.create({
     color: colors.WHITE,
     marginBottom: 100,
   },
+  buttonContainer: {
+    width: '90%',
+    alignSelf: 'center',
+  },
 });
 
 class AssetAddDetail extends Component {
@@ -80,6 +85,9 @@ class AssetAddDetail extends Component {
           <Text style={{ fontSize: 40, color: colors.WHITE, marginTop: 20, marginBottom: 50 }}>ACA VA EL PICKER</Text>
           <Text style={styles.amount}>1 BTC /</Text>
           <Text style={styles.price}>U$D 7,500.00</Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <SecondaryButton text="DONE" onPress={() => this.props.navigation.navigate('AssetListScreen')} />
         </View>
       </LinearGradient>
     );
