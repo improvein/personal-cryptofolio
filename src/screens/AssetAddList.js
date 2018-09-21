@@ -95,7 +95,10 @@ export default class AssetAddList extends React.Component {
   }
 
   renderCoinItem = ({ item }) => (
-    <TouchableOpacity style={styles.itemContainer} onPress={() => this.props.navigation.navigate('AssetAddDetailScreen')}>
+    <TouchableOpacity
+      style={styles.itemContainer}
+      onPress={() => this.props.navigation.navigate('AssetAddDetailScreen', { coin: item })}
+    >
       {/* TODO REMOVE THIS CONDITION WHEN ALL COINS HAVE LOGO */}
       <View style={styles.logoContianer}>
         {item.logo
@@ -137,7 +140,9 @@ export default class AssetAddList extends React.Component {
         style={styles.container}
       >
         <View style={styles.header}>
-          <Text>Back arrow</Text>
+          <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+            <Text>Back arrow</Text>
+          </TouchableOpacity>
           <TextInput style={styles.input} placeholder="Name of the currency..." />
         </View>
         <View style={styles.contentContainer}>
