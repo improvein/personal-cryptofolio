@@ -101,16 +101,10 @@ export default class AssetAddList extends React.Component {
     >
       {/* TODO REMOVE THIS CONDITION WHEN ALL COINS HAVE LOGO */}
       <View style={styles.logoContianer}>
-        {item.logo
-          && <Image source={item.logo} style={styles.logo} />
-        }
+        {item.logo && <Image source={item.logo} style={styles.logo} />}
       </View>
       <View style={styles.nameContainer}>
-        <Text style={styles.names}>
-          {item.name}
-          :
-          {item.ticker}
-        </Text>
+        <Text style={styles.names}>{`${item.name}  (${item.ticker})`}</Text>
       </View>
       <View style={styles.proceContainer}>
         <Text style={styles.price}>$7,225.00</Text>
@@ -143,7 +137,7 @@ export default class AssetAddList extends React.Component {
           <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
             <Text>Back arrow</Text>
           </TouchableOpacity>
-          <TextInput style={styles.input} placeholder="Name of the currency..." />
+          <TextInput style={styles.input} placeholder="Name of the coin..." />
         </View>
         <View style={styles.contentContainer}>
           <FlatList

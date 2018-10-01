@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+  Text, StyleSheet, TouchableOpacity, View,
 } from 'react-native';
 import { colors } from '../utils';
 
@@ -47,8 +44,7 @@ const styles = StyleSheet.create({
 class componentName extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
 
   render() {
@@ -57,7 +53,7 @@ class componentName extends Component {
         <View style={styles.plusContainer}>
           <Text style={styles.plus}> + </Text>
         </View>
-        <Text style={styles.buttonText}> ADD CURRENCY </Text>
+        <Text style={styles.buttonText}> ADD ASSET </Text>
       </TouchableOpacity>
     );
   }

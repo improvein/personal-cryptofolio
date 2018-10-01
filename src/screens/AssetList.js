@@ -1,9 +1,6 @@
 import React from 'react';
 import {
-  FlatList,
-  StyleSheet,
-  View,
-  Text,
+  FlatList, StyleSheet, View, Text,
 } from 'react-native';
 import { AssetItem, Header, AddCoinButton } from '../components';
 // import DataStorage from '../data/DataStorage';
@@ -78,7 +75,7 @@ export default class AssetList extends React.Component {
     // });
     const assets = [
       {
-        amount: 1,
+        amount: 1.3,
         coin: {
           ticker: 'BTC',
           name: 'Bitcoin',
@@ -86,7 +83,7 @@ export default class AssetList extends React.Component {
         },
       },
       {
-        amount: 1,
+        amount: 2.09,
         coin: {
           ticker: 'ETH',
           name: 'Ethereum',

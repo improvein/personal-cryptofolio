@@ -85,14 +85,13 @@ class AssetItem extends React.Component {
           <View style={styles.contentContainer}>
             <View style={styles.logoContainer}>
               {/* TODO TAKE OUT THIS VALIDATION WHEN ALL COINS HAVE LOGO */}
-              {asset.coin && asset.coin.logo &&
-                <Image source={asset.coin.logo} style={styles.logoImage} />
-              }
-              <Text>BTC</Text>
+              {asset.coin
+                && asset.coin.logo && <Image source={asset.coin.logo} style={styles.logoImage} />}
+              <Text>{asset.coin.ticker}</Text>
             </View>
             <View style={styles.personalDataContainer}>
               <Text style={styles.mainText}>$980.00</Text>
-              <Text style={styles.secondaryText}>2.00</Text>
+              <Text style={styles.secondaryText}>{asset.amount}</Text>
             </View>
             <View style={styles.coinDataContinar}>
               <Text style={styles.mainText}>$7,520.00</Text>
