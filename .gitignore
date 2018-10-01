@@ -9,6 +9,12 @@
 # IDE
 /.vscode
 
+# Android
+android/.gradle
+android/.idea
+android/app/build
+android/local.properties
+
 # misc
 .env
 .env.local
