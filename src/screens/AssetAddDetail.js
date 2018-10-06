@@ -3,6 +3,7 @@ import {
   StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors } from '../utils';
 import { SecondaryButton } from '../components';
 
@@ -59,8 +60,7 @@ class AssetAddDetail extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
 
   render() {
@@ -76,18 +76,30 @@ class AssetAddDetail extends Component {
             onPress={() => this.props.navigation.goBack()}
             style={styles.backArrowContainer}
           >
-            <Text>Back arrow</Text>
+            <Icon name="arrow-left" size={30} />
           </TouchableOpacity>
           <Text style={styles.title}>BTC/USD</Text>
         </View>
         <View style={styles.contentContainer}>
           <Text style={styles.label}>Price Source</Text>
-          <Text style={{ fontSize: 40, color: colors.WHITE, marginTop: 20, marginBottom: 50 }}>ACA VA EL PICKER</Text>
+          <Text
+            style={{
+              fontSize: 40,
+              color: colors.WHITE,
+              marginTop: 20,
+              marginBottom: 50,
+            }}
+          >
+            ACA VA EL PICKER
+          </Text>
           <Text style={styles.amount}>1 BTC /</Text>
           <Text style={styles.price}>U$D 7,500.00</Text>
         </View>
         <View style={styles.buttonContainer}>
-          <SecondaryButton text="DONE" onPress={() => this.props.navigation.navigate('AssetListScreen')} />
+          <SecondaryButton
+            text="DONE"
+            onPress={() => this.props.navigation.navigate('AssetListScreen')}
+          />
         </View>
       </LinearGradient>
     );

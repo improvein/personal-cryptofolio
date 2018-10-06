@@ -3,6 +3,7 @@ import {
   TextInput, StyleSheet, Text, View, FlatList, Image, TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DataStorage from '../data/DataStorage';
 import { colors } from '../utils';
 
@@ -135,7 +136,7 @@ export default class AssetAddList extends React.Component {
       >
         <View style={styles.header}>
           <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-            <Text>Back arrow</Text>
+            <Icon name="arrow-left" size={30} />
           </TouchableOpacity>
           <TextInput style={styles.input} placeholder="Name of the coin..." />
         </View>
