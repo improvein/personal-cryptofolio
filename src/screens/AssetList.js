@@ -3,9 +3,9 @@ import {
   FlatList, StyleSheet, View, Text,
 } from 'react-native';
 import { AssetItem, Header, AddCoinButton } from '../components';
-// import DataStorage from '../data/DataStorage';
+import DataStorage from '../data/DataStorage';
 import { colors } from '../utils';
-import coinsLogos from '../assets';
+// import coinsLogos from '../assets';
 
 const styles = StyleSheet.create({
   container: {
@@ -61,43 +61,43 @@ export default class AssetList extends React.Component {
     // on pres event handler
     this.state = {
       assets: [],
+      refreshing: false,
     };
   }
 
   componentDidMount() {
     // load assets from storage
-    // DataStorage.getAssets().then((assets) => {
-    //   // add the assets to the state
-    //   this.setState(prevState => ({
-    //     ...prevState,
-    //     assets,
-    //   }));
-    // });
-    const assets = [
-      {
-        amount: 1.3,
-        coin: {
-          ticker: 'BTC',
-          name: 'Bitcoin',
-          logo: coinsLogos.btc,
-        },
-      },
-      {
-        amount: 2.09,
-        coin: {
-          ticker: 'ETH',
-          name: 'Ethereum',
-          logo: coinsLogos.eth,
-        },
-      },
-    ];
-    this.setState({ assets });
+    this.retrieveAssets();
   }
 
   onPressItem = (item) => {
     const { navigate } = this.props.navigation;
     navigate('AssetScreen', { asset: item });
   };
+
+  onRefresh = () => {
+    this.setState(
+      {
+        refreshing: true,
+      },
+      () => {
+        this.retrieveAssets();
+      },
+    );
+  };
+
+  retrieveAssets() {
+    DataStorage.getAssets().then((assets) => {
+      // add the assets to the state
+      // first take only the actual assets (values)
+      const assetsToList = Object.values(assets);
+      this.setState(prevState => ({
+        ...prevState,
+        assets: assetsToList,
+        refreshing: false,
+      }));
+    });
+  }
 
   render() {
     return (
@@ -106,9 +106,11 @@ export default class AssetList extends React.Component {
           <FlatList
             style={styles.list}
             contentContainerStyle={styles.listContentContainer}
-            data={Object.values(this.state.assets)}
+            data={this.state.assets}
             keyExtractor={item => item.coin.ticker}
             renderItem={({ item }) => <AssetItem asset={item} onPressItem={this.onPressItem} />}
+            refreshing={this.state.refreshing}
+            onRefresh={this.onRefresh}
           />
         </View>
         <View style={styles.footerContainer}>
