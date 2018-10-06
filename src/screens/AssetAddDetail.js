@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import DataStorage from '../data/DataStorage';
 import { colors } from '../utils';
 import { SecondaryButton } from '../components';
 
@@ -79,11 +80,11 @@ class AssetAddDetail extends Component {
 
   onAdd = () => {
     const coinToAdd = this.state.coin;
-    const exchange = this.state.selectedExchange;
-    if (coinToAdd !== null && exchange !== null) {
-      // DataStorage.addAsset(coinToAdd).then(() => {
-      //   console.log(`Asset added ${coinToAdd.ticker}`);
-      // });
+    const exchangeCode = this.state.selectedExchange;
+    if (coinToAdd !== null && exchangeCode !== null) {
+      DataStorage.addAsset(coinToAdd, exchangeCode).then(() => {
+        console.log(`Asset added ${coinToAdd.ticker}`);
+      });
 
       // go back to the list
       this.props.navigation.navigate('AssetListScreen');

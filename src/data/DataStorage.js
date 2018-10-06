@@ -83,12 +83,13 @@ class DataStorage {
    * Add an asset to the portfolio
    * @param {object} coin
    */
-  static addAsset = async (coin) => {
+  static addAsset = async (coin, exchangeCode) => {
     const assets = await DataStorage.getAssets();
     // initialize new asset
     assets[coin.ticker] = {
       coin,
       amount: 0,
+      exchangeCode,
     };
     try {
       // store updated assets
