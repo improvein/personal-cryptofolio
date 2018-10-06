@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 export default class AssetAdd extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: `${navigation.state.params.asset.coin.name}`,
-    headerRight: <Button onPress={navigation.getParam('removeAsset') || (() => { })} title="X" />,
+    headerRight: <Button onPress={navigation.getParam('removeAsset') || (() => {})} title="X" />,
   });
 
   componentDidMount() {
