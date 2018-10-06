@@ -11,13 +11,21 @@ class DataStorage {
    */
   static getCoins = async () => {
     const coins = [
-      { ticker: 'ADA', name: 'Cardano' },
       {
         ticker: 'BTC',
         name: 'Bitcoin',
         logo: coinsLogos.btc,
       },
-      { ticker: 'BCH', name: 'Bitcoin Cash' },
+      {
+        ticker: 'BCH',
+        name: 'Bitcoin Cash',
+        logo: coinsLogos.bch,
+      },
+      {
+        ticker: 'ADA',
+        name: 'Cardano',
+        logo: coinsLogos.ada,
+      },
       { ticker: 'EOS', name: 'EOS' },
       {
         ticker: 'ETH',
@@ -25,8 +33,16 @@ class DataStorage {
         logo: coinsLogos.eth,
       },
       { ticker: 'IOTA', name: 'IOTA' },
-      { ticker: 'LTC', name: 'Litecoin' },
-      { ticker: 'XMR', name: 'Monero' },
+      {
+        ticker: 'LTC',
+        name: 'Litecoin',
+        logo: coinsLogos.ltc,
+      },
+      {
+        ticker: 'XMR',
+        name: 'Monero',
+        logo: coinsLogos.xmr,
+      },
     ];
     return coins;
   };
