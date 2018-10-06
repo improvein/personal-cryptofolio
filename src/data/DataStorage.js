@@ -11,12 +11,14 @@ class DataStorage {
    */
   static getCoins = async () => {
     const coins = [
+      { ticker: 'ADA', name: 'Cardano' },
       {
         ticker: 'BTC',
         name: 'Bitcoin',
         logo: coinsLogos.btc,
       },
       { ticker: 'BCH', name: 'Bitcoin Cash' },
+      { ticker: 'EOS', name: 'EOS' },
       {
         ticker: 'ETH',
         name: 'Ethereum',
