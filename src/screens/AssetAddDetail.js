@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet, Text, TouchableOpacity, View,
+  Picker, StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -36,6 +36,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.WHITE,
   },
+  exchangePicker: {
+    width: '100%',
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 20,
+    marginBottom: 50,
+    color: colors.WHITE,
+  },
   amount: {
     fontSize: 20,
     color: colors.WHITE,
@@ -60,10 +68,31 @@ class AssetAddDetail extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    // get the selected coin from previous screen
+    const coin = this.props.navigation.getParam('coin', null);
+
+    // initialize state
+    this.state = {
+      coin,
+    };
   }
 
+  onAdd = () => {
+    const coinToAdd = this.state.coin;
+    const exchange = this.state.selectedExchange;
+    if (coinToAdd !== null && exchange !== null) {
+      // DataStorage.addAsset(coinToAdd).then(() => {
+      //   console.log(`Asset added ${coinToAdd.ticker}`);
+      // });
+
+      // go back to the list
+      this.props.navigation.navigate('AssetListScreen');
+    }
+  };
+
   render() {
+    const exchanges = [{ code: 'bitstamp', name: 'Bitstamp' }, { code: 'none', name: '(none)' }];
+
     return (
       <LinearGradient
         start={{ x: 0, y: 0 }}
@@ -76,30 +105,30 @@ class AssetAddDetail extends Component {
             onPress={() => this.props.navigation.goBack()}
             style={styles.backArrowContainer}
           >
-            <Icon name="arrow-left" size={30} />
+            <Icon name="arrow-left" size={30} color={colors.WHITE} />
           </TouchableOpacity>
-          <Text style={styles.title}>BTC/USD</Text>
+          <Text style={styles.title}>{`${this.state.coin.ticker}/USD`}</Text>
         </View>
         <View style={styles.contentContainer}>
-          <Text style={styles.label}>Price Source</Text>
-          <Text
-            style={{
-              fontSize: 40,
-              color: colors.WHITE,
-              marginTop: 20,
-              marginBottom: 50,
-            }}
+          <Text style={styles.label}>Price source</Text>
+          <Picker
+            selectedValue={this.state.selectedExchange}
+            style={styles.exchangePicker}
+            onValueChange={itemValue => this.setState(prevState => ({
+              ...prevState,
+              selectedExchange: itemValue,
+            }))
+            }
           >
-            ACA VA EL PICKER
-          </Text>
-          <Text style={styles.amount}>1 BTC /</Text>
-          <Text style={styles.price}>U$D 7,500.00</Text>
+            {exchanges.map(exchange => (
+              <Picker.Item label={exchange.name} value={exchange.code} key={exchange.code} />
+            ))}
+          </Picker>
+          <Text style={styles.amount}>{`1 ${this.state.coin.ticker} /`}</Text>
+          <Text style={styles.price}>USD 7,500.00</Text>
         </View>
         <View style={styles.buttonContainer}>
-          <SecondaryButton
-            text="DONE"
-            onPress={() => this.props.navigation.navigate('AssetListScreen')}
-          />
+          <SecondaryButton text="DONE" onPress={this.onAdd} />
         </View>
       </LinearGradient>
     );
