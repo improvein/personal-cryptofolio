@@ -1,8 +1,10 @@
 import React from 'react';
 import {
-  TextInput, StyleSheet, Text, View, FlatList, Image, TouchableOpacity,
+  FlatList, StyleSheet, Text, TouchableOpacity, TextInput, View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { CoinListItem } from '../components';
 import DataStorage from '../data/DataStorage';
 import { colors } from '../utils';
 
@@ -15,12 +17,23 @@ const styles = StyleSheet.create({
     width: '95%',
     alignSelf: 'center',
   },
+  title: {
+    fontSize: 25,
+    color: colors.WHITE,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    textAlign: 'center',
+  },
+  backArrowContainer: {
+    position: 'absolute',
+    top: 35,
+  },
   contentContainer: {
     flex: 1,
     width: '95%',
     alignSelf: 'center',
   },
-  input: {
+  searchInput: {
     width: '90%',
     alignSelf: 'center',
     backgroundColor: colors.WHITE,
@@ -28,40 +41,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 8,
     paddingLeft: 10,
-  },
-  itemContainer: {
-    backgroundColor: colors.WHITE,
-    borderRadius: 8,
-    height: 60,
-    width: '100%',
-    marginBottom: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-  },
-  logoContianer: {
-    width: '15%',
-    borderRightColor: colors.BLACK,
-    borderRightWidth: 1,
-  },
-  logo: {
-    width: 30,
-    height: 30,
-  },
-  nameContainer: {
-    width: '45%',
-    paddingLeft: 15,
-  },
-  names: {
-    fontSize: 16,
-  },
-  proceContainer: {
-    width: '40%',
-    paddingLeft: 10,
-  },
-  price: {
-    textAlign: 'right',
-    fontSize: 18,
   },
 });
 
@@ -90,40 +69,27 @@ export default class AssetAddList extends React.Component {
       this.setState(prevState => ({
         ...prevState,
         coins: stateCoins,
+        filteredCoins: stateCoins,
       }));
     });
   }
 
-  renderCoinItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.itemContainer}
-      onPress={() => this.props.navigation.navigate('AssetAddDetailScreen', { coin: item })}
-    >
-      {/* TODO REMOVE THIS CONDITION WHEN ALL COINS HAVE LOGO */}
-      <View style={styles.logoContianer}>
-        {item.logo && <Image source={item.logo} style={styles.logo} />}
-      </View>
-      <View style={styles.nameContainer}>
-        <Text style={styles.names}>{`${item.name}  (${item.ticker})`}</Text>
-      </View>
-      <View style={styles.proceContainer}>
-        <Text style={styles.price}>$7,225.00</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  onSelectCoin = (item) => {
+    // this.setState({ selectedCoin: item });
+    this.props.navigation.navigate('AssetAddDetailScreen', { coin: item });
+  };
 
-  // onTap = () => {
-  //   const coinToAdd = this.state.selectedCoin;
-  //   if (coinToAdd !== null) {
-  //     DataStorage.addAsset(coinToAdd).then(() => {
-  //       console.log(`Asset added ${coinToAdd.ticker}`);
-  //     });
-
-  //     // go back to the list
-  //     const { navigate } = this.props.navigation;
-  //     navigate('AssetListScreen');
-  //   }
-  // };
+  onSearchTextChange = (text) => {
+    // filter the coins
+    const filteredCoins = this.state.coins.filter((coin) => {
+      const fullSearchString = `${coin.ticker.toLowerCase()} ${coin.name.toLowerCase()}`;
+      return fullSearchString.includes(text.toLowerCase());
+    });
+    // reset the state
+    this.setState({
+      filteredCoins,
+    });
+  };
 
   render() {
     return (
@@ -134,16 +100,26 @@ export default class AssetAddList extends React.Component {
         style={styles.container}
       >
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
-            <Text>Back arrow</Text>
+          <TouchableOpacity
+            style={styles.backArrowContainer}
+            onPress={() => this.props.navigation.goBack()}
+          >
+            <Icon name="arrow-left" size={30} color={colors.WHITE} />
           </TouchableOpacity>
-          <TextInput style={styles.input} placeholder="Name of the coin..." />
+          <Text style={styles.title}>Select coin</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Filter coins..."
+            underlineColorAndroid="transparent"
+            returnKeyType="search"
+            onChangeText={this.onSearchTextChange}
+          />
         </View>
         <View style={styles.contentContainer}>
           <FlatList
             keyExtractor={item => item.ticker}
-            data={this.state.coins}
-            renderItem={this.renderCoinItem}
+            data={this.state.filteredCoins}
+            renderItem={({ item }) => <CoinListItem coin={item} onPressItem={this.onSelectCoin} />}
           />
         </View>
       </LinearGradient>

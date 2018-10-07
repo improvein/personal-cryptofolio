@@ -94,13 +94,13 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 26
     buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "com.improvein.personalcryptofolio"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         ndk {
@@ -135,6 +135,14 @@ android {
         }
     }
 }
+
+
+// Vector Icons
+// https://github.com/oblador/react-native-vector-icons
+// project.ext.vectoricons = [
+//     iconFontNames: [ 'MaterialCommunityIcons.ttf' ] // Name of the font files you want to copy
+// ]
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])

@@ -3,9 +3,10 @@ import {
   FlatList, StyleSheet, View, Text,
 } from 'react-native';
 import { AssetItem, Header, AddCoinButton } from '../components';
-// import DataStorage from '../data/DataStorage';
+import DataStorage from '../data/DataStorage';
+import PriceOracle from '../data/PriceOracle';
 import { colors } from '../utils';
-import coinsLogos from '../assets';
+// import coinsLogos from '../assets';
 
 const styles = StyleSheet.create({
   container: {
@@ -38,6 +39,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 30,
   },
+  listEmptyContent: {
+    fontSize: 20,
+    alignSelf: 'center',
+  },
   footerContainer: {
     paddingTop: 10,
     paddingBottom: 20,
@@ -47,13 +52,15 @@ const styles = StyleSheet.create({
 });
 
 export default class AssetList extends React.Component {
-  static navigationOptions = {
-    header: (
-      <Header title="CryptoFolio">
-        <Text style={styles.totalAmount}>$ 1,234.00</Text>
-        <Text style={styles.totalAmountText}>Total Amount</Text>
-      </Header>
-    ),
+  static navigationOptions = ({ navigation }) => {
+    const totalValuation = navigation.getParam('totalValuation', 0);
+    return {
+      header: (
+        <Header title="CryptoFolio">
+          <Text style={styles.totalAmount}>{`$ ${totalValuation.toFixed(2)}`}</Text>
+        </Header>
+      ),
+    };
   };
 
   constructor(props) {
@@ -61,42 +68,64 @@ export default class AssetList extends React.Component {
     // on pres event handler
     this.state = {
       assets: [],
+      refreshing: false,
     };
   }
 
   componentDidMount() {
     // load assets from storage
-    // DataStorage.getAssets().then((assets) => {
-    //   // add the assets to the state
-    //   this.setState(prevState => ({
-    //     ...prevState,
-    //     assets,
-    //   }));
-    // });
-    const assets = [
-      {
-        amount: 1.3,
-        coin: {
-          ticker: 'BTC',
-          name: 'Bitcoin',
-          logo: coinsLogos.btc,
-        },
-      },
-      {
-        amount: 2.09,
-        coin: {
-          ticker: 'ETH',
-          name: 'Ethereum',
-          logo: coinsLogos.eth,
-        },
-      },
-    ];
-    this.setState({ assets });
+    this.refreshAssets();
   }
 
   onPressItem = (item) => {
     const { navigate } = this.props.navigation;
     navigate('AssetScreen', { asset: item });
+  };
+
+  onRefresh = () => {
+    this.setState(
+      {
+        refreshing: true,
+      },
+      async () => {
+        await this.refreshAssets();
+      },
+    );
+  };
+
+  refreshAssets = async () => {
+    const assets = await DataStorage.getAssets();
+    let totalValuation = 0;
+
+    // get assets from storage
+    const assetsToList = Object.values(assets);
+    // fetch and update their market prices
+    await PriceOracle.refreshPrices();
+    // update the data to display
+    const prices = await DataStorage.getPrices();
+    for (let index = 0; index < assetsToList.length; index += 1) {
+      const { ticker } = assetsToList[index].coin;
+      const coinPrice = prices[ticker] || null;
+      if (coinPrice !== null) {
+        assetsToList[index].price = prices[ticker].price || 0;
+        assetsToList[index].variation = prices[ticker].variation || 0;
+      } else {
+        assetsToList[index].price = 0;
+        assetsToList[index].variation = 0;
+      }
+      assetsToList[index].valuation = assetsToList[index].price * assetsToList[index].amount;
+      totalValuation += assetsToList[index].valuation;
+    }
+
+    // update the total valuation
+    this.props.navigation.setParams({ totalValuation });
+
+    // add the assets to the state
+    this.setState(prevState => ({
+      ...prevState,
+      assets: assetsToList,
+      refreshing: false,
+    }));
   };
 
   render() {
@@ -106,9 +135,12 @@ export default class AssetList extends React.Component {
           <FlatList
             style={styles.list}
             contentContainerStyle={styles.listContentContainer}
-            data={Object.values(this.state.assets)}
+            data={this.state.assets}
             keyExtractor={item => item.coin.ticker}
             renderItem={({ item }) => <AssetItem asset={item} onPressItem={this.onPressItem} />}
+            refreshing={this.state.refreshing}
+            onRefresh={this.onRefresh}
+            ListEmptyComponent={<Text style={styles.listEmptyContent}>(no assets)</Text>}
           />
         </View>
         <View style={styles.footerContainer}>
