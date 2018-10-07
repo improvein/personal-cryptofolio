@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.WHITE,
   },
-  contentContainerStyle: {
+  listContainer: {
     flex: 1,
     width: '100%',
     alignSelf: 'center',
@@ -37,11 +37,12 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     alignSelf: 'center',
-    marginTop: 30,
+    marginTop: 0,
   },
   listEmptyContent: {
     fontSize: 20,
     alignSelf: 'center',
+    marginTop: 30,
   },
   footerContainer: {
     paddingTop: 10,
@@ -131,7 +132,7 @@ export default class AssetList extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.contentContainerStyle}>
+        <View style={styles.listContainer}>
           <FlatList
             style={styles.list}
             contentContainerStyle={styles.listContentContainer}

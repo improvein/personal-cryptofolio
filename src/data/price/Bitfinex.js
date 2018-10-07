@@ -1,5 +1,5 @@
-class Bitstamp {
-  apiURL = 'https://www.bitstamp.net/api/v2/ticker/{currency_pair}/';
+class Bitfinex {
+  apiURL = 'https://api.bitfinex.com/v1/pubticker/{currency_pair}/';
 
   getPrices = async (coins) => {
     const fetchPromises = [];
@@ -12,8 +12,8 @@ class Bitstamp {
           .then((responseJson) => {
             const coinPrice = {
               ticker: coinTicker,
-              price: responseJson.last,
-              variation: (responseJson.last / responseJson.open - 1) * 100,
+              price: responseJson.last_price,
+              variation: 0, // (responseJson.last / responseJson.open - 1) * 100,
             };
             resolve(coinPrice);
           })
@@ -39,10 +39,18 @@ class Bitstamp {
   };
 
   getPair = (coinTicker) => {
-    const ticker = coinTicker;
+    let ticker = coinTicker;
+    // consider special cases
+    if (ticker === 'IOTA') {
+      ticker = 'IOT';
+    }
+    if (ticker === 'DASH') {
+      ticker = 'DSH';
+    }
+
     const pair = `${ticker.toLowerCase()}usd`;
     return pair;
   };
 }
 
-export default Bitstamp;
+export default Bitfinex;

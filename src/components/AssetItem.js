@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 8,
     backgroundColor: colors.WHITE,
-    marginBottom: 15,
+    marginBottom: 0,
     width: '95%',
     shadowColor: colors.SHADOW,
     shadowOffset: { width: 0, height: 3 },
@@ -19,10 +19,10 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: 15,
     flexDirection: 'row',
-    height: 80,
+    // height: 80,
   },
   logoContainer: {
-    width: '15%',
+    width: '16%',
     alignItems: 'center',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
-  personalDataContainer: {
+  portfolioDataContainer: {
     width: '40%',
     paddingLeft: 15,
     flexDirection: 'column',
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     borderLeftColor: 'black',
     borderLeftWidth: 1,
   },
-  coinDataContinar: {
+  coinDataContainer: {
     width: '45%',
     alignItems: 'flex-end',
     flexDirection: 'column',
@@ -92,11 +92,11 @@ class AssetItem extends React.Component {
                 && asset.coin.logo && <Image source={asset.coin.logo} style={styles.logoImage} />}
               <Text>{asset.coin.ticker}</Text>
             </View>
-            <View style={styles.personalDataContainer}>
+            <View style={styles.portfolioDataContainer}>
               <Text style={styles.mainText}>{`$ ${asset.valuation.toFixed(2)}`}</Text>
               <Text style={styles.secondaryText}>{asset.amount}</Text>
             </View>
-            <View style={styles.coinDataContinar}>
+            <View style={styles.coinDataContainer}>
               <Text style={styles.mainText}>{`$ ${asset.price}`}</Text>
               <Text style={styles.secondaryText}>{`${asset.variation.toFixed(2)} %`}</Text>
             </View>
