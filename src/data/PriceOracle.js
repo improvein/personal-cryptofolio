@@ -3,10 +3,14 @@ import priceSources from './price/sources';
 
 class PriceOracle {
   /** interval to fech in seconds */
-  static fetchInterval = 60;
+  static fetchInterval = 30;
 
   /** Source for Prices */
-  static priceSources = [{ code: 'bitstamp', name: 'Bitstamp' }];
+  static priceSources = [
+    { code: 'binance', name: 'Binance' },
+    { code: 'bitfinex', name: 'Bitfinex' },
+    { code: 'bitstamp', name: 'Bitstamp' },
+  ];
 
   /**
    * Returns all the available price sources

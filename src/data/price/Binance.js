@@ -1,5 +1,5 @@
-class Bitstamp {
-  apiURL = 'https://www.bitstamp.net/api/v2/ticker/{currency_pair}/';
+class Binance {
+  apiURL = 'https://api.binance.com/api/v1/ticker/24hr?symbol={currency_pair}';
 
   getPrices = async (coins) => {
     const fetchPromises = [];
@@ -12,8 +12,8 @@ class Bitstamp {
           .then((responseJson) => {
             const coinPrice = {
               ticker: coinTicker,
-              price: responseJson.last,
-              variation: (responseJson.last / responseJson.open - 1) * 100,
+              price: parseFloat(responseJson.lastPrice),
+              variation: parseFloat(responseJson.priceChangePercent),
             };
             resolve(coinPrice);
           })
@@ -39,10 +39,9 @@ class Bitstamp {
   };
 
   getPair = (coinTicker) => {
-    const ticker = coinTicker;
-    const pair = `${ticker.toLowerCase()}usd`;
+    const pair = `${coinTicker.toUpperCase()}USDT`;
     return pair;
   };
 }
 
-export default Bitstamp;
+export default Binance;
