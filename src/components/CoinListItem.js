@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Image, StyleSheet, TouchableOpacity, Text, View,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors } from '../utils';
 
 const styles = StyleSheet.create({
@@ -31,11 +32,11 @@ const styles = StyleSheet.create({
   names: {
     fontSize: 16,
   },
-  priceContainer: {
+  selectArrowContainer: {
     width: '40%',
     paddingLeft: 10,
   },
-  price: {
+  selectArrow: {
     textAlign: 'right',
     fontSize: 18,
   },
@@ -59,8 +60,8 @@ class CoinListItem extends React.Component {
         <View style={styles.nameContainer}>
           <Text style={styles.names}>{`${this.props.coin.name}  (${this.props.coin.ticker})`}</Text>
         </View>
-        <View style={styles.priceContainer}>
-          <Text style={styles.price}>$ 7,225.00</Text>
+        <View style={styles.selectArrowContainer}>
+          <Icon style={styles.selectArrow} name="chevron-right" size={30} />
         </View>
       </TouchableOpacity>
     );
