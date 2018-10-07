@@ -93,7 +93,7 @@ class AssetItem extends React.Component {
               <Text>{asset.coin.ticker}</Text>
             </View>
             <View style={styles.personalDataContainer}>
-              <Text style={styles.mainText}>{`$ ${asset.price * asset.amount}`}</Text>
+              <Text style={styles.mainText}>{`$ ${asset.valuation.toFixed(2)}`}</Text>
               <Text style={styles.secondaryText}>{asset.amount}</Text>
             </View>
             <View style={styles.coinDataContinar}>

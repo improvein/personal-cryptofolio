@@ -52,13 +52,15 @@ const styles = StyleSheet.create({
 });
 
 export default class AssetList extends React.Component {
-  static navigationOptions = {
-    header: (
-      <Header title="CryptoFolio">
-        <Text style={styles.totalAmount}>$ 1,234.00</Text>
-        <Text style={styles.totalAmountText}>Total Amount</Text>
-      </Header>
-    ),
+  static navigationOptions = ({ navigation }) => {
+    const totalValuation = navigation.getParam('totalValuation', 0);
+    return {
+      header: (
+        <Header title="CryptoFolio">
+          <Text style={styles.totalAmount}>{`$ ${totalValuation.toFixed(2)}`}</Text>
+        </Header>
+      ),
+    };
   };
 
   constructor(props) {
@@ -93,6 +95,7 @@ export default class AssetList extends React.Component {
 
   refreshAssets = async () => {
     const assets = await DataStorage.getAssets();
+    let totalValuation = 0;
 
     // get assets from storage
     const assetsToList = Object.values(assets);
@@ -110,7 +113,12 @@ export default class AssetList extends React.Component {
         assetsToList[index].price = 0;
         assetsToList[index].variation = 0;
       }
+      assetsToList[index].valuation = assetsToList[index].price * assetsToList[index].amount;
+      totalValuation += assetsToList[index].valuation;
     }
+
+    // update the total valuation
+    this.props.navigation.setParams({ totalValuation });
 
     // add the assets to the state
     this.setState(prevState => ({
