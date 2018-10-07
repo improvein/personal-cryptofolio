@@ -5,19 +5,19 @@ import { screen, colors } from '../utils';
 
 const styles = StyleSheet.create({
   container: {
-    height: screen.hp(25),
+    height: screen.hp(20),
     backgroundColor: colors.PRIMARY_COLOR,
-    paddingTop: 30,
+    paddingTop: 20,
   },
   headerTitle: {
     color: colors.WHITE,
     fontSize: 25,
     alignSelf: 'center',
-    paddingVertical: screen.hp(1),
+    paddingVertical: screen.hp(0.5),
   },
   contentContainer: {
     flex: 1,
-    paddingVertical: screen.hp(2),
+    paddingVertical: screen.hp(1),
   },
 });
 
