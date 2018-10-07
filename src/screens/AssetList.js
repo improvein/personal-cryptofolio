@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { AssetItem, Header, AddCoinButton } from '../components';
 import DataStorage from '../data/DataStorage';
+import PriceOracle from '../data/PriceOracle';
 import { colors } from '../utils';
 // import coinsLogos from '../assets';
 
@@ -67,7 +68,7 @@ export default class AssetList extends React.Component {
 
   componentDidMount() {
     // load assets from storage
-    this.retrieveAssets();
+    this.refreshAssets();
   }
 
   onPressItem = (item) => {
@@ -80,24 +81,34 @@ export default class AssetList extends React.Component {
       {
         refreshing: true,
       },
-      () => {
-        this.retrieveAssets();
+      async () => {
+        await this.refreshAssets();
       },
     );
   };
 
-  retrieveAssets() {
-    DataStorage.getAssets().then((assets) => {
-      // add the assets to the state
-      // first take only the actual assets (values)
-      const assetsToList = Object.values(assets);
-      this.setState(prevState => ({
-        ...prevState,
-        assets: assetsToList,
-        refreshing: false,
-      }));
-    });
-  }
+  refreshAssets = async () => {
+    const assets = await DataStorage.getAssets();
+
+    // get assets from storage
+    const assetsToList = Object.values(assets);
+    // fetch and update their market prices
+    await PriceOracle.refreshPrices();
+    // update the data to display
+    const prices = await DataStorage.getPrices();
+    for (let index = 0; index < assetsToList.length; index += 1) {
+      const { ticker } = assetsToList[index].coin;
+      const price = prices[ticker] || 0;
+      assetsToList[index].price = price;
+    }
+
+    // add the assets to the state
+    this.setState(prevState => ({
+      ...prevState,
+      assets: assetsToList,
+      refreshing: false,
+    }));
+  };
 
   render() {
     return (

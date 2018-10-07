@@ -94,7 +94,7 @@ class AssetItem extends React.Component {
               <Text style={styles.secondaryText}>{asset.amount}</Text>
             </View>
             <View style={styles.coinDataContinar}>
-              <Text style={styles.mainText}>$7,520.00</Text>
+              <Text style={styles.mainText}>{`$ ${asset.price}`}</Text>
               <Text style={styles.secondaryText}>% 5.00</Text>
             </View>
           </View>

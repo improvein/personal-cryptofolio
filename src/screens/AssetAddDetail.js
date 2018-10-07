@@ -79,20 +79,18 @@ class AssetAddDetail extends Component {
   }
 
   onAdd = () => {
-    const coinToAdd = this.state.coin;
-    const exchangeCode = this.state.selectedExchange;
-    if (coinToAdd !== null && exchangeCode !== null) {
-      DataStorage.addAsset(coinToAdd, exchangeCode).then(() => {
-        console.log(`Asset added ${coinToAdd.ticker}`);
+    const { coin, priceSourceCode } = this.state;
+    if (coin !== null && priceSourceCode !== null) {
+      DataStorage.addAsset(coin, priceSourceCode).then(() => {
+        console.log(`Asset added ${coin.ticker}`);
+        // go back to the main list
+        this.props.navigation.navigate('AssetListScreen');
       });
-
-      // go back to the list
-      this.props.navigation.navigate('AssetListScreen');
     }
   };
 
   render() {
-    const exchanges = [{ code: 'bitstamp', name: 'Bitstamp' }, { code: 'none', name: '(none)' }];
+    const priceSources = [{ code: 'bitstamp', name: 'Bitstamp' }, { code: 'none', name: '(none)' }];
 
     return (
       <LinearGradient
@@ -113,15 +111,15 @@ class AssetAddDetail extends Component {
         <View style={styles.contentContainer}>
           <Text style={styles.label}>Price source</Text>
           <Picker
-            selectedValue={this.state.selectedExchange}
+            selectedValue={this.state.priceSourceCode}
             style={styles.exchangePicker}
             onValueChange={itemValue => this.setState(prevState => ({
               ...prevState,
-              selectedExchange: itemValue,
+              priceSourceCode: itemValue,
             }))
             }
           >
-            {exchanges.map(exchange => (
+            {priceSources.map(exchange => (
               <Picker.Item label={exchange.name} value={exchange.code} key={exchange.code} />
             ))}
           </Picker>

@@ -3,6 +3,7 @@ import coinsLogos from '../assets';
 
 const DATA_ASSETS = '@Data:assets';
 const DATA_ASSET_HIST = '@Data:assethist_';
+const DATA_PRICES = '@Data:prices';
 
 class DataStorage {
   /**
@@ -83,13 +84,13 @@ class DataStorage {
    * Add an asset to the portfolio
    * @param {object} coin
    */
-  static addAsset = async (coin, exchangeCode) => {
+  static addAsset = async (coin, priceSourceCode) => {
     const assets = await DataStorage.getAssets();
     // initialize new asset
     assets[coin.ticker] = {
       coin,
       amount: 0,
-      exchangeCode,
+      priceSourceCode,
     };
     try {
       // store updated assets
@@ -107,6 +108,35 @@ class DataStorage {
     try {
       // store updated assets
       await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
+  };
+
+  /**
+   * Get the prices locally stored
+   * @returns Coin prices from price sources
+   */
+  static getPrices = async () => {
+    let returnedValue = null;
+    try {
+      returnedValue = (await AsyncStorage.getItem(DATA_PRICES)) || '{}';
+      returnedValue = JSON.parse(returnedValue);
+    } catch (error) {
+      throw error;
+    }
+    return returnedValue;
+  };
+
+  static updatePrices = async (newPrices) => {
+    const prices = await DataStorage.getPrices();
+    newPrices.forEach((priceData) => {
+      prices[priceData.ticker] = priceData.price;
+    });
+    try {
+      // store updated prices
+      await AsyncStorage.setItem(DATA_PRICES, JSON.stringify(prices));
     } catch (error) {
       // Error saving data
       throw error;
