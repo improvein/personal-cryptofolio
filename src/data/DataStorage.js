@@ -50,6 +50,7 @@ class DataStorage {
       {
         ticker: 'EOS',
         name: 'EOS',
+        logo: coinsLogos.eos,
         availablePriceSources: [],
       },
       {
@@ -61,6 +62,7 @@ class DataStorage {
       {
         ticker: 'IOTA',
         name: 'IOTA',
+        logo: coinsLogos.iota,
         availablePriceSources: [],
       },
       {
