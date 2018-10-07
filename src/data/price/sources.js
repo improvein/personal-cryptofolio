@@ -1,7 +1,7 @@
 import Bitstamp from './Bitstamp';
 
 const sources = {
-  bitstamp: Bitstamp,
+  bitstamp: new Bitstamp(),
 };
 
 export default sources;

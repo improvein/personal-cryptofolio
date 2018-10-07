@@ -4,7 +4,7 @@ class Bitstamp {
   getPrices = async (coins) => {
     const fetchPromises = [];
     coins.forEach((coinTicker) => {
-      const fetchPromise = new Promise((resolve, reject) => {
+      const fetchPromise = new Promise((resolve /* , reject */) => {
         const pair = `${coinTicker.toLowerCase()}usd`;
         const url = this.apiURL.replace('{currency_pair}', pair);
         fetch(url)
@@ -13,11 +13,20 @@ class Bitstamp {
             const coinPrice = {
               ticker: coinTicker,
               price: responseJson.last,
+              variation: (responseJson.last / responseJson.open - 1) * 100,
             };
             resolve(coinPrice);
           })
           .catch((error) => {
-            reject(error);
+            // couldn't get price for coin
+            console.warn(`Couldn't get price for coin: ${coinTicker}`, error);
+            // return empty price
+            const coinPrice = {
+              ticker: coinTicker,
+              price: 0,
+              variation: 0,
+            };
+            resolve(coinPrice);
           });
       }); // end fetch coin price promise
 
@@ -28,43 +37,6 @@ class Bitstamp {
     // return a promise that will end with ALL the prices fetched
     return Promise.all(fetchPromises);
   };
-
-  //   getPrices = async (coins) => {
-  //     const fetchPromises = [];
-  //     coins.forEach((coinTicker) => {
-  //       const fetchPromise = new Promise((resolve, reject) => {
-  //         const pair = `${coinTicker.toLowerCase()}usd`;
-  //         const url = this.apiURL.replace('{currency_pair}', pair);
-  //         // call the API
-  //         http
-  //           .get(url, (res) => {
-  //             res.setEncoding('utf8');
-  //             let body = '';
-  //             res.on('data', (data) => {
-  //               body += data;
-  //             });
-  //             res.on('end', () => {
-  //               // I have the price data
-  //               body = JSON.parse(body);
-  //               const coinPrice = {
-  //                 ticker: coinTicker,
-  //                 price: body.last,
-  //               };
-  //               resolve(coinPrice);
-  //             });
-  //           })
-  //           .on('error', (err) => {
-  //             reject(err);
-  //           });
-  //       }); // end fetch coin price promise
-
-  //       // add the promise to the promise list
-  //       fetchPromises.push(fetchPromise);
-  //     }); // end coins iteration
-
-  //     // return a promise that will end with ALL the prices fetched
-  //     return Promise.all(fetchPromises);
-  //   };
 }
 
 export default Bitstamp;

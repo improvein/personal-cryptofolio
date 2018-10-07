@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DataStorage from '../data/DataStorage';
 import { colors } from '../utils';
 import { SecondaryButton } from '../components';
+import PriceOracle from '../data/PriceOracle';
 
 const styles = StyleSheet.create({
   container: {
@@ -71,10 +72,14 @@ class AssetAddDetail extends Component {
     super(props);
     // get the selected coin from previous screen
     const coin = this.props.navigation.getParam('coin', null);
+    // get the available price sources for this coin
+    const priceSources = PriceOracle.getSources();
+    const availabelPriceSources = priceSources.filter(priceSource => coin.availablePriceSources.includes(priceSource.code));
 
     // initialize state
     this.state = {
       coin,
+      priceSources: availabelPriceSources,
     };
   }
 
@@ -82,7 +87,6 @@ class AssetAddDetail extends Component {
     const { coin, priceSourceCode } = this.state;
     if (coin !== null && priceSourceCode !== null) {
       DataStorage.addAsset(coin, priceSourceCode).then(() => {
-        console.log(`Asset added ${coin.ticker}`);
         // go back to the main list
         this.props.navigation.navigate('AssetListScreen');
       });
@@ -90,8 +94,6 @@ class AssetAddDetail extends Component {
   };
 
   render() {
-    const priceSources = [{ code: 'bitstamp', name: 'Bitstamp' }, { code: 'none', name: '(none)' }];
-
     return (
       <LinearGradient
         start={{ x: 0, y: 0 }}
@@ -119,12 +121,13 @@ class AssetAddDetail extends Component {
             }))
             }
           >
-            {priceSources.map(exchange => (
+            <Picker.Item label="(No price)" value="" key="" />
+            {this.state.priceSources.map(exchange => (
               <Picker.Item label={exchange.name} value={exchange.code} key={exchange.code} />
             ))}
           </Picker>
           <Text style={styles.amount}>{`1 ${this.state.coin.ticker} /`}</Text>
-          <Text style={styles.price}>USD 7,500.00</Text>
+          <Text style={styles.price}>USD 9,999.99</Text>
         </View>
         <View style={styles.buttonContainer}>
           <SecondaryButton text="DONE" onPress={this.onAdd} />

@@ -4,10 +4,27 @@ import coinsLogos from '../assets';
 const DATA_ASSETS = '@Data:assets';
 const DATA_ASSET_HIST = '@Data:assethist_';
 const DATA_PRICES = '@Data:prices';
+const DATA_PRICES_FETCHTIME = '@Data:prices_fetchtime';
 
 class DataStorage {
   /**
-   * Get the available assets
+   * Clears all internally stored data
+   */
+  static clearData = async () => {
+    try {
+      await AsyncStorage.removeItem(DATA_ASSETS);
+      await AsyncStorage.removeItem(DATA_ASSET_HIST);
+      await AsyncStorage.removeItem(DATA_PRICES);
+      await AsyncStorage.removeItem(DATA_PRICES_FETCHTIME);
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
+  };
+
+  /**
+   * Get the available assets.
+   * Hard-coded data.
    * @returns List of assets
    */
   static getCoins = async () => {
@@ -16,33 +33,47 @@ class DataStorage {
         ticker: 'BTC',
         name: 'Bitcoin',
         logo: coinsLogos.btc,
+        availablePriceSources: ['bitstamp'],
       },
       {
         ticker: 'BCH',
         name: 'Bitcoin Cash',
         logo: coinsLogos.bch,
+        availablePriceSources: ['bitstamp'],
       },
       {
         ticker: 'ADA',
         name: 'Cardano',
         logo: coinsLogos.ada,
+        availablePriceSources: [],
       },
-      { ticker: 'EOS', name: 'EOS' },
+      {
+        ticker: 'EOS',
+        name: 'EOS',
+        availablePriceSources: [],
+      },
       {
         ticker: 'ETH',
         name: 'Ethereum',
         logo: coinsLogos.eth,
+        availablePriceSources: ['bitstamp'],
       },
-      { ticker: 'IOTA', name: 'IOTA' },
+      {
+        ticker: 'IOTA',
+        name: 'IOTA',
+        availablePriceSources: [],
+      },
       {
         ticker: 'LTC',
         name: 'Litecoin',
         logo: coinsLogos.ltc,
+        availablePriceSources: ['bitstamp'],
       },
       {
         ticker: 'XMR',
         name: 'Monero',
         logo: coinsLogos.xmr,
+        availablePriceSources: [],
       },
     ];
     return coins;
@@ -95,6 +126,7 @@ class DataStorage {
     try {
       // store updated assets
       await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
+      return assets[coin.ticker];
     } catch (error) {
       // Error saving data
       throw error;
@@ -132,11 +164,39 @@ class DataStorage {
   static updatePrices = async (newPrices) => {
     const prices = await DataStorage.getPrices();
     newPrices.forEach((priceData) => {
-      prices[priceData.ticker] = priceData.price;
+      prices[priceData.ticker] = {
+        price: priceData.price,
+        variation: priceData.variation,
+      };
     });
     try {
       // store updated prices
       await AsyncStorage.setItem(DATA_PRICES, JSON.stringify(prices));
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
+  };
+
+  static getPricesLastFetchTime = async () => {
+    let returnedValue = null;
+    try {
+      returnedValue = (await AsyncStorage.getItem(DATA_PRICES_FETCHTIME)) || '2009-01-03T00:00:01';
+      returnedValue = Date.parse(returnedValue);
+    } catch (error) {
+      throw error;
+    }
+    return returnedValue;
+  };
+
+  /**
+   * Saves the new last fetch time
+   * @param {Date} fetchTime new fetch time
+   */
+  static setPricesLastFetchTime = async (fetchTime) => {
+    try {
+      // store updated prices
+      await AsyncStorage.setItem(DATA_PRICES_FETCHTIME, fetchTime.toISOString());
     } catch (error) {
       // Error saving data
       throw error;

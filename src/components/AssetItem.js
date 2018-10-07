@@ -71,17 +71,20 @@ class AssetItem extends React.Component {
 
   render() {
     const { asset } = this.props;
+    const gradientColors = [colors.WHITE];
+    if (asset.variation >= 0) {
+      gradientColors.push(colors.GREEN);
+    } else {
+      gradientColors.push(colors.RED);
+    }
+
     return (
       <TouchableOpacity
         style={styles.container}
         onPress={this.onPress}
         onLongPress={this.onLongPress}
       >
-        <LinearGradient
-          start={{ x: 0.9, y: 0.4 }}
-          end={{ x: 1, y: 1 }}
-          colors={[colors.WHITE, colors.GREEN]}
-        >
+        <LinearGradient start={{ x: 0.9, y: 0.4 }} end={{ x: 1, y: 1 }} colors={gradientColors}>
           <View style={styles.contentContainer}>
             <View style={styles.logoContainer}>
               {/* TODO TAKE OUT THIS VALIDATION WHEN ALL COINS HAVE LOGO */}
@@ -90,12 +93,12 @@ class AssetItem extends React.Component {
               <Text>{asset.coin.ticker}</Text>
             </View>
             <View style={styles.personalDataContainer}>
-              <Text style={styles.mainText}>$980.00</Text>
+              <Text style={styles.mainText}>{`$ ${asset.price * asset.amount}`}</Text>
               <Text style={styles.secondaryText}>{asset.amount}</Text>
             </View>
             <View style={styles.coinDataContinar}>
               <Text style={styles.mainText}>{`$ ${asset.price}`}</Text>
-              <Text style={styles.secondaryText}>% 5.00</Text>
+              <Text style={styles.secondaryText}>{`${asset.variation.toFixed(2)} %`}</Text>
             </View>
           </View>
         </LinearGradient>

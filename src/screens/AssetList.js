@@ -39,6 +39,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 30,
   },
+  listEmptyContent: {
+    fontSize: 20,
+    alignSelf: 'center',
+  },
   footerContainer: {
     paddingTop: 10,
     paddingBottom: 20,
@@ -98,8 +102,14 @@ export default class AssetList extends React.Component {
     const prices = await DataStorage.getPrices();
     for (let index = 0; index < assetsToList.length; index += 1) {
       const { ticker } = assetsToList[index].coin;
-      const price = prices[ticker] || 0;
-      assetsToList[index].price = price;
+      const coinPrice = prices[ticker] || null;
+      if (coinPrice !== null) {
+        assetsToList[index].price = prices[ticker].price || 0;
+        assetsToList[index].variation = prices[ticker].variation || 0;
+      } else {
+        assetsToList[index].price = 0;
+        assetsToList[index].variation = 0;
+      }
     }
 
     // add the assets to the state
@@ -122,6 +132,7 @@ export default class AssetList extends React.Component {
             renderItem={({ item }) => <AssetItem asset={item} onPressItem={this.onPressItem} />}
             refreshing={this.state.refreshing}
             onRefresh={this.onRefresh}
+            ListEmptyComponent={<Text style={styles.listEmptyContent}>(no assets)</Text>}
           />
         </View>
         <View style={styles.footerContainer}>
