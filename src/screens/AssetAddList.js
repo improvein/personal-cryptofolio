@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   },
   backArrowContainer: {
     position: 'absolute',
-    top: 35,
+    top: 10,
   },
   contentContainer: {
     flex: 1,
