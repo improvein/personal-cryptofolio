@@ -9,10 +9,8 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 8,
     backgroundColor: colors.WHITE,
-    margin: 5,
+    marginBottom: 0,
     width: '95%',
-    overflow: 'hidden',
-    elevation: 5,
     shadowColor: colors.SHADOW,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.8,
