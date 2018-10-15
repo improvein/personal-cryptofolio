@@ -103,11 +103,11 @@ class DataStorage {
   };
 
   /**
-   * Get the assets in the portfolio
+   * Get the asset transactions in the portfolio
    * @param {object} asset Asset to get the history from
    * @returns List of asset transactions history
    */
-  static getAssetHistory = async (asset) => {
+  static getAssetTransactions = async (asset) => {
     const { ticker } = asset;
     let returnedValue = null;
     try {

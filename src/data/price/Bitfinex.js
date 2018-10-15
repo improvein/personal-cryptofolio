@@ -12,7 +12,7 @@ class Bitfinex {
           .then((responseJson) => {
             const coinPrice = {
               ticker: coinTicker,
-              price: responseJson.last_price,
+              price: parseFloat(responseJson.last_price),
               variation: 0, // (responseJson.last / responseJson.open - 1) * 100,
             };
             resolve(coinPrice);

@@ -9,10 +9,8 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 8,
     backgroundColor: colors.WHITE,
-    margin: 5,
+    marginBottom: 0,
     width: '95%',
-    overflow: 'hidden',
-    elevation: 5,
     shadowColor: colors.SHADOW,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.8,
@@ -56,12 +54,12 @@ const styles = StyleSheet.create({
   },
 });
 
-class AssetItem extends React.Component {
+class AssetTxItem extends React.Component {
   /**
    * Press event handler
    */
   onPress = () => {
-    this.props.onPressItem(this.props.asset);
+    this.props.onPressItem(this.props.transaction);
   };
 
   /**
@@ -72,13 +70,8 @@ class AssetItem extends React.Component {
   };
 
   render() {
-    const { asset } = this.props;
+    const { transaction } = this.props;
     const gradientColors = [colors.WHITE];
-    if (asset.variation >= 0) {
-      gradientColors.push(colors.GREEN);
-    } else {
-      gradientColors.push(colors.RED);
-    }
 
     return (
       <TouchableOpacity
@@ -90,17 +83,19 @@ class AssetItem extends React.Component {
           <View style={styles.contentContainer}>
             <View style={styles.logoContainer}>
               {/* TODO TAKE OUT THIS VALIDATION WHEN ALL COINS HAVE LOGO */}
-              {asset.coin
-                && asset.coin.logo && <Image source={asset.coin.logo} style={styles.logoImage} />}
-              <Text>{asset.coin.ticker}</Text>
+              {transaction.coin
+                && transaction.coin.logo && (
+                  <Image source={transaction.coin.logo} style={styles.logoImage} />
+              )}
+              <Text>{transaction.coin.ticker}</Text>
             </View>
             <View style={styles.portfolioDataContainer}>
-              <Text style={styles.mainText}>{`$ ${asset.valuation.toFixed(2)}`}</Text>
-              <Text style={styles.secondaryText}>{asset.amount}</Text>
+              <Text style={styles.mainText}>{`$ ${transaction.valuation.toFixed(2)}`}</Text>
+              <Text style={styles.secondaryText}>{transaction.amount}</Text>
             </View>
             <View style={styles.coinDataContainer}>
-              <Text style={styles.mainText}>{`$ ${asset.price}`}</Text>
-              <Text style={styles.secondaryText}>{`${asset.variation.toFixed(2)} %`}</Text>
+              <Text style={styles.mainText}>{`$ ${transaction.price}`}</Text>
+              <Text style={styles.secondaryText}>{`${transaction.variation.toFixed(2)} %`}</Text>
             </View>
           </View>
         </LinearGradient>
@@ -109,4 +104,4 @@ class AssetItem extends React.Component {
   }
 }
 
-export default AssetItem;
+export default AssetTxItem;
