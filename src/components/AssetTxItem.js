@@ -6,20 +6,20 @@ import { colors } from '../utils';
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: colors.WHITE,
+    width: '95%',
     paddingBottom: 5,
     marginBottom: 5,
-    width: '100%',
     // alignItems: 'center',
-    borderBottomColor: colors.SHADOW,
+    borderBottomColor: colors.GRAY,
     borderBottomWidth: 1,
   },
   contentContainer: {
     flexDirection: 'row',
-    // alignItems: 'stretch',
-    padding: 15,
+    width: '100%',
+    // padding: 15,
   },
   fieldWrapper: {
+    flex: 1,
     margin: 10,
   },
   fieldLabel: {

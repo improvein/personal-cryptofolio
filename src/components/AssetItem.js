@@ -19,8 +19,8 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   contentContainer: {
-    padding: 15,
     flexDirection: 'row',
+    padding: 15,
     // height: 80,
   },
   logoContainer: {

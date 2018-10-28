@@ -30,34 +30,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.WHITE,
   },
   infoContainer: {
-    flex: 1,
+    // flex: 0,
     flexDirection: 'row',
     flexWrap: 'wrap',
     // alignItems: 'stretch',
     paddingHorizontal: 15,
     width: '100%',
-  },
-  listSectionContainer: {
-    flex: 1,
-    // padding: 10,
-    width: '100%',
-  },
-  listSectionHeader: {
-    flexDirection: 'row',
-    width: '100%',
-    height: 100,
-    alignSelf: 'center',
-  },
-  listSectionTitle: {
-    flex: 1,
-    color: colors.PRIMARY_COLOR_DARKER,
-    fontSize: 20,
-    textAlign: 'left',
-    letterSpacing: 2,
-  },
-  listSectionAdd: {
-    alignSelf: 'flex-end',
-    padding: 5,
   },
   listContainer: {
     flex: 1,
@@ -65,11 +43,30 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
   },
-  listContentContainer: {
-    flex: 1,
+  listHeader: {
+    flexDirection: 'row',
+    // justifyContent: 'space-between',
+    paddingHorizontal: 15,
     width: '100%',
     alignSelf: 'center',
     alignItems: 'center',
+  },
+  listSectionTitle: {
+    flex: 1,
+    color: colors.PRIMARY_COLOR_DARKER,
+    fontSize: 20,
+    alignSelf: 'flex-start',
+    textAlign: 'left',
+    letterSpacing: 2,
+  },
+  listSectionAdd: {
+    alignSelf: 'flex-end',
+    padding: 5,
+  },
+  listContentContainer: {
+    width: '100%',
+    alignItems: 'center',
+    alignSelf: 'center',
     marginTop: 0,
   },
   listEmptyContent: {
@@ -79,7 +76,7 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
-    // width: '100%',
+    width: '100%',
   },
 });
 
@@ -225,14 +222,13 @@ export default class Asset extends React.Component {
     const marketPrice = asset.amount * asset.price;
 
     return (
-      <View styles={styles.container}>
+      <View style={styles.container}>
         <View style={styles.infoContainer}>
           <AssetInfoBox title="Holdings" text={asset.amount.toFixed(8)} />
           <AssetInfoBox title="Net cost" text={`$ ${totalCost.toFixed(2)}`} />
           <AssetInfoBox title="Market value" text={`$ ${marketPrice.toFixed(2)}`} />
           <AssetInfoBox title="Profit / Loss">
-            $
-            {(marketPrice - totalCost).toFixed(2)}
+            {`$ ${(marketPrice - totalCost).toFixed(2)}`}
             {marketPrice >= totalCost ? (
               <Icon name="arrow-up-thick" size={15} color={colors.GREEN} />
             ) : (
@@ -240,34 +236,31 @@ export default class Asset extends React.Component {
             )}
           </AssetInfoBox>
         </View>
-        <View style={styles.listSectionContainer}>
-          <View style={styles.listSectionHeader}>
+        <View style={styles.listContainer}>
+          <View style={styles.listHeader}>
             <Text style={styles.listSectionTitle}>Transactions</Text>
             <TouchableOpacity style={styles.listSectionAdd}>
               <Icon
-                onPress={() => {
-                  this.onAddTransaction();
-                }}
+                onPress={this.onAddTransaction}
                 name="plus-circle-outline"
                 size={30}
                 color={colors.PRIMARY_COLOR_DARKER}
               />
             </TouchableOpacity>
           </View>
-          <View style={styles.listContainer}>
-            <FlatList
-              style={styles.list}
-              contentContainerStyle={styles.listContentContainer}
-              data={this.state.transactions}
-              keyExtractor={item => item.date}
-              renderItem={({ item }) => (
-                <AssetTxItem transaction={item} onPressItem={this.onPressTxItem} />
-              )}
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
-              ListEmptyComponent={<Text style={styles.listEmptyContent}>(no transactions)</Text>}
-            />
-          </View>
+
+          <FlatList
+            style={styles.list}
+            contentContainerStyle={styles.listContentContainer}
+            data={this.state.transactions}
+            keyExtractor={item => item.date}
+            renderItem={({ item }) => (
+              <AssetTxItem transaction={item} onPressItem={this.onPressTxItem} />
+            )}
+            refreshing={this.state.refreshing}
+            onRefresh={this.onRefresh}
+            ListEmptyComponent={<Text style={styles.listEmptyContent}>(no transactions)</Text>}
+          />
         </View>
       </View>
     );
