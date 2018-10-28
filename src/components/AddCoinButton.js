@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Text, StyleSheet, TouchableOpacity, View,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors } from '../utils';
 
 const styles = StyleSheet.create({
@@ -50,9 +51,7 @@ class componentName extends Component {
   render() {
     return (
       <TouchableOpacity style={styles.container} onPress={this.props.onPress}>
-        <View style={styles.plusContainer}>
-          <Text style={styles.plus}> + </Text>
-        </View>
+        <Icon name="plus-circle-outline" size={40} color={colors.PRIMARY_COLOR_DARKER} />
         <Text style={styles.buttonText}> ADD ASSET </Text>
       </TouchableOpacity>
     );

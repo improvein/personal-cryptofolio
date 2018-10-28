@@ -29,7 +29,10 @@ class AssetInfoBox extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{this.props.title}</Text>
-        <Text style={styles.text}>{this.props.text}</Text>
+        <Text style={styles.text}>
+          {this.props.text}
+          {this.props.children}
+        </Text>
       </View>
     );
   }

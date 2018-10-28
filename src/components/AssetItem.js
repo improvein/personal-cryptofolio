@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     margin: 5,
     width: '95%',
     overflow: 'hidden',
-    elevation: 5,
+    elevation: 3,
     shadowColor: colors.SHADOW,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.8,
@@ -96,7 +96,7 @@ class AssetItem extends React.Component {
             </View>
             <View style={styles.portfolioDataContainer}>
               <Text style={styles.mainText}>{`$ ${asset.valuation.toFixed(2)}`}</Text>
-              <Text style={styles.secondaryText}>{asset.amount}</Text>
+              <Text style={styles.secondaryText}>{asset.amount.toFixed(8)}</Text>
             </View>
             <View style={styles.coinDataContainer}>
               <Text style={styles.mainText}>{`$ ${asset.price}`}</Text>

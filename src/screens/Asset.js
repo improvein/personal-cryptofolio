@@ -30,16 +30,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.WHITE,
   },
   infoContainer: {
+    flex: 1,
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    // alignItems: 'stretch',
     paddingHorizontal: 15,
     width: '100%',
   },
   listSectionContainer: {
-    padding: 10,
+    flex: 1,
+    // padding: 10,
+    width: '100%',
   },
   listSectionHeader: {
     flexDirection: 'row',
     width: '100%',
+    height: 100,
+    alignSelf: 'center',
   },
   listSectionTitle: {
     flex: 1,
@@ -59,9 +66,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listContentContainer: {
+    flex: 1,
     width: '100%',
-    alignItems: 'center',
     alignSelf: 'center',
+    alignItems: 'center',
     marginTop: 0,
   },
   listEmptyContent: {
@@ -71,6 +79,7 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
+    // width: '100%',
   },
 });
 
@@ -110,6 +119,7 @@ export default class Asset extends React.Component {
     // on pres event handler
     this.state = {
       asset,
+      totalCost: 0,
       transactions: [],
       refreshing: false,
     };
@@ -137,6 +147,12 @@ export default class Asset extends React.Component {
 
     // get assets from storage
     const transactions = await DataStorage.getAssetTransactions(this.state.asset);
+    // calculate the total cost
+    let totalCost = 0.0;
+    transactions.forEach((tx) => {
+      totalCost += tx.amount * tx.price;
+    });
+
     // fetch and update their market prices
     await PriceOracle.refreshPrices();
     // update the  data to display
@@ -155,6 +171,7 @@ export default class Asset extends React.Component {
     this.setState(prevState => ({
       ...prevState,
       transactions,
+      totalCost,
       refreshing: false,
     }));
   };
@@ -185,22 +202,52 @@ export default class Asset extends React.Component {
     );
   };
 
+  onAddTransaction = () => {
+    const { navigation } = this.props;
+    navigation.navigate('AssetTxScreen', {
+      asset: this.state.asset,
+      currentPrice: navigation.getParam('currentPrice', 0),
+    });
+  };
+
+  onPressTxItem = (tx) => {
+    const { navigation } = this.props;
+    navigation.navigate('AssetTxScreen', {
+      asset: this.state.asset,
+      transaction: tx,
+      currentPrice: navigation.getParam('currentPrice', 0),
+    });
+  };
+
   render() {
     const { asset } = this.props.navigation.state.params;
+    const { totalCost } = this.state;
+    const marketPrice = asset.amount * asset.price;
+
     return (
       <View styles={styles.container}>
         <View style={styles.infoContainer}>
-          <AssetInfoBox title="Holdings" text={asset.amount} />
-          <AssetInfoBox title="Net cost" text={0} />
-          <AssetInfoBox title="Market value" text={asset.amount * asset.price} />
-          <AssetInfoBox title="Profit / Loss" text={0} />
+          <AssetInfoBox title="Holdings" text={asset.amount.toFixed(8)} />
+          <AssetInfoBox title="Net cost" text={`$ ${totalCost.toFixed(2)}`} />
+          <AssetInfoBox title="Market value" text={`$ ${marketPrice.toFixed(2)}`} />
+          <AssetInfoBox title="Profit / Loss">
+            $
+            {(marketPrice - totalCost).toFixed(2)}
+            {marketPrice >= totalCost ? (
+              <Icon name="arrow-up-thick" size={15} color={colors.GREEN} />
+            ) : (
+              <Icon name="arrow-down-thick" size={15} color={colors.RED} />
+            )}
+          </AssetInfoBox>
         </View>
         <View style={styles.listSectionContainer}>
           <View style={styles.listSectionHeader}>
             <Text style={styles.listSectionTitle}>Transactions</Text>
             <TouchableOpacity style={styles.listSectionAdd}>
               <Icon
-                onPress={() => {}}
+                onPress={() => {
+                  this.onAddTransaction();
+                }}
                 name="plus-circle-outline"
                 size={30}
                 color={colors.PRIMARY_COLOR_DARKER}
@@ -214,7 +261,7 @@ export default class Asset extends React.Component {
               data={this.state.transactions}
               keyExtractor={item => item.date}
               renderItem={({ item }) => (
-                <AssetTxItem transaction={item} onPressItem={this.onPressItem} />
+                <AssetTxItem transaction={item} onPressItem={this.onPressTxItem} />
               )}
               refreshing={this.state.refreshing}
               onRefresh={this.onRefresh}
