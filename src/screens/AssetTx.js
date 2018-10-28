@@ -18,14 +18,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   assetName: {
-    flex: 1,
     color: colors.WHITE,
     fontSize: 10,
     textAlign: 'left',
     letterSpacing: 2,
   },
   currentPrice: {
-    flex: 1,
     color: colors.WHITE,
     fontSize: 15,
     textAlign: 'left',
@@ -37,14 +35,13 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    flexDirection: 'column',
     backgroundColor: colors.WHITE,
   },
   fieldWrapper: {
-    flex: 1,
-    // width: '95%',
-    padding: 15,
-    margin: 15,
+    flex: 0,
+    width: '100%',
+    paddingHorizontal: 15,
+    marginVertical: 5,
   },
   fieldLabel: {
     fontWeight: 'bold',
@@ -52,7 +49,19 @@ const styles = StyleSheet.create({
   fieldInputNumber: {
     height: 40,
     textAlign: 'right',
-    borderColor: colors.PRIMARY_COLOR_DARKER,
+    padding: 5,
+    borderWidth: 1,
+    borderColor: colors.GRAY,
+    borderRadius: 8,
+  },
+  fieldInputNotes: {
+    flex: 1,
+    textAlign: 'left',
+    textAlignVertical: 'top',
+    padding: 5,
+    borderWidth: 1,
+    borderColor: colors.GRAY,
+    borderRadius: 8,
   },
   buttonContainer: {
     width: '90%',
@@ -76,7 +85,9 @@ class AssetTx extends Component {
               <Text style={styles.assetName}>{navigation.state.params.asset.coin.name}</Text>
               <Text style={styles.currentPrice}>{`$ ${currentPrice.toFixed(2)}`}</Text>
             </View>
-            {!isNew || (
+            {isNew ? (
+              <View style={styles.deleteButton} />
+            ) : (
               <TouchableOpacity style={styles.deleteButton}>
                 <Icon
                   onPress={navigation.getParam('onRemoveTransaction') || (() => {})}
@@ -106,12 +117,14 @@ class AssetTx extends Component {
       amount: 0,
       price: currentPrice,
       date: new Date(),
+      notes: '',
     };
     // update with transaction values, if there is one
     if (transaction != null) {
       newState.operation = transaction.amount >= 0 ? 'buy' : 'sell';
       newState.amount = transaction.amount;
       newState.price = transaction.price;
+      newState.notes = transaction.notes;
     }
 
     // set the state
@@ -151,6 +164,22 @@ class AssetTx extends Component {
     );
   };
 
+  renderRemoveButton = (navigation) => {
+    if (this.state.isNew) {
+      return <Text />;
+    }
+    return (
+      <TouchableOpacity style={styles.deleteButton}>
+        <Icon
+          onPress={navigation.getParam('onRemoveTransaction') || (() => {})}
+          name="delete"
+          size={20}
+          color={colors.WHITE}
+        />
+      </TouchableOpacity>
+    );
+  };
+
   onAdd = async () => {
     try {
       // Add the transaction to the storage
@@ -161,6 +190,7 @@ class AssetTx extends Component {
         this.state.amount * sign,
         this.state.price,
         this.state.date,
+        this.state.notes,
       );
 
       this.props.navigation.navigate('AssetScreen', { asset: this.state.asset });
@@ -171,29 +201,42 @@ class AssetTx extends Component {
   };
 
   decimalParse = (text) => {
-    const parsedText = text.replace(/[^(((\d)+(\.)\d)|((\d)+))]/g, '_').split('_')[0];
-    return parseFloat(parsedText);
+    // const parsedText = text.replace(/[^(((\d)+(\.)\d)|((\d)+))]/g, '_').split('_')[0];
+    return parseFloat(text);
   };
 
   render() {
     return (
-      <View styles={styles.container}>
-        <View styles={styles.fieldWrapper}>
+      <View style={styles.container}>
+        <View style={styles.fieldWrapper}>
           <Text style={styles.fieldLabel}>Amount</Text>
           <TextInput
             style={styles.fieldInputNumber}
+            underlineColorAndroid="transparent"
             keyboardType="numeric"
             onChangeText={text => this.setState({ amount: this.decimalParse(text) })}
             value={this.state.amount.toString()}
           />
         </View>
-        <View styles={styles.fieldWrapper}>
+        <View style={styles.fieldWrapper}>
           <Text style={styles.fieldLabel}>Price</Text>
           <TextInput
             style={styles.fieldInputNumber}
+            underlineColorAndroid="transparent"
             keyboardType="numeric"
             onChangeText={text => this.setState({ price: this.decimalParse(text) })}
             value={this.state.price.toString()}
+          />
+        </View>
+
+        <View style={[styles.fieldWrapper, { flex: 1 }]}>
+          <Text style={styles.fieldLabel}>Notes</Text>
+          <TextInput
+            style={styles.fieldInputNotes}
+            multiline
+            underlineColorAndroid="transparent"
+            onChangeText={text => this.setState({ notes: text })}
+            value={this.state.notes}
           />
         </View>
 

@@ -125,8 +125,9 @@ class DataStorage {
    * @param {float} amount
    * @param {float} price
    * @param {Date} date
+   * @param {string} notes
    */
-  static addAssetTransaction = async (asset, amount, price, date) => {
+  static addAssetTransaction = async (asset, amount, price, date, notes) => {
     const { ticker } = asset.coin;
     const transactions = await DataStorage.getAssetTransactions(asset);
     // initialize new tx and add it
@@ -134,8 +135,9 @@ class DataStorage {
       amount,
       price,
       date,
+      notes,
     };
-    transactions.push(tx);
+    transactions.unshift(tx);
     // update asset amount
     // calculate amount
     const calculatedAmount = transactions

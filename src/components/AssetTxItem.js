@@ -57,7 +57,7 @@ class AssetTxItem extends React.Component {
         <View style={styles.contentContainer}>
           <View style={styles.fieldWrapper}>
             <Text style={styles.fieldLabel}>Amount</Text>
-            <Text style={styles.fieldContent}>{`$ ${transaction.amount.toFixed(2)}`}</Text>
+            <Text style={styles.fieldContent}>{transaction.amount.toFixed(8)}</Text>
           </View>
           <View style={styles.fieldWrapper}>
             <Text style={styles.fieldLabel}>Price</Text>
@@ -65,7 +65,11 @@ class AssetTxItem extends React.Component {
           </View>
           <View style={styles.fieldWrapper}>
             <Text style={styles.fieldLabel}>Cost</Text>
-            <Text style={styles.fieldContent}>{`$ ${(transaction.price * transaction.amount).toFixed(2)}`}</Text>
+            <Text style={styles.fieldContent}>
+              {`$ ${(
+                transaction.price * transaction.amount
+              ).toFixed(2)}`}
+            </Text>
           </View>
         </View>
         <View style={styles.contentContainer}>
