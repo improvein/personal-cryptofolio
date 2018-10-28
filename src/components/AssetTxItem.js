@@ -1,55 +1,31 @@
 import React from 'react';
 import {
-  Image, StyleSheet, TouchableOpacity, Text, View,
+  StyleSheet, TouchableOpacity, Text, View,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import { colors } from '../utils';
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 8,
-    backgroundColor: colors.WHITE,
-    marginBottom: 0,
     width: '95%',
-    shadowColor: colors.SHADOW,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
+    paddingBottom: 5,
+    marginBottom: 5,
+    // alignItems: 'center',
+    borderBottomColor: colors.GRAY,
+    borderBottomWidth: 1,
   },
   contentContainer: {
-    padding: 15,
     flexDirection: 'row',
-    // height: 80,
+    width: '100%',
+    // padding: 15,
   },
-  logoContainer: {
-    width: '16%',
-    alignItems: 'center',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    paddingRight: 10,
+  fieldWrapper: {
+    flex: 1,
+    margin: 10,
   },
-  logoImage: {
-    width: 30,
-    height: 30,
+  fieldLabel: {
+    fontSize: 10,
   },
-  portfolioDataContainer: {
-    width: '40%',
-    paddingLeft: 15,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    borderLeftColor: 'black',
-    borderLeftWidth: 1,
-  },
-  coinDataContainer: {
-    width: '45%',
-    alignItems: 'flex-end',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  mainText: {
-    fontSize: 20,
-  },
-  secondaryText: {
+  fieldContent: {
     fontSize: 12,
   },
 });
@@ -71,7 +47,6 @@ class AssetTxItem extends React.Component {
 
   render() {
     const { transaction } = this.props;
-    const gradientColors = [colors.WHITE];
 
     return (
       <TouchableOpacity
@@ -79,26 +54,34 @@ class AssetTxItem extends React.Component {
         onPress={this.onPress}
         onLongPress={this.onLongPress}
       >
-        <LinearGradient start={{ x: 0.9, y: 0.4 }} end={{ x: 1, y: 1 }} colors={gradientColors}>
-          <View style={styles.contentContainer}>
-            <View style={styles.logoContainer}>
-              {/* TODO TAKE OUT THIS VALIDATION WHEN ALL COINS HAVE LOGO */}
-              {transaction.coin
-                && transaction.coin.logo && (
-                  <Image source={transaction.coin.logo} style={styles.logoImage} />
-              )}
-              <Text>{transaction.coin.ticker}</Text>
-            </View>
-            <View style={styles.portfolioDataContainer}>
-              <Text style={styles.mainText}>{`$ ${transaction.valuation.toFixed(2)}`}</Text>
-              <Text style={styles.secondaryText}>{transaction.amount}</Text>
-            </View>
-            <View style={styles.coinDataContainer}>
-              <Text style={styles.mainText}>{`$ ${transaction.price}`}</Text>
-              <Text style={styles.secondaryText}>{`${transaction.variation.toFixed(2)} %`}</Text>
-            </View>
+        <View style={styles.contentContainer}>
+          <View style={styles.fieldWrapper}>
+            <Text style={styles.fieldLabel}>Amount</Text>
+            <Text style={styles.fieldContent}>{transaction.amount.toFixed(8)}</Text>
           </View>
-        </LinearGradient>
+          <View style={styles.fieldWrapper}>
+            <Text style={styles.fieldLabel}>Price</Text>
+            <Text style={styles.fieldContent}>{`$ ${transaction.price.toFixed(2)}`}</Text>
+          </View>
+          <View style={styles.fieldWrapper}>
+            <Text style={styles.fieldLabel}>Cost</Text>
+            <Text style={styles.fieldContent}>
+              {`$ ${(
+                transaction.price * transaction.amount
+              ).toFixed(2)}`}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.contentContainer}>
+          <View style={styles.fieldWrapper}>
+            <Text style={styles.fieldLabel}>Notes</Text>
+            <Text style={styles.fieldContent}>{transaction.notes || ''}</Text>
+          </View>
+          <View style={styles.fieldWrapper}>
+            <Text style={styles.fieldLabel}>Date</Text>
+            <Text style={styles.fieldContent}>{transaction.date}</Text>
+          </View>
+        </View>
       </TouchableOpacity>
     );
   }

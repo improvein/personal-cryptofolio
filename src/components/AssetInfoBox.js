@@ -6,12 +6,13 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 8,
     backgroundColor: colors.WHITE,
-    padding: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     marginTop: 5,
     marginRight: 5,
-    elevation: 5,
+    elevation: 3,
     shadowColor: colors.SHADOW,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
   },
@@ -29,7 +30,10 @@ class AssetInfoBox extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{this.props.title}</Text>
-        <Text style={styles.text}>{this.props.text}</Text>
+        <Text style={styles.text}>
+          {this.props.text}
+          {this.props.children}
+        </Text>
       </View>
     );
   }
