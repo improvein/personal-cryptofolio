@@ -66,7 +66,7 @@ export default class AssetList extends React.Component {
 
   constructor(props) {
     super(props);
-    // on pres event handler
+
     this.state = {
       assets: [],
       refreshing: false,

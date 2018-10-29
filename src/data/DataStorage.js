@@ -103,12 +103,12 @@ class DataStorage {
   };
 
   /**
-   * Get the assets in the portfolio
+   * Get the asset transactions in the portfolio
    * @param {object} asset Asset to get the history from
    * @returns List of asset transactions history
    */
-  static getAssetHistory = async (asset) => {
-    const { ticker } = asset;
+  static getAssetTransactions = async (asset) => {
+    const { ticker } = asset.coin;
     let returnedValue = null;
     try {
       returnedValue = (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '[]';
@@ -121,7 +121,45 @@ class DataStorage {
 
   /**
    * Add an asset to the portfolio
+   * @param {object} asset
+   * @param {float} amount
+   * @param {float} price
+   * @param {Date} date
+   * @param {string} notes
+   */
+  static addAssetTransaction = async (asset, amount, price, date, notes) => {
+    const { ticker } = asset.coin;
+    const transactions = await DataStorage.getAssetTransactions(asset);
+    // initialize new tx and add it
+    const tx = {
+      amount,
+      price,
+      date,
+      notes,
+    };
+    transactions.unshift(tx);
+    // update asset amount
+    // calculate amount
+    const calculatedAmount = transactions
+      .map(trans => trans.amount)
+      .reduce((accum, current) => accum + current);
+    const updatedAsset = asset;
+    updatedAsset.amount = calculatedAmount;
+    try {
+      // store updated transactions and asset
+      await AsyncStorage.setItem(DATA_ASSET_HIST + ticker, JSON.stringify(transactions));
+      await DataStorage.updateAsset(updatedAsset);
+      return tx;
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
+  };
+
+  /**
+   * Add an asset to the portfolio
    * @param {object} coin
+   * @param {string} priceSourceCode
    */
   static addAsset = async (coin, priceSourceCode) => {
     const assets = await DataStorage.getAssets();
@@ -141,13 +179,32 @@ class DataStorage {
     }
   };
 
+  /**
+   * Update an asset on the portfolio
+   * @param {object} asset
+   */
+  static updateAsset = async (asset) => {
+    const assets = await DataStorage.getAssets();
+    // initialize new asset
+    assets[asset.coin.ticker] = asset;
+    try {
+      // store updated assets
+      await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
+      return asset;
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
+  };
+
   static removeAsset = async (ticker) => {
     const assets = await DataStorage.getAssets();
     // clear the asset
     delete assets[ticker];
     try {
-      // store updated assets
+      // re,pve asset and it's transactions
       await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
+      await AsyncStorage.removeItem(DATA_ASSET_HIST + ticker);
     } catch (error) {
       // Error saving data
       throw error;
