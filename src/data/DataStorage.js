@@ -111,8 +111,25 @@ class DataStorage {
     const { ticker } = asset.coin;
     let returnedValue = null;
     try {
-      returnedValue = (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '[]';
-      returnedValue = JSON.parse(returnedValue);
+      returnedValue = (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '{}';
+      // if empty dont bother with complex conversions
+      if (returnedValue === '{}') {
+        returnedValue = {};
+      } else {
+        returnedValue = JSON.parse(returnedValue);
+        // convert to array
+        returnedValue = Object.values(returnedValue);
+        // sort by date
+        returnedValue = returnedValue.sort((a, b) => {
+          if (a.date > b.date) {
+            return 1;
+          }
+          if (a.date < b.date) {
+            return -1;
+          }
+          return 0;
+        });
+      }
     } catch (error) {
       throw error;
     }
@@ -130,17 +147,21 @@ class DataStorage {
   static addAssetTransaction = async (asset, amount, price, date, notes) => {
     const { ticker } = asset.coin;
     const transactions = await DataStorage.getAssetTransactions(asset);
+
     // initialize new tx and add it
+    const dateStr = date.toISOString();
     const tx = {
       amount,
       price,
       date,
       notes,
     };
-    transactions.unshift(tx);
+    transactions[dateStr] = tx;
+
     // update asset amount
     // calculate amount
-    const calculatedAmount = transactions
+    const transactionsArray = Object.values(transactions);
+    const calculatedAmount = transactionsArray
       .map(trans => trans.amount)
       .reduce((accum, current) => accum + current);
     const updatedAsset = asset;
