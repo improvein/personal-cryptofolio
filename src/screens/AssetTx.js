@@ -43,6 +43,33 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.WHITE,
   },
+  operationButtons: {
+    flex: 1,
+    flexDirection: 'row',
+    width: '100%',
+    paddingHorizontal: 15,
+    marginVertical: 5,
+  },
+  operationButton: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: colors.WHITE,
+    borderColor: colors.PRIMARY_COLOR_DARKER,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  operationButtonActive: {
+    backgroundColor: colors.PRIMARY_COLOR_DARKER,
+  },
+  operationButtonText: {
+    color: colors.PRIMARY_COLOR_DARKER,
+  },
+  operationButtonTextActive: {
+    color: colors.WHITE,
+  },
   fieldWrapper: {
     flex: 0,
     width: '100%',
@@ -133,6 +160,9 @@ class AssetTx extends Component {
       newState.price = transaction.price;
       newState.notes = transaction.notes;
     }
+    // format numbers
+    newState.amountStr = newState.amount.toString();
+    newState.priceStr = newState.price.toString();
 
     // set the state
     this.state = newState;
@@ -205,20 +235,67 @@ class AssetTx extends Component {
     }
   };
 
-  decimalParse = text => parseFloat(text);
+  parseFloatInput = (text, stateProp, stateStrProp) => {
+    const newState = {};
+
+    if (text.match(/[\d\.]+/)) {
+      newState[stateProp] = parseFloat(text);
+      newState[stateStrProp] = text;
+    }
+
+    this.setState(newState);
+  };
 
   render() {
     return (
       <View style={styles.container}>
         <ScrollView>
+          <View style={styles.operationButtons}>
+            <TouchableOpacity
+              style={[
+                styles.operationButton,
+                this.state.operation === 'buy' && styles.operationButtonActive,
+              ]}
+              onPress={() => this.setState({ operation: 'buy' })}
+            >
+              <Text
+                style={[
+                  styles.operationButtonText,
+                  this.state.operation === 'buy' && styles.operationButtonTextActive,
+                ]}
+              >
+                Buy
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.operationButton,
+                this.state.operation === 'sell' && styles.operationButtonActive,
+              ]}
+              onPress={() => this.setState({ operation: 'sell' })}
+            >
+              <Text
+                style={[
+                  styles.operationButtonText,
+                  this.state.operation === 'sell' && styles.operationButtonTextActive,
+                ]}
+              >
+                Sell
+              </Text>
+            </TouchableOpacity>
+          </View>
           <View style={styles.fieldWrapper}>
             <Text style={styles.fieldLabel}>Amount</Text>
             <TextInput
               style={styles.fieldInputNumber}
               underlineColorAndroid="transparent"
               keyboardType="numeric"
-              onChangeText={text => this.setState({ amount: this.decimalParse(text) })}
-              value={this.state.amount.toString()}
+              onChangeText={text => this.parseFloatInput(text, 'amount', 'amountStr')}
+              onSubmitEditing={() => this.setState(prevState => ({
+                amountStr: prevState.amount.toString(),
+              }))
+              }
+              value={this.state.amountStr}
             />
           </View>
           <View style={styles.fieldWrapper}>
@@ -227,8 +304,12 @@ class AssetTx extends Component {
               style={styles.fieldInputNumber}
               underlineColorAndroid="transparent"
               keyboardType="numeric"
-              onChangeText={text => this.setState({ price: this.decimalParse(text) })}
-              value={this.state.price.toString()}
+              onChangeText={text => this.parseFloatInput(text, 'price', 'priceStr')}
+              onSubmitEditing={() => this.setState(prevState => ({
+                priceStr: prevState.price.toString(),
+              }))
+              }
+              value={this.state.priceStr}
             />
           </View>
 

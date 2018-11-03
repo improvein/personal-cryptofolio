@@ -132,7 +132,10 @@ class DataStorage {
     const transactions = await DataStorage.getAssetTransactions(asset);
 
     // initialize new tx and add it
-    const dateStr = date.toISOString();
+    let dateStr = date;
+    if (typeof dateStr !== 'string') {
+      dateStr = dateStr.toISOString();
+    }
     const tx = {
       date,
       amount,
