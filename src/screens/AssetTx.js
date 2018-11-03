@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import {
-  Alert, StyleSheet, Text, TextInput, TouchableOpacity, View,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Header, SecondaryButton } from '../components';
@@ -121,6 +127,7 @@ class AssetTx extends Component {
     };
     // update with transaction values, if there is one
     if (transaction != null) {
+      newState.date = transaction.date;
       newState.operation = transaction.amount >= 0 ? 'buy' : 'sell';
       newState.amount = transaction.amount;
       newState.price = transaction.price;
@@ -145,18 +152,16 @@ class AssetTx extends Component {
       [
         {
           text: 'Cancel',
-          onPress: () => {
-            /* do nothing */
-          },
+          onPress: () => {},
           style: 'cancel',
         },
         {
           text: 'OK',
           onPress: () => {
             const { asset, transaction } = this.props.navigation.state.params;
-            // DataStorage.removeAsset(asset.coin.ticker).then(() => {
-            //   this.props.navigation.navigate('AssetListScreen');
-            // });
+            DataStorage.removeAssetTransaction(asset, transaction.date).then(() => {
+              this.props.navigation.navigate('AssetScreen', { asset });
+            });
           },
         },
       ],
@@ -180,12 +185,12 @@ class AssetTx extends Component {
     );
   };
 
-  onAdd = async () => {
+  onSave = async () => {
     try {
       // Add the transaction to the storage
       // it will also take care of updating the Asset
       const sign = this.state.operation === 'buy' ? 1 : -1;
-      await DataStorage.addAssetTransaction(
+      await DataStorage.saveAssetTransaction(
         this.state.asset,
         this.state.amount * sign,
         this.state.price,
@@ -200,49 +205,48 @@ class AssetTx extends Component {
     }
   };
 
-  decimalParse = (text) => {
-    // const parsedText = text.replace(/[^(((\d)+(\.)\d)|((\d)+))]/g, '_').split('_')[0];
-    return parseFloat(text);
-  };
+  decimalParse = text => parseFloat(text);
 
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.fieldWrapper}>
-          <Text style={styles.fieldLabel}>Amount</Text>
-          <TextInput
-            style={styles.fieldInputNumber}
-            underlineColorAndroid="transparent"
-            keyboardType="numeric"
-            onChangeText={text => this.setState({ amount: this.decimalParse(text) })}
-            value={this.state.amount.toString()}
-          />
-        </View>
-        <View style={styles.fieldWrapper}>
-          <Text style={styles.fieldLabel}>Price</Text>
-          <TextInput
-            style={styles.fieldInputNumber}
-            underlineColorAndroid="transparent"
-            keyboardType="numeric"
-            onChangeText={text => this.setState({ price: this.decimalParse(text) })}
-            value={this.state.price.toString()}
-          />
-        </View>
+        <ScrollView>
+          <View style={styles.fieldWrapper}>
+            <Text style={styles.fieldLabel}>Amount</Text>
+            <TextInput
+              style={styles.fieldInputNumber}
+              underlineColorAndroid="transparent"
+              keyboardType="numeric"
+              onChangeText={text => this.setState({ amount: this.decimalParse(text) })}
+              value={this.state.amount.toString()}
+            />
+          </View>
+          <View style={styles.fieldWrapper}>
+            <Text style={styles.fieldLabel}>Price</Text>
+            <TextInput
+              style={styles.fieldInputNumber}
+              underlineColorAndroid="transparent"
+              keyboardType="numeric"
+              onChangeText={text => this.setState({ price: this.decimalParse(text) })}
+              value={this.state.price.toString()}
+            />
+          </View>
 
-        <View style={[styles.fieldWrapper, { flex: 1 }]}>
-          <Text style={styles.fieldLabel}>Notes</Text>
-          <TextInput
-            style={styles.fieldInputNotes}
-            multiline
-            underlineColorAndroid="transparent"
-            onChangeText={text => this.setState({ notes: text })}
-            value={this.state.notes}
-          />
-        </View>
+          <View style={[styles.fieldWrapper, { flex: 1 }]}>
+            <Text style={styles.fieldLabel}>Notes</Text>
+            <TextInput
+              style={styles.fieldInputNotes}
+              multiline
+              underlineColorAndroid="transparent"
+              onChangeText={text => this.setState({ notes: text })}
+              value={this.state.notes}
+            />
+          </View>
 
-        <View style={styles.buttonContainer}>
-          <SecondaryButton text="DONE" onPress={this.onAdd} />
-        </View>
+          <View style={styles.buttonContainer}>
+            <SecondaryButton theme="dark" text="DONE" onPress={this.onSave} />
+          </View>
+        </ScrollView>
       </View>
     );
   }

@@ -22,14 +22,24 @@ const styles = StyleSheet.create({
 class SecondaryButton extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
 
   render() {
+    const themeStyleContainer = {};
+    const themeStyleText = {};
+    const theme = this.props.theme || 'light';
+    if (theme === 'dark') {
+      themeStyleContainer.backgroundColor = colors.PRIMARY_COLOR_DARKER;
+      themeStyleText.color = colors.WHITE;
+    }
+
     return (
-      <TouchableOpacity style={styles.container} onPress={this.props.onPress}>
-        <Text style={styles.text}>{this.props.text}</Text>
+      <TouchableOpacity
+        style={[styles.container, themeStyleContainer]}
+        onPress={this.props.onPress}
+      >
+        <Text style={[styles.text, themeStyleText]}>{this.props.text}</Text>
       </TouchableOpacity>
     );
   }

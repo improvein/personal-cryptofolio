@@ -144,11 +144,27 @@ export default class Asset extends React.Component {
 
     // get assets from storage
     const transactions = await DataStorage.getAssetTransactions(this.state.asset);
-    // calculate the total cost
+    let transactionsArray = Object.values(transactions);
+    // calculate the total cost and sort
     let totalCost = 0.0;
-    transactions.forEach((tx) => {
-      totalCost += tx.amount * tx.price;
-    });
+
+    // if empty then dont bother with complex conversions
+    if (transactionsArray.length > 0) {
+      // sort by date (descending)
+      transactionsArray = transactionsArray.sort((a, b) => {
+        if (a.date > b.date) {
+          return -1;
+        }
+        if (a.date < b.date) {
+          return 1;
+        }
+        return 0;
+      });
+      // calculate total
+      transactionsArray.forEach((tx) => {
+        totalCost += tx.amount * tx.price;
+      });
+    }
 
     // fetch and update their market prices
     await PriceOracle.refreshPrices();
@@ -167,7 +183,7 @@ export default class Asset extends React.Component {
     // add the assets to the state
     this.setState(prevState => ({
       ...prevState,
-      transactions,
+      transactions: transactionsArray,
       totalCost,
       refreshing: false,
     }));

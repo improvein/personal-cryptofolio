@@ -13,7 +13,7 @@ class DataStorage {
   static clearData = async () => {
     try {
       await AsyncStorage.removeItem(DATA_ASSETS);
-      await AsyncStorage.removeItem(DATA_ASSET_HIST);
+      // await AsyncStorage.removeItem(DATA_ASSET_HIST);
       await AsyncStorage.removeItem(DATA_PRICES);
       await AsyncStorage.removeItem(DATA_PRICES_FETCHTIME);
     } catch (error) {
@@ -112,24 +112,7 @@ class DataStorage {
     let returnedValue = null;
     try {
       returnedValue = (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '{}';
-      // if empty dont bother with complex conversions
-      if (returnedValue === '{}') {
-        returnedValue = {};
-      } else {
-        returnedValue = JSON.parse(returnedValue);
-        // convert to array
-        returnedValue = Object.values(returnedValue);
-        // sort by date
-        returnedValue = returnedValue.sort((a, b) => {
-          if (a.date > b.date) {
-            return 1;
-          }
-          if (a.date < b.date) {
-            return -1;
-          }
-          return 0;
-        });
-      }
+      returnedValue = JSON.parse(returnedValue);
     } catch (error) {
       throw error;
     }
@@ -144,16 +127,16 @@ class DataStorage {
    * @param {Date} date
    * @param {string} notes
    */
-  static addAssetTransaction = async (asset, amount, price, date, notes) => {
+  static saveAssetTransaction = async (asset, amount, price, date, notes) => {
     const { ticker } = asset.coin;
     const transactions = await DataStorage.getAssetTransactions(asset);
 
     // initialize new tx and add it
     const dateStr = date.toISOString();
     const tx = {
+      date,
       amount,
       price,
-      date,
       notes,
     };
     transactions[dateStr] = tx;
@@ -171,6 +154,34 @@ class DataStorage {
       await AsyncStorage.setItem(DATA_ASSET_HIST + ticker, JSON.stringify(transactions));
       await DataStorage.updateAsset(updatedAsset);
       return tx;
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
+  };
+
+  static removeAssetTransaction = async (asset, txDate) => {
+    const { ticker } = asset.coin;
+    const transactions = await DataStorage.getAssetTransactions(asset);
+    let dateStr = txDate;
+    if (typeof dateStr !== 'string') {
+      dateStr = dateStr.toISOString();
+    }
+    // clear the asset
+    delete transactions[dateStr];
+
+    // update asset amount
+    // calculate amount
+    const transactionsArray = Object.values(transactions);
+    const calculatedAmount = transactionsArray
+      .map(trans => trans.amount)
+      .reduce((accum, current) => accum + current);
+    const updatedAsset = asset;
+    updatedAsset.amount = calculatedAmount;
+    try {
+      // store updated transactions and asset
+      await AsyncStorage.setItem(DATA_ASSET_HIST + ticker, JSON.stringify(transactions));
+      await DataStorage.updateAsset(updatedAsset);
     } catch (error) {
       // Error saving data
       throw error;
