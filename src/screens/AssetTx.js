@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Header, SecondaryButton } from '../components';
 import DataStorage from '../data/DataStorage';
@@ -87,6 +88,14 @@ const styles = StyleSheet.create({
     borderColor: colors.GRAY,
     borderRadius: 8,
   },
+  fieldInputDate: {
+    height: 40,
+    textAlign: 'center',
+    padding: 5,
+    borderWidth: 1,
+    borderColor: colors.GRAY,
+    borderRadius: 8,
+  },
   fieldInputNotes: {
     flex: 1,
     textAlign: 'left',
@@ -151,12 +160,13 @@ class AssetTx extends Component {
       price: currentPrice,
       date: new Date(),
       notes: '',
+      isDateTimePickerVisible: false,
     };
     // update with transaction values, if there is one
     if (transaction != null) {
-      newState.date = transaction.date;
+      newState.date = new Date(transaction.date);
       newState.operation = transaction.amount >= 0 ? 'buy' : 'sell';
-      newState.amount = transaction.amount;
+      newState.amount = Math.abs(transaction.amount);
       newState.price = transaction.price;
       newState.notes = transaction.notes;
     }
@@ -246,6 +256,23 @@ class AssetTx extends Component {
     this.setState(newState);
   };
 
+  showDateTimePicker = () => {
+    // only allow changing date if it's a new Tx
+    if (this.state.isNew) {
+      this.setState({ isDateTimePickerVisible: true });
+    }
+  };
+
+  hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
+
+  handleDatePicked = (date) => {
+    const newDate = date;
+    newDate.setSeconds(new Date().getSeconds());
+    this.setState({ date: newDate });
+
+    this.hideDateTimePicker();
+  };
+
   render() {
     return (
       <View style={styles.container}>
@@ -312,7 +339,18 @@ class AssetTx extends Component {
               value={this.state.priceStr}
             />
           </View>
-
+          <View style={styles.fieldWrapper}>
+            <Text style={styles.fieldLabel}>Date</Text>
+            <TouchableOpacity onPress={this.showDateTimePicker}>
+              <Text style={styles.fieldInputDate}>{this.state.date.toDateString()}</Text>
+            </TouchableOpacity>
+            <DateTimePicker
+              isVisible={this.state.isDateTimePickerVisible}
+              onConfirm={this.handleDatePicked}
+              onCancel={this.hideDateTimePicker}
+              date={this.state.date}
+            />
+          </View>
           <View style={[styles.fieldWrapper, { flex: 1 }]}>
             <Text style={styles.fieldLabel}>Notes</Text>
             <TextInput
