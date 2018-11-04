@@ -200,7 +200,7 @@ class AssetTx extends Component {
           onPress: () => {
             const { asset, transaction } = this.props.navigation.state.params;
             DataStorage.removeAssetTransaction(asset, transaction.date).then(() => {
-              this.props.navigation.navigate('AssetScreen', { asset });
+              this.props.navigation.navigate('AssetScreen', { asset, refresh: true });
             });
           },
         },
@@ -238,7 +238,7 @@ class AssetTx extends Component {
         this.state.notes,
       );
 
-      this.props.navigation.navigate('AssetScreen', { asset: this.state.asset });
+      this.props.navigation.navigate('AssetScreen', { asset: this.state.asset, refresh: true });
     } catch (error) {
       console.warn(`Cannot add the new transaction. ${error}`, error);
       throw error;

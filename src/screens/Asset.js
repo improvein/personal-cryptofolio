@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Alert, FlatList, StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AssetInfoBox, AssetTxItem, Header } from '../components';
 import DataStorage from '../data/DataStorage';
@@ -206,7 +207,7 @@ export default class Asset extends React.Component {
           onPress: () => {
             const { asset } = this.props.navigation.state.params;
             DataStorage.removeAsset(asset.coin.ticker).then(() => {
-              this.props.navigation.navigate('AssetListScreen');
+              this.props.navigation.navigate('AssetListScreen', { refresh: true });
             });
           },
         },
@@ -232,6 +233,12 @@ export default class Asset extends React.Component {
     });
   };
 
+  onDidFocus = (payload) => {
+    if (this.props.navigation.getParam('refresh', false)) {
+      this.onRefresh();
+    }
+  };
+
   render() {
     const { asset } = this.props.navigation.state.params;
     const { totalCost } = this.state;
@@ -239,6 +246,7 @@ export default class Asset extends React.Component {
 
     return (
       <View style={styles.container}>
+        <NavigationEvents onDidFocus={this.onDidFocus} />
         <View style={styles.infoContainer}>
           <AssetInfoBox title="Holdings" text={asset.amount.toFixed(8)} />
           <AssetInfoBox title="Net cost" text={`$ ${totalCost.toFixed(2)}`} />

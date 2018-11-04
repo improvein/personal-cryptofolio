@@ -88,7 +88,7 @@ class AssetAddDetail extends Component {
     if (coin !== null && priceSourceCode !== null) {
       DataStorage.addAsset(coin, priceSourceCode).then(() => {
         // go back to the main list
-        this.props.navigation.navigate('AssetListScreen');
+        this.props.navigation.navigate('AssetListScreen', { refresh: true });
       });
     }
   };

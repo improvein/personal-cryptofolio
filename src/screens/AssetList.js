@@ -2,6 +2,7 @@ import React from 'react';
 import {
   FlatList, StyleSheet, View, Text,
 } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
 import { AssetItem, Header, AddCoinButton } from '../components';
 import DataStorage from '../data/DataStorage';
 import PriceOracle from '../data/PriceOracle';
@@ -129,9 +130,16 @@ export default class AssetList extends React.Component {
     }));
   };
 
+  onDidFocus = (payload) => {
+    if (this.props.navigation.getParam('refresh', false)) {
+      this.onRefresh();
+    }
+  };
+
   render() {
     return (
       <View style={styles.container}>
+        <NavigationEvents onDidFocus={this.onDidFocus} />
         <View style={styles.listContainer}>
           <FlatList
             style={styles.list}
