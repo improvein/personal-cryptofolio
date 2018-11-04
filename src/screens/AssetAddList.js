@@ -52,26 +52,33 @@ export default class AssetAddList extends React.Component {
 
   constructor(props) {
     super(props);
-    // on pres event handler
+
     this.state = {
       selectedCoin: null,
       coins: [],
     };
   }
 
-  componentDidMount() {
-    DataStorage.getCoins().then((coins) => {
-      const stateCoins = [];
-      coins.forEach((coin) => {
-        stateCoins.push(coin);
-      });
-      // add the coins to the state
-      this.setState(prevState => ({
-        ...prevState,
-        coins: stateCoins,
-        filteredCoins: stateCoins,
-      }));
+  async componentDidMount() {
+    const assets = await DataStorage.getAssets();
+    const excludedTickers = Object.keys(assets);
+
+    let coins = await DataStorage.getCoins();
+    // remove the excluded tickets from the initial coins list
+    coins = coins.filter(coin => !excludedTickers.includes(coin.ticker));
+
+    // prepare the initial coins to show (stateCoins)
+    const stateCoins = [];
+    coins.forEach((coin) => {
+      stateCoins.push(coin);
     });
+
+    // add the coins to the state
+    this.setState(prevState => ({
+      ...prevState,
+      coins: stateCoins,
+      filteredCoins: stateCoins,
+    }));
   }
 
   onSelectCoin = (item) => {

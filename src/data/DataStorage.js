@@ -1,5 +1,5 @@
 import { AsyncStorage } from 'react-native';
-import coinsLogos from '../assets';
+import coins from './coins';
 
 const DATA_ASSETS = '@Data:assets';
 const DATA_ASSET_HIST = '@Data:assethist_';
@@ -13,7 +13,7 @@ class DataStorage {
   static clearData = async () => {
     try {
       await AsyncStorage.removeItem(DATA_ASSETS);
-      await AsyncStorage.removeItem(DATA_ASSET_HIST);
+      // await AsyncStorage.removeItem(DATA_ASSET_HIST);
       await AsyncStorage.removeItem(DATA_PRICES);
       await AsyncStorage.removeItem(DATA_PRICES_FETCHTIME);
     } catch (error) {
@@ -27,65 +27,7 @@ class DataStorage {
    * Hard-coded data.
    * @returns List of assets
    */
-  static getCoins = async () => {
-    const coins = [
-      {
-        ticker: 'BTC',
-        name: 'Bitcoin',
-        logo: coinsLogos.btc,
-        availablePriceSources: ['binance', 'bitfinex', 'bitstamp'],
-      },
-      {
-        ticker: 'BCH',
-        name: 'Bitcoin Cash',
-        logo: coinsLogos.bch,
-        availablePriceSources: ['bitfinex', 'bitstamp'],
-      },
-      {
-        ticker: 'ADA',
-        name: 'Cardano',
-        logo: coinsLogos.ada,
-        availablePriceSources: ['binance'],
-      },
-      {
-        ticker: 'DASH',
-        name: 'Dash',
-        logo: coinsLogos.dash,
-        availablePriceSources: ['bitfinex'],
-      },
-      {
-        ticker: 'EOS',
-        name: 'EOS',
-        logo: coinsLogos.eos,
-        availablePriceSources: ['binance', 'bitfinex'],
-      },
-      {
-        ticker: 'ETH',
-        name: 'Ethereum',
-        logo: coinsLogos.eth,
-        availablePriceSources: ['binance', 'bitfinex', 'bitstamp'],
-      },
-      {
-        ticker: 'IOTA',
-        name: 'IOTA',
-        logo: coinsLogos.iota,
-        availablePriceSources: ['binance', 'bitfinex'],
-      },
-      {
-        ticker: 'LTC',
-        name: 'Litecoin',
-        logo: coinsLogos.ltc,
-        availablePriceSources: ['binance', 'bitfinex', 'bitstamp'],
-      },
-      {
-        ticker: 'XMR',
-        name: 'Monero',
-        logo: coinsLogos.xmr,
-        availablePriceSources: ['bitfinex'],
-      },
-    ];
-    return coins;
-  };
+  static getCoins = async () => coins;
 
   /**
    * Get the assets in the portfolio
@@ -111,7 +53,7 @@ class DataStorage {
     const { ticker } = asset.coin;
     let returnedValue = null;
     try {
-      returnedValue = (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '[]';
+      returnedValue = (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '{}';
       returnedValue = JSON.parse(returnedValue);
     } catch (error) {
       throw error;
@@ -127,20 +69,27 @@ class DataStorage {
    * @param {Date} date
    * @param {string} notes
    */
-  static addAssetTransaction = async (asset, amount, price, date, notes) => {
+  static saveAssetTransaction = async (asset, amount, price, date, notes) => {
     const { ticker } = asset.coin;
     const transactions = await DataStorage.getAssetTransactions(asset);
+
     // initialize new tx and add it
+    let dateStr = date;
+    if (typeof dateStr !== 'string') {
+      dateStr = dateStr.toISOString();
+    }
     const tx = {
+      date,
       amount,
       price,
-      date,
       notes,
     };
-    transactions.unshift(tx);
+    transactions[dateStr] = tx;
+
     // update asset amount
     // calculate amount
-    const calculatedAmount = transactions
+    const transactionsArray = Object.values(transactions);
+    const calculatedAmount = transactionsArray
       .map(trans => trans.amount)
       .reduce((accum, current) => accum + current);
     const updatedAsset = asset;
@@ -150,6 +99,34 @@ class DataStorage {
       await AsyncStorage.setItem(DATA_ASSET_HIST + ticker, JSON.stringify(transactions));
       await DataStorage.updateAsset(updatedAsset);
       return tx;
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
+  };
+
+  static removeAssetTransaction = async (asset, txDate) => {
+    const { ticker } = asset.coin;
+    const transactions = await DataStorage.getAssetTransactions(asset);
+    let dateStr = txDate;
+    if (typeof dateStr !== 'string') {
+      dateStr = dateStr.toISOString();
+    }
+    // clear the asset
+    delete transactions[dateStr];
+
+    // update asset amount
+    // calculate amount
+    const transactionsArray = Object.values(transactions);
+    const calculatedAmount = transactionsArray
+      .map(trans => trans.amount)
+      .reduce((accum, current) => accum + current);
+    const updatedAsset = asset;
+    updatedAsset.amount = calculatedAmount;
+    try {
+      // store updated transactions and asset
+      await AsyncStorage.setItem(DATA_ASSET_HIST + ticker, JSON.stringify(transactions));
+      await DataStorage.updateAsset(updatedAsset);
     } catch (error) {
       // Error saving data
       throw error;

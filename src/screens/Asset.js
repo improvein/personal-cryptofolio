@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Alert, FlatList, StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AssetInfoBox, AssetTxItem, Header } from '../components';
 import DataStorage from '../data/DataStorage';
@@ -144,11 +145,27 @@ export default class Asset extends React.Component {
 
     // get assets from storage
     const transactions = await DataStorage.getAssetTransactions(this.state.asset);
-    // calculate the total cost
+    let transactionsArray = Object.values(transactions);
+    // calculate the total cost and sort
     let totalCost = 0.0;
-    transactions.forEach((tx) => {
-      totalCost += tx.amount * tx.price;
-    });
+
+    // if empty then dont bother with complex conversions
+    if (transactionsArray.length > 0) {
+      // sort by date (descending)
+      transactionsArray = transactionsArray.sort((a, b) => {
+        if (a.date > b.date) {
+          return -1;
+        }
+        if (a.date < b.date) {
+          return 1;
+        }
+        return 0;
+      });
+      // calculate total
+      transactionsArray.forEach((tx) => {
+        totalCost += tx.amount * tx.price;
+      });
+    }
 
     // fetch and update their market prices
     await PriceOracle.refreshPrices();
@@ -167,7 +184,7 @@ export default class Asset extends React.Component {
     // add the assets to the state
     this.setState(prevState => ({
       ...prevState,
-      transactions,
+      transactions: transactionsArray,
       totalCost,
       refreshing: false,
     }));
@@ -190,7 +207,7 @@ export default class Asset extends React.Component {
           onPress: () => {
             const { asset } = this.props.navigation.state.params;
             DataStorage.removeAsset(asset.coin.ticker).then(() => {
-              this.props.navigation.navigate('AssetListScreen');
+              this.props.navigation.navigate('AssetListScreen', { refresh: true });
             });
           },
         },
@@ -216,6 +233,12 @@ export default class Asset extends React.Component {
     });
   };
 
+  onDidFocus = (payload) => {
+    if (this.props.navigation.getParam('refresh', false)) {
+      this.onRefresh();
+    }
+  };
+
   render() {
     const { asset } = this.props.navigation.state.params;
     const { totalCost } = this.state;
@@ -223,6 +246,7 @@ export default class Asset extends React.Component {
 
     return (
       <View style={styles.container}>
+        <NavigationEvents onDidFocus={this.onDidFocus} />
         <View style={styles.infoContainer}>
           <AssetInfoBox title="Holdings" text={asset.amount.toFixed(8)} />
           <AssetInfoBox title="Net cost" text={`$ ${totalCost.toFixed(2)}`} />

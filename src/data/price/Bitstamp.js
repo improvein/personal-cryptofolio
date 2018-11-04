@@ -12,7 +12,7 @@ class Bitstamp {
           .then((responseJson) => {
             const coinPrice = {
               ticker: coinTicker,
-              price: responseJson.last,
+              price: parseFloat(responseJson.last),
               variation: (responseJson.last / responseJson.open - 1) * 100,
             };
             resolve(coinPrice);
