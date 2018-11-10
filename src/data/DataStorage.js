@@ -13,13 +13,37 @@ class DataStorage {
   static clearData = async () => {
     try {
       await AsyncStorage.removeItem(DATA_ASSETS);
-      // await AsyncStorage.removeItem(DATA_ASSET_HIST);
       await AsyncStorage.removeItem(DATA_PRICES);
       await AsyncStorage.removeItem(DATA_PRICES_FETCHTIME);
+      // remove transactions
+      const keys = await AsyncStorage.getAllKeys();
+      for (let k = 0; k < keys.length; k += 1) {
+        const key = keys[k];
+        if (key.includes(DATA_ASSET_HIST)) {
+          await AsyncStorage.removeItem(key);
+        }
+      }
     } catch (error) {
       // Error saving data
       throw error;
     }
+  };
+
+  static getRawData = async () => {
+    let assetsJson = (await AsyncStorage.getItem(DATA_ASSETS)) || '{}';
+    const assets = JSON.parse(assetsJson);
+
+    // get each asset's transactions and attach them to it
+    const tickers = Object.keys(assets);
+    for (let t = 0; t < tickers.length; t += 1) {
+      const ticker = tickers[t];
+      const txsJson = (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '{}';
+      // attach the txs to the asset
+      assets[ticker].transactions = JSON.parse(txsJson);
+    }
+    // convert to string to export
+    assetsJson = JSON.stringify(assets);
+    return assetsJson;
   };
 
   /**
