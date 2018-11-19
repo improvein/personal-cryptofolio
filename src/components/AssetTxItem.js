@@ -47,6 +47,8 @@ class AssetTxItem extends React.Component {
 
   render() {
     const { transaction } = this.props;
+    const costIncome = transaction.price * transaction.amount;
+    const operation = transaction.amount >= 0 ? 'buy' : 'sell';
 
     return (
       <TouchableOpacity
@@ -56,7 +58,10 @@ class AssetTxItem extends React.Component {
       >
         <View style={styles.contentContainer}>
           <View style={styles.fieldWrapper}>
-            <Text style={styles.fieldLabel}>Amount</Text>
+            <Text style={styles.fieldLabel}>
+              Amount
+              {operation === 'buy' ? ' (Buy)' : ' (Sell)'}
+            </Text>
             <Text style={styles.fieldContent}>{transaction.amount.toFixed(8)}</Text>
           </View>
           <View style={styles.fieldWrapper}>
@@ -64,12 +69,8 @@ class AssetTxItem extends React.Component {
             <Text style={styles.fieldContent}>{`$ ${transaction.price.toFixed(2)}`}</Text>
           </View>
           <View style={styles.fieldWrapper}>
-            <Text style={styles.fieldLabel}>Cost</Text>
-            <Text style={styles.fieldContent}>
-              {`$ ${(
-                transaction.price * transaction.amount
-              ).toFixed(2)}`}
-            </Text>
+            <Text style={styles.fieldLabel}>{operation === 'buy' ? 'Cost' : 'Income'}</Text>
+            <Text style={styles.fieldContent}>{`$ ${Math.abs(costIncome).toFixed(2)}`}</Text>
           </View>
         </View>
         <View style={styles.contentContainer}>

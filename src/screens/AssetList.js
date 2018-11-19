@@ -160,7 +160,11 @@ export default class AssetList extends React.Component {
             renderItem={({ item }) => <AssetItem asset={item} onPressItem={this.onPressItem} />}
             refreshing={this.state.refreshing}
             onRefresh={this.onRefresh}
-            ListEmptyComponent={<Text style={styles.listEmptyContent}>(no assets)</Text>}
+            ListEmptyComponent={(
+              <Text style={styles.listEmptyContent}>
+                {this.state.refreshing ? '(loading...)' : '(no assets)'}
+              </Text>
+)}
           />
         </View>
         <View style={styles.footerContainer}>
