@@ -4,7 +4,7 @@
 
 Personal Portfolio for crypto assets.
 
-This app allows you to track your portfolio registering all the transactions for each asset you have. It is very similar to many others that exists in the market, but with focus on privacy and data availability.
+This mobile app allows you to track your portfolio registering all the transactions for each asset you have. It is very similar to many others that exists in the market, but with focus on privacy and data availability.
 
 We think it's worth having a portfolio manager that allows you to keep your information isolated and private from anyone else.
 
@@ -34,3 +34,25 @@ Some things to consider regarding your privacy:
 ## Future changes & Dev TODOs
 * Enable icons from "react-native-vector-icons" for iOS
 * Encrypt data in device based on PIN
+
+## Contribute
+You are more than welcome to contribute!
+
+Just [report an issue](https://github.com/improvein/personal-cryptofolio/issues) or [make a pull request](https://github.com/improvein/personal-cryptofolio/pulls), whatever you want.
+
+## Development
+This is a React Native application.
+
+So after cloning the repo make sure you install all dependencies:
+```
+npm install
+```
+
+Then plug your phone or start an emulator, and you can run the project in either Android:
+```
+npm run android
+```
+or iOS
+```
+npm run ios
+```
