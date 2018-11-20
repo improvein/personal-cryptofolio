@@ -1,7 +1,13 @@
 import React from 'react';
 import { createStackNavigator } from 'react-navigation';
 import {
-  AssetAddList, AssetAddDetail, AssetList, Asset, AssetTx, Settings
+  AssetAddList,
+  AssetAddDetail,
+  AssetList,
+  Asset,
+  AssetTx,
+  Settings,
+  PINInput,
 } from './src/screens';
 
 const RouteNav = createStackNavigator(
@@ -23,6 +29,9 @@ const RouteNav = createStackNavigator(
     },
     SettingsScreen: {
       screen: Settings,
+    },
+    PINInputScreen: {
+      screen: PINInput,
     },
   },
   {

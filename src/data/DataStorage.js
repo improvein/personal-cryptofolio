@@ -5,6 +5,7 @@ const DATA_ASSETS = '@Data:assets';
 const DATA_ASSET_HIST = '@Data:assethist_';
 const DATA_PRICES = '@Data:prices';
 const DATA_PRICES_FETCHTIME = '@Data:prices_fetchtime';
+const DATA_SETTINGS = '@Data:settings';
 
 class DataStorage {
   /**
@@ -12,6 +13,7 @@ class DataStorage {
    */
   static clearData = async () => {
     try {
+      await AsyncStorage.removeItem(DATA_SETTINGS);
       await AsyncStorage.removeItem(DATA_ASSETS);
       await AsyncStorage.removeItem(DATA_PRICES);
       await AsyncStorage.removeItem(DATA_PRICES_FETCHTIME);
@@ -263,6 +265,33 @@ class DataStorage {
     try {
       // store updated prices
       await AsyncStorage.setItem(DATA_PRICES_FETCHTIME, fetchTime.toISOString());
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
+  };
+
+  /**
+   * Get the app settings
+   */
+  static getSettings = async () => {
+    let returnedValue = null;
+    try {
+      returnedValue = (await AsyncStorage.getItem(DATA_SETTINGS)) || '{}';
+      returnedValue = JSON.parse(returnedValue);
+    } catch (error) {
+      throw error;
+    }
+    return returnedValue;
+  };
+
+  static updateSettings = async (newSettings) => {
+    let settings = await DataStorage.getSettings();
+    // merge with old settings
+    settings = { ...settings, ...newSettings };
+    try {
+      // store updated settings
+      await AsyncStorage.setItem(DATA_SETTINGS, JSON.stringify(settings));
     } catch (error) {
       // Error saving data
       throw error;

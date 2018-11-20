@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-  Alert, Share, StyleSheet, Text, TouchableOpacity, TextInput, View,
+  Alert, Share, StyleSheet, Switch, Text, TouchableOpacity, View,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { NavigationEvents } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DataStorage from '../data/DataStorage';
 import { colors } from '../utils';
@@ -31,6 +31,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   optionContainer: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '95%',
     padding: 10,
     marginHorizontal: 5,
     borderBottomColor: colors.BLACK,
@@ -38,7 +42,11 @@ const styles = StyleSheet.create({
   },
   optionText: {
     textAlign: 'left',
+    alignSelf: 'flex-start',
     fontSize: 20,
+  },
+  optionButton: {
+    alignSelf: 'flex-end',
   },
 });
 
@@ -55,13 +63,42 @@ export default class Settings extends React.Component {
   }
 
   async componentDidMount() {
-    // const assets = await DataStorage.getSettings();
-    // // add the settings to the state
-    // this.setState(prevState => ({
-    //   ...prevState,
-    //   coins: stateCoins,
-    // }));
+    const settings = await DataStorage.getSettings();
+    // add the settings to the state
+    this.setState(prevState => ({
+      ...prevState,
+      settings,
+    }));
   }
+
+  updateSettings = async (newSettings) => {
+    try {
+      // save them
+      await DataStorage.updateSettings(newSettings);
+      // update state
+      this.setState(newSettings);
+    } catch (err) {
+      console.warn('Error saving settings.', err);
+    }
+  };
+
+  onPinProtection = () => {
+    this.props.navigation.navigate('PINInputScreen', {
+      enableBack: true,
+      returnScreen: 'SettingsScreen',
+    });
+  };
+
+  onPinProtectionSwitch = async (value) => {
+    if (value) {
+      // activate
+      // call the standard procedure
+      this.onPinProtection();
+    } else {
+      // de-activate
+      await this.updateSettings({ pinProtection: false });
+    }
+  };
 
   exportData = async () => {
     const rawDataJson = await DataStorage.getRawData();
@@ -91,9 +128,21 @@ export default class Settings extends React.Component {
     );
   };
 
+  onDidFocus = async (payload) => {
+    // check if came with params
+    if (typeof payload.state.params !== 'undefined') {
+      // check if came from PIN screen
+      if (typeof payload.state.params.pin !== 'undefined') {
+        // save the PIN protection
+        await this.updateSettings({ pinProtection: true });
+      }
+    }
+  };
+
   render() {
     return (
       <View style={styles.container}>
+        <NavigationEvents onDidFocus={this.onDidFocus} />
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backArrowContainer}
@@ -104,6 +153,14 @@ export default class Settings extends React.Component {
           <Text style={styles.title}>Settings</Text>
         </View>
         <View style={styles.contentContainer}>
+          <TouchableOpacity style={styles.optionContainer} onPress={this.onPinProtection}>
+            <Text style={styles.optionText}>PIN protection</Text>
+            <Switch
+              style={styles.optionButton}
+              value={this.state.pinProtection}
+              onValueChange={this.onPinProtectionSwitch}
+            />
+          </TouchableOpacity>
           <TouchableOpacity style={styles.optionContainer} onPress={this.exportData}>
             <Text style={styles.optionText}>Export data...</Text>
           </TouchableOpacity>
