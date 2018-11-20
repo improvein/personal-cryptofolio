@@ -1,4 +1,5 @@
 import { AsyncStorage } from 'react-native';
+import crypto from 'crypto';
 import coins from './coins';
 
 const DATA_ASSETS = '@Data:assets';
@@ -6,6 +7,7 @@ const DATA_ASSET_HIST = '@Data:assethist_';
 const DATA_PRICES = '@Data:prices';
 const DATA_PRICES_FETCHTIME = '@Data:prices_fetchtime';
 const DATA_SETTINGS = '@Data:settings';
+const DATA_PIN_HASH = '@Data:pin_hash';
 
 class DataStorage {
   /**
@@ -14,6 +16,7 @@ class DataStorage {
   static clearData = async () => {
     try {
       await AsyncStorage.removeItem(DATA_SETTINGS);
+      await AsyncStorage.removeItem(DATA_PIN_HASH);
       await AsyncStorage.removeItem(DATA_ASSETS);
       await AsyncStorage.removeItem(DATA_PRICES);
       await AsyncStorage.removeItem(DATA_PRICES_FETCHTIME);
@@ -296,6 +299,42 @@ class DataStorage {
       // Error saving data
       throw error;
     }
+  };
+
+  /**
+   * Update the PIN for storage and other purposes
+   * Also saves a verification of the PIN
+   */
+  static updatePIN = async (pin) => {
+    const hash = crypto.createHash('sha1');
+    hash.update(pin);
+    const hashedHex = hash.digest('hex');
+    try {
+      // store updated settings
+      await AsyncStorage.setItem(DATA_PIN_HASH, hashedHex);
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
+  };
+
+  /**
+   * Validates if the given PIN corresponds to the one stored
+   * @todo: move this function to a more suitable place
+   */
+  static validatePIN = async (pin) => {
+    let storedHashedPin = '';
+    try {
+      storedHashedPin = (await AsyncStorage.getItem(DATA_PIN_HASH)) || '';
+    } catch (error) {
+      throw error;
+    }
+
+    // calculate the hash of the PIN
+    const hash = crypto.createHash('sha1');
+    hash.update(pin);
+    const hashedHex = hash.digest('hex');
+    return hashedHex === storedHashedPin;
   };
 }
 
