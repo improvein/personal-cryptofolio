@@ -1,31 +1,5 @@
 import React from 'react';
-import { createStackNavigator } from 'react-navigation';
-import {
-  AssetAddList, AssetAddDetail, AssetList, Asset, AssetTx,
-} from './src/screens';
-
-const RouteNav = createStackNavigator(
-  {
-    AssetListScreen: {
-      screen: AssetList,
-    },
-    AssetAddScreen: {
-      screen: AssetAddList,
-    },
-    AssetAddDetailScreen: {
-      screen: AssetAddDetail,
-    },
-    AssetScreen: {
-      screen: Asset,
-    },
-    AssetTxScreen: {
-      screen: AssetTx,
-    },
-  },
-  {
-    initialRouteName: 'AssetListScreen',
-  },
-);
+import RouteNav from './src/RouteNav';
 
 export default class App extends React.Component {
   render() {

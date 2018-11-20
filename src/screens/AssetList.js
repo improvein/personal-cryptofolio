@@ -1,8 +1,9 @@
 import React from 'react';
 import {
-  FlatList, StyleSheet, View, Text,
+  FlatList, StyleSheet, View, Text, TouchableOpacity,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AssetItem, Header, AddCoinButton } from '../components';
 import DataStorage from '../data/DataStorage';
 import PriceOracle from '../data/PriceOracle';
@@ -23,16 +24,18 @@ const styles = StyleSheet.create({
   list: {
     flex: 1,
   },
+  headerChildren: {},
   totalAmount: {
     color: colors.WHITE,
-    fontSize: 40,
+    fontSize: 35,
     alignSelf: 'center',
     letterSpacing: 2,
   },
-  totalAmountText: {
-    fontSize: 20,
-    color: colors.WHITE,
-    alignSelf: 'center',
+  settingsButton: {
+    // alignSelf: 'flex-end',
+    position: 'absolute',
+    top: -40,
+    right: 10,
   },
   listContentContainer: {
     width: '100%',
@@ -60,6 +63,14 @@ export default class AssetList extends React.Component {
       header: (
         <Header title="CryptoFolio">
           <Text style={styles.totalAmount}>{`$ ${totalValuation.toFixed(2)}`}</Text>
+          <TouchableOpacity
+            style={styles.settingsButton}
+            onPress={() => {
+              navigation.navigate('SettingsScreen');
+            }}
+          >
+            <Icon name="settings" size={30} color={colors.WHITE} />
+          </TouchableOpacity>
         </Header>
       ),
     };
@@ -149,7 +160,11 @@ export default class AssetList extends React.Component {
             renderItem={({ item }) => <AssetItem asset={item} onPressItem={this.onPressItem} />}
             refreshing={this.state.refreshing}
             onRefresh={this.onRefresh}
-            ListEmptyComponent={<Text style={styles.listEmptyContent}>(no assets)</Text>}
+            ListEmptyComponent={(
+              <Text style={styles.listEmptyContent}>
+                {this.state.refreshing ? '(loading...)' : '(no assets)'}
+              </Text>
+)}
           />
         </View>
         <View style={styles.footerContainer}>

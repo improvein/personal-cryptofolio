@@ -1,10 +1,13 @@
 import { AsyncStorage } from 'react-native';
+import sha256 from 'crypto-js/sha256';
 import coins from './coins';
 
 const DATA_ASSETS = '@Data:assets';
 const DATA_ASSET_HIST = '@Data:assethist_';
 const DATA_PRICES = '@Data:prices';
 const DATA_PRICES_FETCHTIME = '@Data:prices_fetchtime';
+const DATA_SETTINGS = '@Data:settings';
+const DATA_PIN_HASH = '@Data:pin_hash';
 
 class DataStorage {
   /**
@@ -12,14 +15,40 @@ class DataStorage {
    */
   static clearData = async () => {
     try {
+      await AsyncStorage.removeItem(DATA_SETTINGS);
+      await AsyncStorage.removeItem(DATA_PIN_HASH);
       await AsyncStorage.removeItem(DATA_ASSETS);
-      // await AsyncStorage.removeItem(DATA_ASSET_HIST);
       await AsyncStorage.removeItem(DATA_PRICES);
       await AsyncStorage.removeItem(DATA_PRICES_FETCHTIME);
+      // remove transactions
+      const keys = await AsyncStorage.getAllKeys();
+      for (let k = 0; k < keys.length; k += 1) {
+        const key = keys[k];
+        if (key.includes(DATA_ASSET_HIST)) {
+          await AsyncStorage.removeItem(key);
+        }
+      }
     } catch (error) {
       // Error saving data
       throw error;
     }
+  };
+
+  static getRawData = async () => {
+    let assetsJson = (await AsyncStorage.getItem(DATA_ASSETS)) || '{}';
+    const assets = JSON.parse(assetsJson);
+
+    // get each asset's transactions and attach them to it
+    const tickers = Object.keys(assets);
+    for (let t = 0; t < tickers.length; t += 1) {
+      const ticker = tickers[t];
+      const txsJson = (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '{}';
+      // attach the txs to the asset
+      assets[ticker].transactions = JSON.parse(txsJson);
+    }
+    // convert to string to export
+    assetsJson = JSON.stringify(assets);
+    return assetsJson;
   };
 
   /**
@@ -243,6 +272,79 @@ class DataStorage {
       // Error saving data
       throw error;
     }
+  };
+
+  /**
+   * Get the app settings
+   */
+  static getSettings = async () => {
+    let returnedValue = null;
+    try {
+      returnedValue = (await AsyncStorage.getItem(DATA_SETTINGS)) || '{}';
+      returnedValue = JSON.parse(returnedValue);
+    } catch (error) {
+      throw error;
+    }
+    return returnedValue;
+  };
+
+  static updateSettings = async (newSettings) => {
+    let settings = await DataStorage.getSettings();
+    // merge with old settings
+    settings = { ...settings, ...newSettings };
+    try {
+      // store updated settings
+      await AsyncStorage.setItem(DATA_SETTINGS, JSON.stringify(settings));
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
+  };
+
+  /**
+   * Update the PIN for storage and other purposes
+   * Also saves a verification of the PIN
+   */
+  static updatePIN = async (pin) => {
+    const hashedPin = sha256(pin);
+    try {
+      // store updated settings
+      await AsyncStorage.setItem(DATA_PIN_HASH, hashedPin.toString());
+    } catch (error) {
+      // Error saving data
+      throw error;
+    }
+  };
+
+  /**
+   * Validates if the given PIN corresponds to the one stored
+   * @todo: move this function to a more suitable place
+   */
+  static getPINHash = async () => {
+    let storedHashedPin = '';
+    try {
+      storedHashedPin = (await AsyncStorage.getItem(DATA_PIN_HASH)) || '';
+    } catch (error) {
+      throw error;
+    }
+    return storedHashedPin;
+  };
+
+  /**
+   * Validates if the given PIN corresponds to the one stored
+   * @todo: move this function to a more suitable place
+   */
+  static validatePIN = async (pin) => {
+    let storedHashedPin = '';
+    try {
+      storedHashedPin = (await AsyncStorage.getItem(DATA_PIN_HASH)) || '';
+    } catch (error) {
+      throw error;
+    }
+
+    // calculate the hash of the PIN
+    const hashedHex = sha256(pin).toString();
+    return hashedHex === storedHashedPin;
   };
 }
 
