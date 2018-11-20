@@ -307,7 +307,6 @@ class DataStorage {
    */
   static updatePIN = async (pin) => {
     const hashedPin = sha256(pin);
-    console.warn(`Hash pin: ${hashedPin}`);
     try {
       // store updated settings
       await AsyncStorage.setItem(DATA_PIN_HASH, hashedPin.toString());
