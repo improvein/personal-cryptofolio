@@ -67,7 +67,7 @@ export default class Settings extends React.Component {
     // add the settings to the state
     this.setState(prevState => ({
       ...prevState,
-      settings,
+      ...settings,
     }));
   }
 
@@ -97,6 +97,7 @@ export default class Settings extends React.Component {
     } else {
       // de-activate
       await this.updateSettings({ pinProtection: false });
+      global.pinProtection = false;
     }
   };
 
@@ -135,6 +136,9 @@ export default class Settings extends React.Component {
       if (typeof payload.state.params.pin !== 'undefined') {
         // save the PIN protection
         await this.updateSettings({ pinProtection: true });
+        // set the PIN to the app and update global
+        await DataStorage.updatePIN(payload.state.params.pin);
+        global.pinProtection = true;
       }
     }
   };

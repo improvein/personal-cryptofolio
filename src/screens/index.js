@@ -1,3 +1,4 @@
+export { default as Splash } from './Splash';
 export { default as AssetAddList } from './AssetAddList';
 export { default as AssetAddDetail } from './AssetAddDetail';
 export { default as AssetList } from './AssetList';

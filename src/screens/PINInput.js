@@ -5,6 +5,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors } from '../utils';
+import DataStorage from '../data/DataStorage';
 
 const styles = StyleSheet.create({
   container: {
@@ -42,6 +43,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
   },
+  errorMessage: {
+    width: '90%',
+    alignSelf: 'center',
+    textAlign: 'center',
+    color: colors.RED,
+    fontSize: 15,
+    marginVertical: 5,
+    height: 30,
+    padding: 5,
+  },
   keypad: {
     flex: 1,
     justifyContent: 'center',
@@ -78,6 +89,7 @@ export default class PINInput extends React.Component {
 
     this.state = {
       pin: '',
+      valid: true,
     };
   }
 
@@ -87,8 +99,21 @@ export default class PINInput extends React.Component {
     }));
   };
 
-  onConfirm = () => {
+  onConfirm = async () => {
+    const authMode = this.props.navigation.getParam('authMode', false);
     const returnScreen = this.props.navigation.getParam('returnScreen', 'AssetListScreen');
+
+    // if authMode then update global
+    if (authMode) {
+      // need to validate
+      if (!(await DataStorage.validatePIN(this.state.pin))) {
+        this.setState({ valid: false });
+        return;
+      }
+      // validation went OK
+      global.activePin = this.state.pin;
+    }
+
     this.props.navigation.navigate(returnScreen, { pin: this.state.pin });
   };
 
@@ -127,6 +152,7 @@ export default class PINInput extends React.Component {
         </View>
         <View style={styles.contentContainer}>
           <Text style={styles.enteredPin}>{'*'.repeat(this.state.pin.length)}</Text>
+          {this.state.valid || <Text style={styles.errorMessage}>Invalid PIN</Text>}
           <View style={styles.keypad}>
             <View style={styles.keypadRow}>
               {['1', '2', '3'].map(key => this.renderKeyPad(key))}
