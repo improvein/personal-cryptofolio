@@ -31,10 +31,6 @@ Some things to consider regarding your privacy:
 * Data is stored non-encrypted in the device. (see Future changes & Dev TODOs).<br/>
   However, the isolation the OS provides protects you from other apps trying to access it in most cases.
 
-## Future changes & Dev TODOs
-* Enable icons from "react-native-vector-icons" for iOS
-* Encrypt data in device based on PIN
-
 ## Contribute
 You are more than welcome to contribute!
 
