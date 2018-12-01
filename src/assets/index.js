@@ -7,6 +7,8 @@ const ethLogo = require('./images/coin_eth.png');
 const iotaLogo = require('./images/coin_iota.png');
 const ltcLogo = require('./images/coin_ltc.png');
 const xmrLogo = require('./images/coin_xmr.png');
+const xrpLogo = require('./images/coin_xrp.png');
+const zecLogo = require('./images/coin_zec.png');
 
 const coinsLogos = {
   ada: adaLogo,
@@ -18,6 +20,8 @@ const coinsLogos = {
   iota: iotaLogo,
   ltc: ltcLogo,
   xmr: xmrLogo,
+  xrp: xrpLogo,
+  zec: zecLogo,
 };
 
 export default coinsLogos;

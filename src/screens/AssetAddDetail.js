@@ -79,6 +79,7 @@ class AssetAddDetail extends Component {
     // initialize state
     this.state = {
       coin,
+      price: 0,
       priceSources: availabelPriceSources,
     };
   }
@@ -91,6 +92,21 @@ class AssetAddDetail extends Component {
         this.props.navigation.navigate('AssetListScreen', { refresh: true });
       });
     }
+  };
+
+  onPriceSourceChange = async (itemValue) => {
+    let price = 0;
+    if (itemValue !== '') {
+      // fetch and update the price
+      price = await PriceOracle.fetchPrice(itemValue, this.state.coin.ticker);
+    }
+
+    // update the state
+    this.setState(prevState => ({
+      ...prevState,
+      priceSourceCode: itemValue,
+      price,
+    }));
   };
 
   render() {
@@ -115,11 +131,7 @@ class AssetAddDetail extends Component {
           <Picker
             selectedValue={this.state.priceSourceCode}
             style={styles.exchangePicker}
-            onValueChange={itemValue => this.setState(prevState => ({
-              ...prevState,
-              priceSourceCode: itemValue,
-            }))
-            }
+            onValueChange={this.onPriceSourceChange}
           >
             <Picker.Item label="(No price)" value="" key="" />
             {this.state.priceSources.map(exchange => (
@@ -127,7 +139,7 @@ class AssetAddDetail extends Component {
             ))}
           </Picker>
           <Text style={styles.amount}>{`1 ${this.state.coin.ticker} /`}</Text>
-          <Text style={styles.price}>USD 9,999.99</Text>
+          <Text style={styles.price}>{`USD ${this.state.price.toFixed(0)}`}</Text>
         </View>
         <View style={styles.buttonContainer}>
           <SecondaryButton text="DONE" onPress={this.onAdd} />

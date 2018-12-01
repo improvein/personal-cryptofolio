@@ -3,13 +3,14 @@ import priceSources from './price/sources';
 
 class PriceOracle {
   /** interval to fech in seconds */
-  static fetchInterval = 30;
+  static fetchInterval = 20;
 
   /** Source for Prices */
   static priceSources = [
     { code: 'binance', name: 'Binance' },
     { code: 'bitfinex', name: 'Bitfinex' },
     { code: 'bitstamp', name: 'Bitstamp' },
+    { code: 'kraken', name: 'Kraken' },
   ];
 
   /**
@@ -23,6 +24,10 @@ class PriceOracle {
     return sources;
   };
 
+  /**
+   * Refresh the prices of the assets in the portfolio.
+   * The results will be saved in the storage.
+   */
   static refreshPrices = async () => {
     // get the time for the last price fetch
     const lastFetch = await DataStorage.getPricesLastFetchTime();
@@ -78,6 +83,36 @@ class PriceOracle {
     // not going to fetch new prices
     // return OK
     return Promise.resolve();
+  };
+
+  /**
+   * Fetch the price for a specific ticker
+   */
+  static fetchPrice = async (priceSourceCode, ticker) => {
+    let resultPrice = 0;
+
+    // get the time for the last price fetch
+    const lastFetch = await DataStorage.getPricesLastFetchTime();
+    const secondsPassed = (new Date() - lastFetch) / 1000;
+    if (secondsPassed >= PriceOracle.fetchInterval) {
+      // get the price source
+      const source = priceSources[priceSourceCode];
+      // call the common "interface" method
+      const prices = await source.getPrices([ticker]);
+      resultPrice = prices[0].price || 0;
+
+      // now that I have the prices, update the data storage
+      await DataStorage.updatePrices(prices);
+      // updates the fetch time for prices
+      await DataStorage.setPricesLastFetchTime(new Date());
+    } else {
+      const prices = await DataStorage.getPrices();
+      if (Object.keys(prices).includes(ticker)) {
+        resultPrice = prices[ticker].price || 0;
+      }
+    }
+
+    return resultPrice;
   };
 }
 
