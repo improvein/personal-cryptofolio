@@ -144,6 +144,9 @@ android {
                 output.versionCodeOverride =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
+
+            // output file (APK) name
+            output.outputFileName = "personal-cryptofolio-${variant.versionName}.apk"
         }
     }
 }
