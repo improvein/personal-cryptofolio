@@ -13,6 +13,7 @@
     "crypto-js": "^3.1.9-1",
     "react": "16.3.1",
     "react-native": "~0.55.2",
+    "react-native-device-info": "^0.24.3",
     "react-native-linear-gradient": "^2.4.2",
     "react-native-modal-datetime-picker": "^6.0.0",
     "react-native-vector-icons": "^5.0.0",
