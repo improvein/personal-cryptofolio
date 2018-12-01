@@ -61,7 +61,7 @@ export default class AssetList extends React.Component {
     const totalValuation = navigation.getParam('totalValuation', 0);
     return {
       header: (
-        <Header title="CryptoFolio">
+        <Header title="Personal CryptoFolio">
           <Text style={styles.totalAmount}>{`$ ${totalValuation.toFixed(2)}`}</Text>
           <TouchableOpacity
             style={styles.settingsButton}
