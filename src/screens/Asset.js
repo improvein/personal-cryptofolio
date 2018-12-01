@@ -15,10 +15,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     width: '100%',
   },
-  currentPrice: {
+  headerPrice: {
     flex: 1,
+    flexDirection: 'column',
+  },
+  currentPrice: {
     color: colors.WHITE,
-    fontSize: 30,
+    fontSize: 28,
+    textAlign: 'left',
+    letterSpacing: 2,
+  },
+  priceSource: {
+    color: colors.WHITE,
+    fontSize: 10,
     textAlign: 'left',
     letterSpacing: 2,
   },
@@ -84,6 +93,16 @@ const styles = StyleSheet.create({
 export default class Asset extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const currentPrice = navigation.getParam('currentPrice', 0);
+
+    const priceSources = PriceOracle.getSources();
+    // get the Price Source name, if it exists
+    let priceSourceName = '(no price)';
+    priceSources.forEach((priceSource) => {
+      if (priceSource.code === navigation.state.params.asset.priceSourceCode) {
+        priceSourceName = priceSource.name;
+      }
+    });
+
     return {
       header: (
         <Header
@@ -94,7 +113,10 @@ export default class Asset extends React.Component {
           onBackArrowPress={() => navigation.goBack()}
         >
           <View style={styles.headerChildren}>
-            <Text style={styles.currentPrice}>{`$ ${currentPrice.toFixed(2)}`}</Text>
+            <View style={styles.headerPrice}>
+              <Text style={styles.currentPrice}>{`$ ${currentPrice.toFixed(2)}`}</Text>
+              <Text style={styles.priceSource}>{priceSourceName}</Text>
+            </View>
             <TouchableOpacity style={styles.deleteButton}>
               <Icon
                 onPress={navigation.getParam('onRemoveAsset') || (() => {})}
