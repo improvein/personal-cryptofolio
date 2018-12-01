@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import DeviceInfo from 'react-native-device-info';
 import DataStorage from '../data/DataStorage';
 import { colors } from '../utils';
 
@@ -47,6 +48,12 @@ const styles = StyleSheet.create({
   },
   optionButton: {
     alignSelf: 'flex-end',
+  },
+  textContainer: {
+    flexDirection: 'column',
+  },
+  text: {
+    fontSize: 12,
   },
 });
 
@@ -174,6 +181,11 @@ export default class Settings extends React.Component {
           <TouchableOpacity style={styles.optionContainer} onPress={this.clearData}>
             <Text style={styles.optionText}>Clear data...</Text>
           </TouchableOpacity>
+          <View style={[styles.optionContainer, styles.textContainer]}>
+            <Text style={styles.text}>{`App: ${DeviceInfo.getApplicationName()}`}</Text>
+            <Text style={styles.text}>{`Version: ${DeviceInfo.getVersion()}`}</Text>
+            <Text style={styles.text}>{`Bundle ID: ${DeviceInfo.getBundleId()}`}</Text>
+          </View>
         </View>
       </View>
     );
