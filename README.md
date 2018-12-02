@@ -10,15 +10,19 @@ We think it's worth having a portfolio manager that allows you to keep your info
 
 ## Core principles - where we are different
 
-* Data availability: export and import your data and allow YOU to be the owner of it
-* Privacy: no 3rd parties involved for storage of your data
+* **Data availability**: export and import your data and allow YOU to be the owner of it
+* **Privacy**: no 3rd parties involved for storage of your data
 
 ## Features
 
 * Track several crypto assets (we will add more)
 * Track each asset's transactions by registering your operations (buy or sell)
-* See your portfolio valuation and profit/loss for each asset at the moment
-* Online price retrieval from different sources
+* See your portfolio valuation and profit/loss (only for each asset at the moment)
+* Online price retrieval from different sources:
+  * Binance
+  * Bitfinex
+  * Bitstamp
+  * Kraken
 * Export your entire portfolio in JSON format
 * PIN protection for the app
 
@@ -26,9 +30,9 @@ We think it's worth having a portfolio manager that allows you to keep your info
 Some things to consider regarding your privacy:
 
 * Your entire portfolio data is stored in your device. Nothing is sent to any server.
-* The only contact with the "outside world" is for price retrieval from price sources like exchanges. But in those cases, nothing from your portfolio is revelead except for the coin of which you want to fetch the price.
+* The only contact with the "outside world" is for price retrieval from price sources like exchanges. But in those cases, nothing from your portfolio is revelead except for the coin for which you want to fetch the price.
 * The App can be protected with a PIN.
-* Data is stored non-encrypted in the device. (see Future changes & Dev TODOs).<br/>
+* Data is stored non-encrypted in the device. (see [future features](https://github.com/improvein/personal-cryptofolio/issues)).<br/>
   However, the isolation the OS provides protects you from other apps trying to access it in most cases.
 
 ## Contribute
@@ -48,7 +52,9 @@ Then plug your phone or start an emulator, and you can run the project in either
 ```
 npm run android
 ```
-or iOS
+or iOS:
 ```
 npm run ios
 ```
+
+For more information about how to develop and build using React Native: https://facebook.github.io/react-native/
