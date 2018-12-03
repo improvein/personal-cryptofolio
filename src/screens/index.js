@@ -7,3 +7,4 @@ export { default as AssetTx } from './AssetTx';
 export { default as Settings } from './Settings';
 export { default as DataImport } from './DataImport';
 export { default as PINInput } from './PINInput';
+export { default as Stats } from './Stats';

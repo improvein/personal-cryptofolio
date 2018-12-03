@@ -62,7 +62,13 @@ export default class AssetList extends React.Component {
     return {
       header: (
         <Header title="Personal CryptoFolio">
-          <Text style={styles.totalAmount}>{`$ ${totalValuation.toFixed(2)}`}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('StatsScreen');
+            }}
+          >
+            <Text style={styles.totalAmount}>{`$ ${totalValuation.toFixed(2)}`}</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.settingsButton}
             onPress={() => {

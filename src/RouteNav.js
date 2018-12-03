@@ -9,6 +9,7 @@ import {
   Settings,
   PINInput,
   Splash,
+  Stats,
 } from './screens';
 
 const RouteNav = createStackNavigator(
@@ -33,6 +34,9 @@ const RouteNav = createStackNavigator(
     },
     DataImportScreen: {
       screen: DataImport,
+    },
+    StatsScreen: {
+      screen: Stats,
     },
   },
   // {
