@@ -5,6 +5,7 @@ import {
   AssetList,
   Asset,
   AssetTx,
+  DataImport,
   Settings,
   PINInput,
   Splash,
@@ -29,6 +30,9 @@ const RouteNav = createStackNavigator(
     },
     SettingsScreen: {
       screen: Settings,
+    },
+    DataImportScreen: {
+      screen: DataImport,
     },
   },
   // {

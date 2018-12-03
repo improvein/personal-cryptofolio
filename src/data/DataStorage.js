@@ -52,6 +52,41 @@ class DataStorage {
   };
 
   /**
+   * Import data into the internal storage, replacing existing data.
+   * @param {string|object} data Data to import
+   */
+  static importData = async (data) => {
+    // prepare new data
+    let assets = data;
+    if (typeof assets === 'string') {
+      assets = JSON.parse(assets);
+    }
+
+    // clear existing data
+    await DataStorage.clearData();
+
+    // separate transactions from asset objects
+    const transactions = {};
+    const tickers = Object.keys(assets);
+    tickers.forEach((ticker) => {
+      // save the transactions for later import, and remove it from the object
+      transactions[ticker] = assets[ticker].transactions;
+      delete assets[ticker].transactions;
+    });
+    // now save and import
+    // assets
+    await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
+    // transactions
+    const txPromises = [];
+    tickers.forEach((ticker) => {
+      txPromises.push(
+        AsyncStorage.setItem(DATA_ASSET_HIST + ticker, JSON.stringify(transactions[ticker])),
+      );
+    });
+    await Promise.all(txPromises);
+  };
+
+  /**
    * Get the available assets.
    * Hard-coded data.
    * @returns List of assets

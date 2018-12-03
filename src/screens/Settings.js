@@ -35,8 +35,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '95%',
-    padding: 10,
+    width: '90%',
+    paddingVertical: 10,
     marginHorizontal: 5,
     borderBottomColor: colors.BLACK,
     borderBottomWidth: 1,
@@ -108,6 +108,10 @@ export default class Settings extends React.Component {
     }
   };
 
+  importData = async () => {
+    this.props.navigation.navigate('DataImportScreen');
+  };
+
   exportData = async () => {
     const rawDataJson = await DataStorage.getRawData();
     Share.share({
@@ -175,9 +179,9 @@ export default class Settings extends React.Component {
           <TouchableOpacity style={styles.optionContainer} onPress={this.exportData}>
             <Text style={styles.optionText}>Export data...</Text>
           </TouchableOpacity>
-          <View style={styles.optionContainer}>
+          <TouchableOpacity style={styles.optionContainer} onPress={this.importData}>
             <Text style={styles.optionText}>Import data...</Text>
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.optionContainer} onPress={this.clearData}>
             <Text style={styles.optionText}>Clear data...</Text>
           </TouchableOpacity>
