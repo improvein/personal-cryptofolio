@@ -115,6 +115,9 @@ export default class Stats extends React.Component {
   };
 
   render() {
+    const gainLoss = this.state.valuation - this.state.cost;
+    const gainLosColor = gainLoss >= 0 ? colors.GREEN : colors.RED;
+
     return (
       <LinearGradient
         start={{ x: 0, y: 0 }}
@@ -139,6 +142,12 @@ export default class Stats extends React.Component {
           <View style={styles.statRow}>
             <Text style={styles.statRowLabel}>Total cost</Text>
             <Text style={styles.statRowValue}>{`$ ${this.state.cost.toFixed(2)}`}</Text>
+          </View>
+          <View style={styles.statRow}>
+            <Text style={styles.statRowLabel}>Total gain/loss</Text>
+            <Text style={[styles.statRowValue, { color: gainLosColor }]}>
+              {`$ ${gainLoss.toFixed(2)}`}
+            </Text>
           </View>
         </View>
       </LinearGradient>
