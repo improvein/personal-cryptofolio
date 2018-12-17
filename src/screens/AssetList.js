@@ -92,8 +92,8 @@ export default class AssetList extends React.Component {
   }
 
   componentDidMount() {
-    // load assets from storage
-    this.refreshAssets();
+    // load assets from storage (simulate manual refresh action)
+    this.onRefresh();
   }
 
   onPressItem = (item) => {

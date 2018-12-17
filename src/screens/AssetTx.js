@@ -37,8 +37,11 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   deleteButton: {
-    alignSelf: 'flex-end',
-    padding: 5,
+    // alignSelf: 'flex-end',
+    // padding: 5,
+    position: 'absolute',
+    top: -30,
+    right: 10,
   },
   container: {
     flex: 1,
@@ -127,19 +130,19 @@ class AssetTx extends Component {
               <Text style={styles.assetName}>{navigation.state.params.asset.coin.name}</Text>
               <Text style={styles.currentPrice}>{`$ ${currentPrice.toFixed(2)}`}</Text>
             </View>
-            {isNew ? (
-              <View style={styles.deleteButton} />
-            ) : (
-              <TouchableOpacity style={styles.deleteButton}>
-                <Icon
-                  onPress={navigation.getParam('onRemoveTransaction') || (() => {})}
-                  name="delete"
-                  size={20}
-                  color={colors.WHITE}
-                />
-              </TouchableOpacity>
-            )}
           </View>
+          {isNew ? (
+            <View style={styles.deleteButton} />
+          ) : (
+            <TouchableOpacity style={styles.deleteButton}>
+              <Icon
+                onPress={navigation.getParam('onRemoveTransaction') || (() => {})}
+                name="delete"
+                size={20}
+                color={colors.WHITE}
+              />
+            </TouchableOpacity>
+          )}
         </Header>
       ),
     };
