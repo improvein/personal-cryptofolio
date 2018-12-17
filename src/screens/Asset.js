@@ -32,8 +32,11 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   deleteButton: {
-    alignSelf: 'flex-end',
-    padding: 5,
+    // alignSelf: 'flex-end',
+    // padding: 5,
+    position: 'absolute',
+    top: -30,
+    right: 10,
   },
   container: {
     flex: 1,
@@ -117,15 +120,15 @@ export default class Asset extends React.Component {
               <Text style={styles.currentPrice}>{`$ ${currentPrice.toFixed(2)}`}</Text>
               <Text style={styles.priceSource}>{priceSourceName}</Text>
             </View>
-            <TouchableOpacity style={styles.deleteButton}>
-              <Icon
-                onPress={navigation.getParam('onRemoveAsset') || (() => {})}
-                name="delete"
-                size={20}
-                color={colors.WHITE}
-              />
-            </TouchableOpacity>
           </View>
+          <TouchableOpacity style={styles.deleteButton}>
+            <Icon
+              onPress={navigation.getParam('onRemoveAsset') || (() => {})}
+              name="delete"
+              size={20}
+              color={colors.WHITE}
+            />
+          </TouchableOpacity>
         </Header>
       ),
     };
