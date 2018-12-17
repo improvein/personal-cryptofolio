@@ -8,6 +8,10 @@ This mobile app allows you to track your portfolio registering all the transacti
 
 We think it's worth having a portfolio manager that allows you to keep your information isolated and private from anyone else.
 
+Download from the stores (Android only for the moment, iOS coming later):
+
+<a href='https://play.google.com/store/apps/details?id=com.improvein.personalcryptofolio'><img alt='Get it on Google Play' height="50" src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+
 ## Core principles - where we are different
 
 * **Data availability**: export and import your data and allow YOU to be the owner of it
