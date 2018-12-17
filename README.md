@@ -17,13 +17,18 @@ We think it's worth having a portfolio manager that allows you to keep your info
 
 * Track several crypto assets (we will add more)
 * Track each asset's transactions by registering your operations (buy or sell)
-* See your portfolio valuation and profit/loss (only for each asset at the moment)
+* See your portfolio valuation and profit/loss
+  * You can see it at a portfolio level by clicking on the total valuation amount in the main screen
+  * Or you can see it an asset level in each asset's screen
 * Online price retrieval from different sources:
   * Binance
   * Bitfinex
   * Bitstamp
   * Kraken
-* Export your entire portfolio in JSON format
+* Export your entire portfolio in JSON format<br>
+  _(at the moment only available with the "share" option)_
+* Import your entire portfolio in JSON format<br>
+  _(at the moment only by copy-pasting the JSON content)_
 * PIN protection for the app
 
 ## Privacy
@@ -33,7 +38,7 @@ Some things to consider regarding your privacy:
 * The only contact with the "outside world" is for price retrieval from price sources like exchanges. But in those cases, nothing from your portfolio is revelead except for the coin for which you want to fetch the price.
 * The App can be protected with a PIN.
 * Data is stored non-encrypted in the device. (see [future features](https://github.com/improvein/personal-cryptofolio/issues)).<br/>
-  However, the isolation the OS provides protects you from other apps trying to access it in most cases.
+  However, the isolation the modern OS provides protects you from other apps trying to access it in most cases.
 
 ## Contribute
 You are more than welcome to contribute!
@@ -43,16 +48,32 @@ Just [report an issue](https://github.com/improvein/personal-cryptofolio/issues)
 ## Development
 This is a React Native application.
 
-So after cloning the repo make sure you install all dependencies:
+So after cloning the repo make sure you install all the dependencies:
 ```
 npm install
 ```
 
-Then plug your phone or start an emulator, and you can run the project in either Android:
+Then plug your phone or start an emulator for the OS you want. OS specific instructions below.
+
+### Android
+Before starting you need to create the file `android/local.properties` with this:
+```
+APP_RELEASE_STORE_FILE=/location/to/your/keystore.file
+APP_RELEASE_STORE_PASSWORD=your_store_password
+APP_RELEASE_KEY_ALIAS=your_key_alias
+APP_RELEASE_KEY_PASSWORD=your_key_password
+```
+(if you have any doubt as for the use of these parameters, check the [android/app/build.grade](https://github.com/improvein/personal-cryptofolio/blob/master/android/app/build.grade) file)
+
+Then run the project in Android:
 ```
 npm run android
 ```
-or iOS:
+
+### iOS
+(@TODO: NEED MORE DETAILS HERE)
+
+Run the project in iOS:
 ```
 npm run ios
 ```
