@@ -1,4 +1,4 @@
-import { createSwitchNavigator, createStackNavigator } from 'react-navigation';
+import { createSwitchNavigator, createStackNavigator, createAppContainer } from 'react-navigation';
 import {
   AssetAddList,
   AssetAddDetail,
@@ -49,8 +49,7 @@ const AuthStack = createStackNavigator({
   },
 });
 
-// export default RouteNav;
-export default createSwitchNavigator(
+const MainNavigator = createSwitchNavigator(
   {
     SplashScreen: Splash,
     App: RouteNav,
@@ -60,3 +59,7 @@ export default createSwitchNavigator(
     initialRouteName: 'SplashScreen',
   },
 );
+
+const AppNavContainer = createAppContainer(MainNavigator);
+
+export default AppNavContainer;
