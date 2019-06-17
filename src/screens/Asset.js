@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Alert, FlatList, StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
+import PropTypes from 'prop-types';
 import { NavigationEvents } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AssetInfoBox, AssetTxItem, Header } from '../components';
@@ -94,6 +95,12 @@ const styles = StyleSheet.create({
 });
 
 export default class Asset extends React.Component {
+  static propTypes = {
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func.isRequired,
+    }).isRequired,
+  };
+
   static navigationOptions = ({ navigation }) => {
     const currentPrice = navigation.getParam('currentPrice', 0);
 
@@ -265,7 +272,8 @@ export default class Asset extends React.Component {
   };
 
   render() {
-    const { asset } = this.props.navigation.state.params;
+    const { navigation } = this.props;
+    const { asset } = navigation.state.params;
     const { totalCost } = this.state;
     const marketPrice = asset.amount * asset.price;
 

@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
   statRowValue: {
     alignSelf: 'flex-end',
     fontSize: 20,
+    textAlign: 'right',
   },
 });
 

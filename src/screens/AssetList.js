@@ -2,13 +2,13 @@ import React from 'react';
 import {
   FlatList, StyleSheet, View, Text, TouchableOpacity,
 } from 'react-native';
+import PropTypes from 'prop-types';
 import { NavigationEvents } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AssetItem, Header, AddCoinButton } from '../components';
 import DataStorage from '../data/DataStorage';
 import PriceOracle from '../data/PriceOracle';
 import { colors } from '../utils';
-// import coinsLogos from '../assets';
 
 const styles = StyleSheet.create({
   container: {
@@ -57,6 +57,12 @@ const styles = StyleSheet.create({
 });
 
 export default class AssetList extends React.Component {
+  static propTypes = {
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func.isRequired,
+    }).isRequired,
+  };
+
   static navigationOptions = ({ navigation }) => {
     const totalValuation = navigation.getParam('totalValuation', 0);
     return {
@@ -96,9 +102,14 @@ export default class AssetList extends React.Component {
     this.onRefresh();
   }
 
+  onAddCoin = () => {
+    const { navigation } = this.props;
+    navigation.navigate('AssetAddScreen');
+  };
+
   onPressItem = (item) => {
-    const { navigate } = this.props.navigation;
-    navigate('AssetScreen', { asset: item });
+    const { navigation } = this.props;
+    navigation.navigate('AssetScreen', { asset: item });
   };
 
   onRefresh = () => {
@@ -113,6 +124,8 @@ export default class AssetList extends React.Component {
   };
 
   refreshAssets = async () => {
+    const { navigation } = this.props;
+
     const assets = await DataStorage.getAssets();
     let totalValuation = 0;
 
@@ -137,7 +150,7 @@ export default class AssetList extends React.Component {
     }
 
     // update the total valuation
-    this.props.navigation.setParams({ totalValuation });
+    navigation.setParams({ totalValuation });
 
     // add the assets to the state
     this.setState(prevState => ({
@@ -148,12 +161,16 @@ export default class AssetList extends React.Component {
   };
 
   onDidFocus = (payload) => {
-    if (this.props.navigation.getParam('refresh', false)) {
+    const { navigation } = this.props;
+
+    if (navigation.getParam('refresh', false)) {
       this.onRefresh();
     }
   };
 
   render() {
+    const { assets, refreshing } = this.state;
+
     return (
       <View style={styles.container}>
         <NavigationEvents onDidFocus={this.onDidFocus} />
@@ -161,20 +178,20 @@ export default class AssetList extends React.Component {
           <FlatList
             style={styles.list}
             contentContainerStyle={styles.listContentContainer}
-            data={this.state.assets}
+            data={assets}
             keyExtractor={item => item.coin.ticker}
             renderItem={({ item }) => <AssetItem asset={item} onPressItem={this.onPressItem} />}
-            refreshing={this.state.refreshing}
+            refreshing={refreshing}
             onRefresh={this.onRefresh}
             ListEmptyComponent={(
               <Text style={styles.listEmptyContent}>
-                {this.state.refreshing ? '(loading...)' : '(no assets)'}
+                {refreshing ? '(loading...)' : '(no assets)'}
               </Text>
 )}
           />
         </View>
         <View style={styles.footerContainer}>
-          <AddCoinButton onPress={() => this.props.navigation.navigate('AssetAddScreen')} />
+          <AddCoinButton onPress={this.onAddCoin} />
         </View>
       </View>
     );
