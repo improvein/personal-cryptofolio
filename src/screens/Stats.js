@@ -115,7 +115,10 @@ export default class Stats extends React.Component {
   };
 
   render() {
-    const gainLoss = this.state.valuation - this.state.cost;
+    const { cost, valuation } = this.state;
+
+    const gainLoss = valuation - cost;
+    const gainLossPerc = (gainLoss / cost) * 100;
     const gainLosColor = gainLoss >= 0 ? colors.GREEN : colors.RED;
 
     return (
@@ -137,16 +140,17 @@ export default class Stats extends React.Component {
         <View style={styles.contentContainer}>
           <View style={styles.statRow}>
             <Text style={styles.statRowLabel}>Total valuation</Text>
-            <Text style={styles.statRowValue}>{`$ ${this.state.valuation.toFixed(2)}`}</Text>
+            <Text style={styles.statRowValue}>{`$ ${valuation.toFixed(2)}`}</Text>
           </View>
           <View style={styles.statRow}>
             <Text style={styles.statRowLabel}>Total cost</Text>
-            <Text style={styles.statRowValue}>{`$ ${this.state.cost.toFixed(2)}`}</Text>
+            <Text style={styles.statRowValue}>{`$ ${cost.toFixed(2)}`}</Text>
           </View>
           <View style={styles.statRow}>
             <Text style={styles.statRowLabel}>Total gain/loss</Text>
             <Text style={[styles.statRowValue, { color: gainLosColor }]}>
-              {`$ ${gainLoss.toFixed(2)}`}
+              {`$ ${gainLoss.toFixed(2)} \n`}
+              {`${gainLossPerc.toFixed(2)} %`}
             </Text>
           </View>
         </View>
