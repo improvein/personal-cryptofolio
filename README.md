@@ -69,10 +69,11 @@ APP_RELEASE_KEY_PASSWORD=your_key_password
 ```
 (if you have any doubt as for the use of these parameters, check the [android/app/build.grade](https://github.com/improvein/personal-cryptofolio/blob/master/android/app/build.grade) file)
 
-Then run the project in Android:
+Then run the project in debug mode in Android:
 ```
-npm run android
+react-native run-android --appIdSuffix "debug"
 ```
+(the suffix thing is because the app is configured to add a "debug" prefix to the package name when running on debug mode. That way it doesn't run into conflics with your production app that might be installed on the device)
 
 ### iOS
 (@TODO: NEED MORE DETAILS HERE)
