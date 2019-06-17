@@ -274,10 +274,7 @@ export default class Asset extends React.Component {
         <NavigationEvents onDidFocus={this.onDidFocus} />
         <View style={styles.infoContainer}>
           <AssetInfoBox title="Holdings" text={asset.amount.toFixed(8)} />
-          <AssetInfoBox
-            title={totalCost >= 0 ? 'Income' : 'Cost'}
-            text={`$ ${totalCost.toFixed(2)}`}
-          />
+          <AssetInfoBox title="Spent" text={`$ ${totalCost.toFixed(2)}`} />
           <AssetInfoBox title="Market value" text={`$ ${marketPrice.toFixed(2)}`} />
           <AssetInfoBox title="Profit / Loss">
             {`$ ${(marketPrice - totalCost).toFixed(2)}`}
