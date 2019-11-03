@@ -109,12 +109,10 @@ class DataStorage {
   static getAssetTransactions = async (asset) => {
     const { ticker } = asset.coin;
     let returnedValue = null;
-    try {
-      returnedValue = (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '{}';
-      returnedValue = JSON.parse(returnedValue);
-    } catch (error) {
-      throw error;
-    }
+
+    returnedValue = (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '{}';
+    returnedValue = JSON.parse(returnedValue);
+
     return returnedValue;
   };
 
@@ -203,14 +201,10 @@ class DataStorage {
       amount: 0,
       priceSourceCode,
     };
-    try {
-      // store updated assets
-      await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
-      return assets[coin.ticker];
-    } catch (error) {
-      // Error saving data
-      throw error;
-    }
+
+    // store updated assets
+    await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
+    return assets[coin.ticker];
   };
 
   /**
@@ -221,29 +215,23 @@ class DataStorage {
     const assets = await DataStorage.getAssets();
     // initialize new asset
     assets[asset.coin.ticker] = asset;
-    try {
-      // store updated assets
-      await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
-      return asset;
-    } catch (error) {
-      // Error saving data
-      throw error;
-    }
+
+    // store updated assets
+    await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
+    return asset;
   };
 
   static removeAsset = async (ticker) => {
     const assets = await DataStorage.getAssets();
     // clear the asset
     delete assets[ticker];
-    try {
-      // re,pve asset and it's transactions
-      await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
-      await AsyncStorage.removeItem(DATA_ASSET_HIST + ticker);
-    } catch (error) {
-      // Error saving data
-      throw error;
-    }
+
+    // re,pve asset and it's transactions
+    await AsyncStorage.setItem(DATA_ASSETS, JSON.stringify(assets));
+    await AsyncStorage.removeItem(DATA_ASSET_HIST + ticker);
   };
+
+  // #region Prices  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   /**
    * Get the prices locally stored
@@ -291,6 +279,10 @@ class DataStorage {
     }
   };
 
+  // #endregion Prices  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+  // #region Settings  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
   /**
    * Get the app settings
    */
@@ -317,6 +309,10 @@ class DataStorage {
       throw error;
     }
   };
+
+  // #endregion Settings  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+  // #region PIN  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   /**
    * Update the PIN for storage and other purposes
@@ -363,6 +359,8 @@ class DataStorage {
     const hashedHex = sha256(pin).toString();
     return hashedHex === storedHashedPin;
   };
+
+  // #endregion PIN  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 }
 
 export default DataStorage;
