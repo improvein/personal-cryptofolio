@@ -142,6 +142,7 @@ class AssetList extends React.Component {
           assetsToList[index].valuation = assetsToList[index].price * assetsToList[index].amount;
           totalValuation += assetsToList[index].valuation;
         }
+
         // update the total valuation
         navigation.setParams({ totalValuation });
 
@@ -208,6 +209,7 @@ AssetList.propTypes = {
     goBack: PropTypes.func.isRequired,
     getParam: PropTypes.func.isRequired,
     setParams: PropTypes.func.isRequired,
+    addListener: PropTypes.func.isRequired,
   }).isRequired,
 };
 

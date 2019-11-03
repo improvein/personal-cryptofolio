@@ -149,15 +149,11 @@ class DataStorage {
       .reduce((accum, current) => accum + current);
     const updatedAsset = asset;
     updatedAsset.amount = calculatedAmount;
-    try {
-      // store updated transactions and asset
-      await AsyncStorage.setItem(DATA_ASSET_HIST + ticker, JSON.stringify(transactions));
-      await DataStorage.updateAsset(updatedAsset);
-      return tx;
-    } catch (error) {
-      // Error saving data
-      throw error;
-    }
+
+    // store updated transactions and asset
+    await AsyncStorage.setItem(DATA_ASSET_HIST + ticker, JSON.stringify(transactions));
+    await DataStorage.updateAsset(updatedAsset);
+    return tx;
   };
 
   static removeAssetTransaction = async (asset, txDate) => {
@@ -270,13 +266,8 @@ class DataStorage {
    * @param {Date} fetchTime new fetch time
    */
   static setPricesLastFetchTime = async (fetchTime) => {
-    try {
-      // store updated prices
-      await AsyncStorage.setItem(DATA_PRICES_FETCHTIME, fetchTime.toISOString());
-    } catch (error) {
-      // Error saving data
-      throw error;
-    }
+    // store updated prices
+    await AsyncStorage.setItem(DATA_PRICES_FETCHTIME, fetchTime.toISOString());
   };
 
   // #endregion Prices  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

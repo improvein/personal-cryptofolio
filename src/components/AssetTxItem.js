@@ -81,7 +81,9 @@ class AssetTxItem extends React.Component {
           <View style={styles.fieldWrapper}>
             <Text style={styles.fieldLabel}>Date</Text>
             <Text style={styles.fieldContent}>
-              {moment(transaction.date).format('YYYY-MM-DD HH:mm')}
+              {moment(transaction.date)
+                .local()
+                .format('YYYY-MM-DD HH:mm')}
             </Text>
           </View>
         </View>

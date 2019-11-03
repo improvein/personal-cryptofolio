@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   container: {
     borderColor: colors.PRIMARY_COLOR_DARKER,
     borderWidth: 2,
-    borderStyle: 'dashed',
+    borderStyle: 'solid',
     borderRadius: 8,
     width: '100%',
     height: 60,
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.PRIMARY_COLOR_DARKER,
     borderRadius: 20,
+    borderStyle: 'solid',
     marginRight: 25,
   },
   plus: {
