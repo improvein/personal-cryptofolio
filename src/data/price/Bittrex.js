@@ -12,7 +12,7 @@ class Bittrex {
           .then((responseJson) => {
             const coinPrice = {
               ticker: coinTicker,
-              price: parseFloat(responseJson.Last),
+              price: parseFloat(responseJson.result.Last),
               variation: 0, // (responseJson.last / responseJson.open - 1) * 100,
             };
             resolve(coinPrice);
