@@ -1,7 +1,7 @@
 {
   "name": "personal-cryptofolio",
   "author": "Improve-in (https://www.improvein.com)",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Mobile personal crypto portfolio manager focusing on privacy and data availability.",
   "private": true,
   "scripts": {
