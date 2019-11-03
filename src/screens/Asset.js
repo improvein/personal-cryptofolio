@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  Alert, FlatList, StyleSheet, Text, TouchableOpacity, View,
-} from 'react-native';
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { NavigationEvents } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -94,13 +92,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class Asset extends React.Component {
-  static propTypes = {
-    navigation: PropTypes.shape({
-      navigate: PropTypes.func.isRequired,
-    }).isRequired,
-  };
-
+class Asset extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const currentPrice = navigation.getParam('currentPrice', 0);
 
@@ -116,12 +108,9 @@ export default class Asset extends React.Component {
     return {
       header: (
         <Header
-          title={`${navigation.state.params.asset.coin.name} (${
-            navigation.state.params.asset.coin.ticker
-          })`}
+          title={`${navigation.state.params.asset.coin.name} (${navigation.state.params.asset.coin.ticker})`}
           enableBackArrow="true"
-          onBackArrowPress={() => navigation.goBack()}
-        >
+          onBackArrowPress={() => navigation.goBack()}>
           <View style={styles.headerChildren}>
             <View style={styles.headerPrice}>
               <Text style={styles.currentPrice}>{`$ ${currentPrice.toFixed(2)}`}</Text>
@@ -144,7 +133,8 @@ export default class Asset extends React.Component {
   constructor(props) {
     super(props);
 
-    const asset = this.props.navigation.getParam('asset');
+    const { navigation } = this.props;
+    const asset = navigation.getParam('asset');
 
     // on pres event handler
     this.state = {
@@ -156,7 +146,9 @@ export default class Asset extends React.Component {
   }
 
   componentDidMount() {
-    this.props.navigation.setParams({ onRemoveAsset: this.removeAsset });
+    const { navigation } = this.props;
+
+    navigation.setParams({ onRemoveAsset: this.removeAsset });
     // load assets from storage
     this.refreshTransactions();
   }
@@ -173,10 +165,13 @@ export default class Asset extends React.Component {
   };
 
   refreshTransactions = async () => {
+    const { asset } = this.state;
+    const { navigation } = this.props;
+
     let currentPrice = 0;
 
     // get assets from storage
-    const transactions = await DataStorage.getAssetTransactions(this.state.asset);
+    const transactions = await DataStorage.getAssetTransactions(asset);
     let transactionsArray = Object.values(transactions);
     // calculate the total cost and sort
     let totalCost = 0.0;
@@ -204,17 +199,17 @@ export default class Asset extends React.Component {
     // update the  data to display
     // prices
     const prices = await DataStorage.getPrices();
-    const coinPrice = prices[this.state.asset.coin.ticker] || null;
+    const coinPrice = prices[asset.coin.ticker] || null;
     if (coinPrice !== null) {
       currentPrice = coinPrice.price || 0;
     } else {
       currentPrice = 0;
     }
     // update the current price
-    this.props.navigation.setParams({ currentPrice });
+    navigation.setParams({ currentPrice });
 
     // add the assets to the state
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       ...prevState,
       transactions: transactionsArray,
       totalCost,
@@ -223,6 +218,9 @@ export default class Asset extends React.Component {
   };
 
   removeAsset = () => {
+    const { asset } = this.state;
+    const { navigation } = this.props;
+
     Alert.alert(
       'Remove asset',
       'Are you sure you want to remove the asset from your portfolio?',
@@ -237,9 +235,8 @@ export default class Asset extends React.Component {
         {
           text: 'OK',
           onPress: () => {
-            const { asset } = this.props.navigation.state.params;
             DataStorage.removeAsset(asset.coin.ticker).then(() => {
-              this.props.navigation.navigate('AssetListScreen', { refresh: true });
+              navigation.navigate('AssetListScreen', { refresh: true });
             });
           },
         },
@@ -249,32 +246,36 @@ export default class Asset extends React.Component {
   };
 
   onAddTransaction = () => {
+    const { asset } = this.state;
+
     const { navigation } = this.props;
     navigation.navigate('AssetTxScreen', {
-      asset: this.state.asset,
+      asset,
       currentPrice: navigation.getParam('currentPrice', 0),
     });
   };
 
   onPressTxItem = (tx) => {
+    const { asset } = this.state;
     const { navigation } = this.props;
+
     navigation.navigate('AssetTxScreen', {
-      asset: this.state.asset,
+      asset,
       transaction: tx,
       currentPrice: navigation.getParam('currentPrice', 0),
     });
   };
 
   onDidFocus = (payload) => {
-    if (this.props.navigation.getParam('refresh', false)) {
+    const { navigation } = this.props;
+
+    if (navigation.getParam('refresh', false)) {
       this.onRefresh();
     }
   };
 
   render() {
-    const { navigation } = this.props;
-    const { asset } = navigation.state.params;
-    const { totalCost } = this.state;
+    const { totalCost, asset, transactions, refreshing } = this.state;
     const marketPrice = asset.amount * asset.price;
 
     return (
@@ -309,12 +310,12 @@ export default class Asset extends React.Component {
           <FlatList
             style={styles.list}
             contentContainerStyle={styles.listContentContainer}
-            data={this.state.transactions}
-            keyExtractor={item => item.date}
+            data={transactions}
+            keyExtractor={(item) => item.date}
             renderItem={({ item }) => (
               <AssetTxItem transaction={item} onPressItem={this.onPressTxItem} />
             )}
-            refreshing={this.state.refreshing}
+            refreshing={refreshing}
             onRefresh={this.onRefresh}
             ListEmptyComponent={<Text style={styles.listEmptyContent}>(no transactions)</Text>}
           />
@@ -323,3 +324,13 @@ export default class Asset extends React.Component {
     );
   }
 }
+
+Asset.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    getParam: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
+export default Asset;
