@@ -277,6 +277,7 @@ class Asset extends React.Component {
   render() {
     const { totalCost, asset, transactions, refreshing } = this.state;
     const marketPrice = asset.amount * asset.price;
+    const averagePrice = totalCost / asset.amount;
 
     return (
       <View style={styles.container}>
@@ -285,6 +286,7 @@ class Asset extends React.Component {
           <AssetInfoBox title="Holdings" text={asset.amount.toFixed(8)} />
           <AssetInfoBox title="Spent" text={`$ ${totalCost.toFixed(2)}`} />
           <AssetInfoBox title="Market value" text={`$ ${marketPrice.toFixed(2)}`} />
+          <AssetInfoBox title="Avg. Buy" text={`$ ${averagePrice.toFixed(2)}`} />
           <AssetInfoBox title="Profit / Loss">
             {`$ ${(marketPrice - totalCost).toFixed(2)}`}
             {marketPrice >= totalCost ? (
