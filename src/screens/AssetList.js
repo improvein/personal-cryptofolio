@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  FlatList, StyleSheet, View, Text, TouchableOpacity,
-} from 'react-native';
+import { FlatList, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { NavigationEvents } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -56,13 +54,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class AssetList extends React.Component {
-  static propTypes = {
-    navigation: PropTypes.shape({
-      navigate: PropTypes.func.isRequired,
-    }).isRequired,
-  };
-
+class AssetList extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const totalValuation = navigation.getParam('totalValuation', 0);
     return {
@@ -71,16 +63,14 @@ export default class AssetList extends React.Component {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('StatsScreen');
-            }}
-          >
+            }}>
             <Text style={styles.totalAmount}>{`$ ${totalValuation.toFixed(2)}`}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.settingsButton}
             onPress={() => {
               navigation.navigate('SettingsScreen');
-            }}
-          >
+            }}>
             <Icon name="settings" size={30} color={colors.WHITE} />
           </TouchableOpacity>
         </Header>
@@ -153,7 +143,7 @@ export default class AssetList extends React.Component {
     navigation.setParams({ totalValuation });
 
     // add the assets to the state
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       ...prevState,
       assets: assetsToList,
       refreshing: false,
@@ -179,15 +169,15 @@ export default class AssetList extends React.Component {
             style={styles.list}
             contentContainerStyle={styles.listContentContainer}
             data={assets}
-            keyExtractor={item => item.coin.ticker}
+            keyExtractor={(item) => item.coin.ticker}
             renderItem={({ item }) => <AssetItem asset={item} onPressItem={this.onPressItem} />}
             refreshing={refreshing}
             onRefresh={this.onRefresh}
-            ListEmptyComponent={(
+            ListEmptyComponent={
               <Text style={styles.listEmptyContent}>
                 {refreshing ? '(loading...)' : '(no assets)'}
               </Text>
-)}
+            }
           />
         </View>
         <View style={styles.footerContainer}>
@@ -197,3 +187,13 @@ export default class AssetList extends React.Component {
     );
   }
 }
+
+AssetList.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    getParam: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
+export default AssetList;

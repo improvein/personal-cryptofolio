@@ -99,12 +99,10 @@ class DataStorage {
    */
   static getAssets = async () => {
     let returnedValue = null;
-    try {
-      returnedValue = (await AsyncStorage.getItem(DATA_ASSETS)) || '{}';
-      returnedValue = JSON.parse(returnedValue);
-    } catch (error) {
-      throw error;
-    }
+
+    returnedValue = (await AsyncStorage.getItem(DATA_ASSETS)) || '{}';
+    returnedValue = JSON.parse(returnedValue);
+
     return returnedValue;
   };
 
@@ -154,7 +152,7 @@ class DataStorage {
     // calculate amount
     const transactionsArray = Object.values(transactions);
     const calculatedAmount = transactionsArray
-      .map(trans => trans.amount)
+      .map((trans) => trans.amount)
       .reduce((accum, current) => accum + current);
     const updatedAsset = asset;
     updatedAsset.amount = calculatedAmount;
@@ -183,7 +181,7 @@ class DataStorage {
     // calculate amount
     const transactionsArray = Object.values(transactions);
     const calculatedAmount = transactionsArray
-      .map(trans => trans.amount)
+      .map((trans) => trans.amount)
       .reduce((accum, current) => accum + current);
     const updatedAsset = asset;
     updatedAsset.amount = calculatedAmount;
