@@ -121,33 +121,47 @@ class AssetList extends React.Component {
 
     // get assets from storage
     const assetsToList = Object.values(assets);
-    // fetch and update their market prices
-    await PriceOracle.refreshPrices();
-    // update the data to display
-    const prices = await DataStorage.getPrices();
-    for (let index = 0; index < assetsToList.length; index += 1) {
-      const { ticker } = assetsToList[index].coin;
-      const coinPrice = prices[ticker] || null;
-      if (coinPrice !== null) {
-        assetsToList[index].price = prices[ticker].price || 0;
-        assetsToList[index].variation = prices[ticker].variation || 0;
-      } else {
-        assetsToList[index].price = 0;
-        assetsToList[index].variation = 0;
-      }
-      assetsToList[index].valuation = assetsToList[index].price * assetsToList[index].amount;
-      totalValuation += assetsToList[index].valuation;
-    }
 
-    // update the total valuation
-    navigation.setParams({ totalValuation });
+    // fetch and update their market prices
+    PriceOracle.refreshPrices()
+      .then(() => {
+        // update the data to display
+        return DataStorage.getPrices();
+      })
+      .then((prices) => {
+        for (let index = 0; index < assetsToList.length; index += 1) {
+          const { ticker } = assetsToList[index].coin;
+          const coinPrice = prices[ticker] || null;
+          if (coinPrice !== null) {
+            assetsToList[index].price = prices[ticker].price || 0;
+            assetsToList[index].variation = prices[ticker].variation || 0;
+          } else {
+            assetsToList[index].price = 0;
+            assetsToList[index].variation = 0;
+          }
+          assetsToList[index].valuation = assetsToList[index].price * assetsToList[index].amount;
+          totalValuation += assetsToList[index].valuation;
+        }
+        // update the total valuation
+        navigation.setParams({ totalValuation });
+
+        // add the assets to the state
+        this.setState({
+          assets: assetsToList,
+          refreshing: false,
+        });
+      })
+      .catch((error) => {
+        console.warn(`Couldn't get prices.`, error);
+        this.setState({
+          refreshing: false,
+        });
+      });
 
     // add the assets to the state
-    this.setState((prevState) => ({
-      ...prevState,
+    this.setState({
       assets: assetsToList,
-      refreshing: false,
-    }));
+    });
   };
 
   onDidFocus = (payload) => {

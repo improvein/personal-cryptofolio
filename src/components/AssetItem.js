@@ -99,12 +99,16 @@ class AssetItem extends React.Component {
               <Text>{asset.coin.ticker}</Text>
             </View>
             <View style={styles.portfolioDataContainer}>
-              <Text style={styles.mainText}>{`$ ${asset.valuation.toFixed(2)}`}</Text>
+              <Text style={styles.mainText}>{`$ ${
+                asset.valuation !== undefined ? asset.valuation.toFixed(2) : '-'
+              }`}</Text>
               <Text style={styles.secondaryText}>{asset.amount.toFixed(8)}</Text>
             </View>
             <View style={styles.coinDataContainer}>
-              <Text style={styles.mainText}>{`$ ${asset.price}`}</Text>
-              <Text style={styles.secondaryText}>{`${asset.variation.toFixed(2)} %`}</Text>
+              <Text style={styles.mainText}>{`$ ${asset.price ? asset.price : '-'}`}</Text>
+              <Text style={styles.secondaryText}>{`${
+                asset.variation !== undefined ? asset.variation.toFixed(2) : '-'
+              } %`}</Text>
             </View>
           </View>
         </LinearGradient>
