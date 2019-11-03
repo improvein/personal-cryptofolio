@@ -15,7 +15,7 @@ Download from the stores (Android only for the moment, iOS coming later):
 ## Core principles - where we are different
 
 * **Data availability**: export and import your data and allow YOU to be the owner of it
-* **Privacy**: no 3rd parties involved for storage of your data
+* **Privacy**: no 3rd parties involved in the storage of your data
 
 ## Features
 
@@ -28,6 +28,7 @@ Download from the stores (Android only for the moment, iOS coming later):
   * Binance
   * Bitfinex
   * Bitstamp
+  * Bittrex
   * Kraken
 * Export your entire portfolio in JSON format<br>
   _(at the moment only available with the "share" option)_
@@ -39,7 +40,7 @@ Download from the stores (Android only for the moment, iOS coming later):
 Some things to consider regarding your privacy:
 
 * Your entire portfolio data is stored in your device. Nothing is sent to any server.
-* The only contact with the "outside world" is for price retrieval from price sources like exchanges. But in those cases, nothing from your portfolio is revelead except for the coin for which you want to fetch the price.
+* The only contact with the "outside world" is for price retrieval from price sources like exchanges. But in those cases, nothing from your portfolio is revelead except for the coin which you want to fetch the price for.
 * The App can be protected with a PIN.
 * Data is stored non-encrypted in the device. (see [future features](https://github.com/improvein/personal-cryptofolio/issues)).<br/>
   However, the isolation the modern OS provides protects you from other apps trying to access it in most cases.
