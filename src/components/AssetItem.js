@@ -1,8 +1,8 @@
 import React from 'react';
-import {
-  Image, StyleSheet, TouchableOpacity, Text, View,
-} from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, Text, View } from 'react-native';
+import PropTypes from 'prop-types';
 import LinearGradient from 'react-native-linear-gradient';
+import coinLogos from '../assets';
 import { colors } from '../utils';
 
 const styles = StyleSheet.create({
@@ -61,7 +61,8 @@ class AssetItem extends React.Component {
    * Press event handler
    */
   onPress = () => {
-    this.props.onPressItem(this.props.asset);
+    const { onPressItem, asset } = this.props;
+    onPressItem(asset);
   };
 
   /**
@@ -73,6 +74,7 @@ class AssetItem extends React.Component {
 
   render() {
     const { asset } = this.props;
+
     const gradientColors = [colors.WHITE];
     if (asset.variation >= 0) {
       gradientColors.push(colors.GREEN);
@@ -80,18 +82,20 @@ class AssetItem extends React.Component {
       gradientColors.push(colors.RED);
     }
 
+    let logoImage = null;
+    if (asset.coin.ticker) {
+      logoImage = coinLogos[asset.coin.ticker.toLowerCase()];
+    }
+
     return (
       <TouchableOpacity
         style={styles.container}
         onPress={this.onPress}
-        onLongPress={this.onLongPress}
-      >
+        onLongPress={this.onLongPress}>
         <LinearGradient start={{ x: 0.9, y: 0.4 }} end={{ x: 1, y: 1 }} colors={gradientColors}>
           <View style={styles.contentContainer}>
             <View style={styles.logoContainer}>
-              {/* TODO TAKE OUT THIS VALIDATION WHEN ALL COINS HAVE LOGO */}
-              {asset.coin
-                && asset.coin.logo && <Image source={asset.coin.logo} style={styles.logoImage} />}
+              {logoImage && <Image source={logoImage} style={styles.logoImage} />}
               <Text>{asset.coin.ticker}</Text>
             </View>
             <View style={styles.portfolioDataContainer}>
@@ -108,5 +112,14 @@ class AssetItem extends React.Component {
     );
   }
 }
+
+AssetItem.propTypes = {
+  asset: PropTypes.object.isRequired,
+  onPressItem: PropTypes.func,
+};
+
+AssetItem.defaultProps = {
+  onPressItem: () => {},
+};
 
 export default AssetItem;
