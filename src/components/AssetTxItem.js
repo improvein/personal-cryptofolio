@@ -1,7 +1,7 @@
 import React from 'react';
-import {
-  StyleSheet, TouchableOpacity, Text, View,
-} from 'react-native';
+import PropTypes from 'prop-types';
+import { StyleSheet, TouchableOpacity, Text, View } from 'react-native';
+import moment from 'moment';
 import { colors } from '../utils';
 
 const styles = StyleSheet.create({
@@ -35,7 +35,8 @@ class AssetTxItem extends React.Component {
    * Press event handler
    */
   onPress = () => {
-    this.props.onPressItem(this.props.transaction);
+    const { onPressItem, transaction } = this.props;
+    onPressItem(transaction);
   };
 
   /**
@@ -54,8 +55,7 @@ class AssetTxItem extends React.Component {
       <TouchableOpacity
         style={styles.container}
         onPress={this.onPress}
-        onLongPress={this.onLongPress}
-      >
+        onLongPress={this.onLongPress}>
         <View style={styles.contentContainer}>
           <View style={styles.fieldWrapper}>
             <Text style={styles.fieldLabel}>
@@ -80,12 +80,22 @@ class AssetTxItem extends React.Component {
           </View>
           <View style={styles.fieldWrapper}>
             <Text style={styles.fieldLabel}>Date</Text>
-            <Text style={styles.fieldContent}>{transaction.date}</Text>
+            <Text style={styles.fieldContent}>
+              {moment(transaction.date).format('YYYY-MM-DD HH:mm')}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
     );
   }
 }
+
+AssetTxItem.propTypes = {
+  transaction: PropTypes.object.isRequired,
+  onPressItem: PropTypes.func,
+};
+AssetTxItem.defaultProps = {
+  onPressItem: () => {},
+};
 
 export default AssetTxItem;
