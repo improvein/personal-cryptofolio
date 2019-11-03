@@ -1,10 +1,8 @@
 import React from 'react';
-import {
-  FlatList, StyleSheet, Text, TouchableOpacity, TextInput, View,
-} from 'react-native';
+import PropTypes from 'prop-types';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { CoinListItem } from '../components';
 import DataStorage from '../data/DataStorage';
 import { colors } from '../utils';
 import PriceOracle from '../data/PriceOracle';
@@ -56,7 +54,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class Stats extends React.Component {
+class Stats extends React.Component {
   static navigationOptions = {
     title: 'Portfolio Stats',
     header: null,
@@ -85,6 +83,7 @@ export default class Stats extends React.Component {
     const assetsToList = Object.values(assets);
     // fetch and update their market prices
     await PriceOracle.refreshPrices();
+
     // update the data to display
     const prices = await DataStorage.getPrices();
     for (let index = 0; index < assetsToList.length; index += 1) {
@@ -107,7 +106,7 @@ export default class Stats extends React.Component {
     }
 
     // add the assets to the state
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       ...prevState,
       refreshing: false,
       valuation: totalValuation,
@@ -117,23 +116,20 @@ export default class Stats extends React.Component {
 
   render() {
     const { cost, valuation } = this.state;
+    const { navigation } = this.props;
 
     const gainLoss = valuation - cost;
     const gainLossPerc = (gainLoss / cost) * 100;
-    const gainLosColor = gainLoss >= 0 ? colors.GREEN : colors.RED;
+    const gainLosColor = gainLoss >= 0 ? colors.GREEN_DARK : colors.RED;
 
     return (
       <LinearGradient
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         colors={[colors.PRIMARY_COLOR_LIGHTER, colors.PRIMARY_COLOR_DARKER]}
-        style={styles.container}
-      >
+        style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backArrowContainer}
-            onPress={() => this.props.navigation.goBack()}
-          >
+          <TouchableOpacity style={styles.backArrowContainer} onPress={() => navigation.goBack()}>
             <Icon name="arrow-left" size={30} color={colors.WHITE} />
           </TouchableOpacity>
           <Text style={styles.title}>Portfolio Stats</Text>
@@ -159,3 +155,14 @@ export default class Stats extends React.Component {
     );
   }
 }
+
+Stats.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    getParam: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
+export default Stats;

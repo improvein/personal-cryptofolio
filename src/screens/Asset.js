@@ -290,7 +290,7 @@ class Asset extends React.Component {
           <AssetInfoBox title="Profit / Loss">
             {`$ ${(marketPrice - totalCost).toFixed(2)}`}
             {marketPrice >= totalCost ? (
-              <Icon name="arrow-up-thick" size={15} color={colors.GREEN} />
+              <Icon name="arrow-up-thick" size={15} color={colors.GREEN_DARK} />
             ) : (
               <Icon name="arrow-down-thick" size={15} color={colors.RED} />
             )}

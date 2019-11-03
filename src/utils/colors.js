@@ -7,6 +7,7 @@ const SHADOW = '#3A3A3A';
 const GRAY = '#EEE';
 const RED = '#FFABAB';
 const GREEN = '#95FF95';
+const GREEN_DARK = '#70c470';
 
 const colors = {
   PRIMARY_COLOR,
@@ -18,6 +19,7 @@ const colors = {
   GRAY,
   RED,
   GREEN,
+  GREEN_DARK,
 };
 
 export default colors;

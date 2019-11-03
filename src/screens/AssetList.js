@@ -191,6 +191,7 @@ class AssetList extends React.Component {
 AssetList.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
     getParam: PropTypes.func.isRequired,
     setParams: PropTypes.func.isRequired,
   }).isRequired,
