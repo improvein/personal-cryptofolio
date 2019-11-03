@@ -14,23 +14,18 @@ class DataStorage {
    * Clears all internally stored data
    */
   static clearData = async () => {
-    try {
-      await AsyncStorage.removeItem(DATA_SETTINGS);
-      await AsyncStorage.removeItem(DATA_PIN_HASH);
-      await AsyncStorage.removeItem(DATA_ASSETS);
-      await AsyncStorage.removeItem(DATA_PRICES);
-      await AsyncStorage.removeItem(DATA_PRICES_FETCHTIME);
-      // remove transactions
-      const keys = await AsyncStorage.getAllKeys();
-      for (let k = 0; k < keys.length; k += 1) {
-        const key = keys[k];
-        if (key.includes(DATA_ASSET_HIST)) {
-          await AsyncStorage.removeItem(key);
-        }
+    await AsyncStorage.removeItem(DATA_SETTINGS);
+    await AsyncStorage.removeItem(DATA_PIN_HASH);
+    await AsyncStorage.removeItem(DATA_ASSETS);
+    await AsyncStorage.removeItem(DATA_PRICES);
+    await AsyncStorage.removeItem(DATA_PRICES_FETCHTIME);
+    // remove transactions
+    const keys = await AsyncStorage.getAllKeys();
+    for (let k = 0; k < keys.length; k += 1) {
+      const key = keys[k];
+      if (key.includes(DATA_ASSET_HIST)) {
+        await AsyncStorage.removeItem(key);
       }
-    } catch (error) {
-      // Error saving data
-      throw error;
     }
   };
 
@@ -256,12 +251,8 @@ class DataStorage {
    */
   static getPrices = async () => {
     let returnedValue = null;
-    try {
-      returnedValue = (await AsyncStorage.getItem(DATA_PRICES)) || '{}';
-      returnedValue = JSON.parse(returnedValue);
-    } catch (error) {
-      throw error;
-    }
+    returnedValue = (await AsyncStorage.getItem(DATA_PRICES)) || '{}';
+    returnedValue = JSON.parse(returnedValue);
     return returnedValue;
   };
 
@@ -273,23 +264,16 @@ class DataStorage {
         variation: priceData.variation,
       };
     });
-    try {
-      // store updated prices
-      await AsyncStorage.setItem(DATA_PRICES, JSON.stringify(prices));
-    } catch (error) {
-      // Error saving data
-      throw error;
-    }
+
+    // store updated prices
+    await AsyncStorage.setItem(DATA_PRICES, JSON.stringify(prices));
   };
 
   static getPricesLastFetchTime = async () => {
     let returnedValue = null;
-    try {
-      returnedValue = (await AsyncStorage.getItem(DATA_PRICES_FETCHTIME)) || '2009-01-03T00:00:01';
-      returnedValue = Date.parse(returnedValue);
-    } catch (error) {
-      throw error;
-    }
+
+    returnedValue = (await AsyncStorage.getItem(DATA_PRICES_FETCHTIME)) || '2009-01-03T00:00:01';
+    returnedValue = Date.parse(returnedValue);
     return returnedValue;
   };
 

@@ -1,5 +1,5 @@
-class Binance {
-  apiURL = 'https://api.binance.com/api/v3/ticker/24hr?symbol={currency_pair}';
+class Bittrex {
+  apiURL = 'https://api.bittrex.com/api/v1.1/public/getticker?market={currency_pair}';
 
   getPrices = async (coins) => {
     const fetchPromises = [];
@@ -12,8 +12,8 @@ class Binance {
           .then((responseJson) => {
             const coinPrice = {
               ticker: coinTicker,
-              price: parseFloat(responseJson.lastPrice),
-              variation: parseFloat(responseJson.priceChangePercent),
+              price: parseFloat(responseJson.Last),
+              variation: 0, // (responseJson.last / responseJson.open - 1) * 100,
             };
             resolve(coinPrice);
           })
@@ -39,9 +39,22 @@ class Binance {
   };
 
   getPair = (coinTicker) => {
-    const pair = `${coinTicker.toUpperCase()}USDT`;
+    const ticker = coinTicker;
+
+    let dolarTicker = 'USD';
+    if (
+      ticker === 'DASH' ||
+      ticker === 'DCR' ||
+      ticker === 'EOS' ||
+      ticker === 'RVN' ||
+      ticker === 'XMR'
+    ) {
+      dolarTicker = 'USDT';
+    }
+
+    const pair = `${dolarTicker}-${ticker.toUpperCase()}`;
     return pair;
   };
 }
 
-export default Binance;
+export default Bittrex;

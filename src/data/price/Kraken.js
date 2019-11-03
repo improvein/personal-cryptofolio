@@ -11,7 +11,7 @@ class Bitfinex {
       const tickers = currencyPairs.join(',');
       const url = this.apiURL.replace('{currency_pairs}', tickers);
       fetch(url)
-        .then(response => response.json())
+        .then((response) => response.json())
         .then((responseJson) => {
           const coinPrices = [];
           // Kraken sometimes use similar tickers/pairs so we need to find matches

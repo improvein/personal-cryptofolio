@@ -8,7 +8,7 @@ class Bitfinex {
         const pair = this.getPair(coinTicker);
         const url = this.apiURL.replace('{currency_pair}', pair);
         fetch(url)
-          .then(response => response.json())
+          .then((response) => response.json())
           .then((responseJson) => {
             const coinPrice = {
               ticker: coinTicker,

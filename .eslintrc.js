@@ -7,6 +7,7 @@ module.exports = {
   extends: ['airbnb', 'plugin:prettier/recommended'],
   globals: {
     Atomics: 'readonly',
+    fetch: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
   parserOptions: {

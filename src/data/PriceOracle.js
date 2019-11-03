@@ -10,6 +10,7 @@ class PriceOracle {
     { code: 'binance', name: 'Binance' },
     { code: 'bitfinex', name: 'Bitfinex' },
     { code: 'bitstamp', name: 'Bitstamp' },
+    { code: 'bittrex', name: 'Bittrex' },
     { code: 'kraken', name: 'Kraken' },
   ];
 
@@ -17,7 +18,7 @@ class PriceOracle {
    * Returns all the available price sources
    */
   static getSources = () => {
-    const sources = PriceOracle.priceSources.map(source => ({
+    const sources = PriceOracle.priceSources.map((source) => ({
       code: source.code,
       name: source.name,
     }));
