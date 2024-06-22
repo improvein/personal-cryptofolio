@@ -1,11 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DataStorage from '../data/DataStorage';
 import {colors} from '../utils';
 import PriceOracle from '../data/PriceOracle';
+import {MainStackParamList} from '../RouteNav';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 const styles = StyleSheet.create({
   container: {
@@ -54,27 +55,25 @@ const styles = StyleSheet.create({
   },
 });
 
-class Stats extends React.Component {
-  static navigationOptions = {
-    title: 'Portfolio Stats',
-    header: null,
-  };
+interface StatsScreenProps
+  extends NativeStackScreenProps<MainStackParamList, 'StatsScreen'> {}
 
-  constructor(props) {
-    super(props);
+export default function Stats({navigation}: StatsScreenProps) {
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [valuation, setValuation] = useState<number>(0);
+  const [cost, setCost] = useState<number>(0);
 
-    this.state = {
-      refreshing: false,
-      valuation: 0,
-      cost: 0,
-    };
-  }
+  useEffect(() => {
+    refreshStats();
+  });
 
-  async componentDidMount() {
-    await this.refreshStats();
-  }
+  async function refreshStats() {
+    if (refreshing) {
+      return;
+    }
 
-  refreshStats = async () => {
+    setRefreshing(true);
+
     const assets = await DataStorage.getAssets();
     let totalValuation = 0;
     let totalCost = 0;
@@ -106,67 +105,46 @@ class Stats extends React.Component {
     }
 
     // add the assets to the state
-    this.setState(prevState => ({
-      ...prevState,
-      refreshing: false,
-      valuation: totalValuation,
-      cost: totalCost,
-    }));
-  };
-
-  render() {
-    const {cost, valuation} = this.state;
-    const {navigation} = this.props;
-
-    const gainLoss = valuation - cost;
-    const gainLossPerc = (gainLoss / cost) * 100;
-    const gainLosColor = gainLoss >= 0 ? colors.GREEN_DARK : colors.RED;
-
-    return (
-      <LinearGradient
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
-        colors={[colors.PRIMARY_COLOR_LIGHTER, colors.PRIMARY_COLOR_DARKER]}
-        style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backArrowContainer}
-            onPress={() => navigation.goBack()}>
-            <Icon name="arrow-left" size={30} color={colors.WHITE} />
-          </TouchableOpacity>
-          <Text style={styles.title}>Portfolio Stats</Text>
-        </View>
-        <View style={styles.contentContainer}>
-          <View style={styles.statRow}>
-            <Text style={styles.statRowLabel}>Total valuation</Text>
-            <Text style={styles.statRowValue}>{`$ ${valuation.toFixed(
-              2,
-            )}`}</Text>
-          </View>
-          <View style={styles.statRow}>
-            <Text style={styles.statRowLabel}>Total cost</Text>
-            <Text style={styles.statRowValue}>{`$ ${cost.toFixed(2)}`}</Text>
-          </View>
-          <View style={styles.statRow}>
-            <Text style={styles.statRowLabel}>Total gain/loss</Text>
-            <Text style={[styles.statRowValue, {color: gainLosColor}]}>
-              {`$ ${gainLoss.toFixed(2)} \n`}
-              {`${gainLossPerc.toFixed(2)} %`}
-            </Text>
-          </View>
-        </View>
-      </LinearGradient>
-    );
+    setRefreshing(false);
+    setValuation(totalValuation);
+    setCost(totalCost);
   }
+
+  const gainLoss = valuation - cost;
+  const gainLossPerc = (gainLoss / cost) * 100;
+  const gainLosColor = gainLoss >= 0 ? colors.GREEN_DARK : colors.RED;
+
+  return (
+    <LinearGradient
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 1}}
+      colors={[colors.PRIMARY_COLOR_LIGHTER, colors.PRIMARY_COLOR_DARKER]}
+      style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backArrowContainer}
+          onPress={() => navigation.goBack()}>
+          <Icon name="arrow-left" size={30} color={colors.WHITE} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Portfolio Stats</Text>
+      </View>
+      <View style={styles.contentContainer}>
+        <View style={styles.statRow}>
+          <Text style={styles.statRowLabel}>Total valuation</Text>
+          <Text style={styles.statRowValue}>{`$ ${valuation.toFixed(2)}`}</Text>
+        </View>
+        <View style={styles.statRow}>
+          <Text style={styles.statRowLabel}>Total cost</Text>
+          <Text style={styles.statRowValue}>{`$ ${cost.toFixed(2)}`}</Text>
+        </View>
+        <View style={styles.statRow}>
+          <Text style={styles.statRowLabel}>Total gain/loss</Text>
+          <Text style={[styles.statRowValue, {color: gainLosColor}]}>
+            {`$ ${gainLoss.toFixed(2)} \n`}
+            {`${gainLossPerc.toFixed(2)} %`}
+          </Text>
+        </View>
+      </View>
+    </LinearGradient>
+  );
 }
-
-Stats.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-    goBack: PropTypes.func.isRequired,
-    getParam: PropTypes.func.isRequired,
-    setParams: PropTypes.func.isRequired,
-  }).isRequired,
-};
-
-export default Stats;

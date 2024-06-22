@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../utils';
 import DataStorage from '../data/DataStorage';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {AuthStackParamList} from '../RouteNav';
 
 const styles = StyleSheet.create({
   container: {
@@ -76,121 +78,102 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class PINInput extends React.Component {
-  static navigationOptions = {
-    title: 'Enter PIN',
-    header: null,
-  };
+interface PINInputScreenProps
+  extends NativeStackScreenProps<AuthStackParamList, 'PINInputScreen'> {}
 
-  constructor(props) {
-    super(props);
+export default function PINInput({navigation, route}: PINInputScreenProps) {
+  const [pin, setPin] = useState<string>('');
+  const [valid, setIsValid] = useState<boolean>(true);
 
-    this.state = {
-      pin: '',
-      valid: true,
-    };
+  function onPressKey(key: string) {
+    setPin(pin + key);
   }
 
-  onPressKey = key => {
-    this.setState(prevState => ({
-      pin: prevState.pin + key,
-    }));
-  };
-
-  onConfirm = async () => {
-    const authMode = this.props.navigation.getParam('authMode', false);
-    const returnScreen = this.props.navigation.getParam(
-      'returnScreen',
-      'AssetListScreen',
-    );
+  async function onConfirm() {
+    const authMode = route.params.authMode;
+    const returnScreen = route.params.returnScreen ?? 'AssetListScreen';
 
     // if authMode then update global
     if (authMode) {
       // need to validate
-      if (!(await DataStorage.validatePIN(this.state.pin))) {
-        this.setState({valid: false});
+      if (!(await DataStorage.validatePIN(pin))) {
+        setIsValid(false);
         return;
       }
       // validation went OK
-      global.activePin = this.state.pin;
+      global.activePin = pin;
     }
 
-    this.props.navigation.navigate(returnScreen, {pin: this.state.pin});
-  };
+    navigation.navigate('App', {screen: returnScreen, params: {pin: pin}});
+  }
 
-  onClear = () => {
-    this.setState({
-      pin: '',
-    });
-  };
+  function onClear() {
+    setPin('');
+  }
 
-  renderKeyPad = key => (
-    <TouchableOpacity
-      style={styles.keypadNumber}
-      onPress={() => this.onPressKey(key)}
-      key={key}>
-      <Text style={styles.keypadNumberText}>{key}</Text>
-    </TouchableOpacity>
-  );
-
-  render() {
-    const enableBack = this.props.navigation.getParam('enableBack', false);
-
+  function renderKeyPad(key: string) {
     return (
-      <LinearGradient
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
-        colors={[colors.PRIMARY_COLOR_LIGHTER, colors.PRIMARY_COLOR_DARKER]}
-        style={styles.container}>
-        <View style={styles.header}>
-          {enableBack && (
-            <TouchableOpacity
-              style={styles.backArrowContainer}
-              onPress={() => this.props.navigation.goBack()}>
-              <Icon name="arrow-left" size={30} color={colors.WHITE} />
-            </TouchableOpacity>
-          )}
-          <Text style={styles.title}>Enter PIN</Text>
-        </View>
-        <View style={styles.contentContainer}>
-          <Text style={styles.enteredPin}>
-            {'*'.repeat(this.state.pin.length)}
-          </Text>
-          {this.state.valid || (
-            <Text style={styles.errorMessage}>Invalid PIN</Text>
-          )}
-          <View style={styles.keypad}>
-            <View style={styles.keypadRow}>
-              {['1', '2', '3'].map(key => this.renderKeyPad(key))}
-            </View>
-            <View style={styles.keypadRow}>
-              {['4', '5', '6'].map(key => this.renderKeyPad(key))}
-            </View>
-            <View style={styles.keypadRow}>
-              {['7', '8', '9'].map(key => this.renderKeyPad(key))}
-            </View>
-            <View style={styles.keypadRow}>
-              <TouchableOpacity
-                style={styles.keypadNumber}
-                onPress={this.onClear}
-                key="clear">
-                <Text style={styles.keypadNumberText}>
-                  <Icon name="close" size={25} />
-                </Text>
-              </TouchableOpacity>
-              {this.renderKeyPad('0')}
-              <TouchableOpacity
-                style={styles.keypadNumber}
-                onPress={this.onConfirm}
-                key="confirm">
-                <Text style={styles.keypadNumberText}>
-                  <Icon name="check" size={25} />
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </LinearGradient>
+      <TouchableOpacity
+        style={styles.keypadNumber}
+        onPress={() => onPressKey(key)}
+        key={key}>
+        <Text style={styles.keypadNumberText}>{key}</Text>
+      </TouchableOpacity>
     );
   }
+
+  const enableBack = route.params.enableBack ?? false;
+
+  return (
+    <LinearGradient
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 1}}
+      colors={[colors.PRIMARY_COLOR_LIGHTER, colors.PRIMARY_COLOR_DARKER]}
+      style={styles.container}>
+      <View style={styles.header}>
+        {enableBack && (
+          <TouchableOpacity
+            style={styles.backArrowContainer}
+            onPress={() => navigation.goBack()}>
+            <Icon name="arrow-left" size={30} color={colors.WHITE} />
+          </TouchableOpacity>
+        )}
+        <Text style={styles.title}>Enter PIN</Text>
+      </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.enteredPin}>{'*'.repeat(pin.length)}</Text>
+        {valid || <Text style={styles.errorMessage}>Invalid PIN</Text>}
+        <View style={styles.keypad}>
+          <View style={styles.keypadRow}>
+            {['1', '2', '3'].map(key => renderKeyPad(key))}
+          </View>
+          <View style={styles.keypadRow}>
+            {['4', '5', '6'].map(key => renderKeyPad(key))}
+          </View>
+          <View style={styles.keypadRow}>
+            {['7', '8', '9'].map(key => renderKeyPad(key))}
+          </View>
+          <View style={styles.keypadRow}>
+            <TouchableOpacity
+              style={styles.keypadNumber}
+              onPress={onClear}
+              key="clear">
+              <Text style={styles.keypadNumberText}>
+                <Icon name="close" size={25} />
+              </Text>
+            </TouchableOpacity>
+            {renderKeyPad('0')}
+            <TouchableOpacity
+              style={styles.keypadNumber}
+              onPress={onConfirm}
+              key="confirm">
+              <Text style={styles.keypadNumberText}>
+                <Icon name="check" size={25} />
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </LinearGradient>
+  );
 }

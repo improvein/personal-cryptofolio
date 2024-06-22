@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -81,36 +81,14 @@ export default function AssetScreen({route, navigation}: AssetScreenProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  useEffect(() => {
-    // const unsubscribe = navigation.addListener('focus', () => {
-    //   if (route.params.refresh) {
-    //     setRefreshing(true);
-    //     refreshTransactions().then(() => {
-    //       setRefreshing(false);
-    //     });
-    //   }
-    // });
-
-    navigation.setParams({onRemoveAsset: removeAsset});
-    // load assets from storage
-    refreshTransactions();
-
-    // return unsubscribe;
-  }, [navigation, refreshTransactions, removeAsset]);
-
-  async function onRefresh() {
-    setRefreshing(true);
-    await refreshTransactions();
-  }
-
-  async function refreshTransactions() {
+  const refreshTransactions = useCallback(async () => {
     let currentPrice = 0;
 
     // get assets from storage
-    const transactions = await DataStorage.getAssetTransactions(asset);
-    let transactionsArray = Object.values(transactions);
+    const storedTransactions = await DataStorage.getAssetTransactions(asset);
+    let transactionsArray = Object.values(storedTransactions);
     // calculate the total cost and sort
-    let totalCost = 0.0;
+    let calculatedTotalCost = 0.0;
 
     // if empty then dont bother with complex conversions
     if (transactionsArray.length > 0) {
@@ -126,7 +104,7 @@ export default function AssetScreen({route, navigation}: AssetScreenProps) {
       });
       // calculate total
       transactionsArray.forEach(tx => {
-        totalCost += tx.amount * tx.price;
+        calculatedTotalCost += tx.amount * tx.price;
       });
     }
 
@@ -146,11 +124,11 @@ export default function AssetScreen({route, navigation}: AssetScreenProps) {
 
     // add the assets to the state
     setTransactions(transactionsArray);
-    setTotalCost(totalCost);
+    setTotalCost(calculatedTotalCost);
     setRefreshing(false);
-  }
+  }, [asset, navigation]);
 
-  function removeAsset() {
+  const removeAsset = useCallback(() => {
     Alert.alert(
       'Remove asset',
       'Are you sure you want to remove the asset from your portfolio?',
@@ -173,6 +151,30 @@ export default function AssetScreen({route, navigation}: AssetScreenProps) {
       ],
       {cancelable: false},
     );
+  }, [asset.coin.ticker, navigation]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (route.params.refresh) {
+        setRefreshing(true);
+        refreshTransactions().then(() => {
+          setRefreshing(false);
+        });
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, refreshTransactions, route.params.refresh]);
+
+  useEffect(() => {
+    navigation.setParams({onRemoveAsset: removeAsset});
+    // load assets from storage
+    refreshTransactions();
+  }, [navigation, refreshTransactions, removeAsset]);
+
+  async function onRefresh() {
+    setRefreshing(true);
+    await refreshTransactions();
   }
 
   function onAddTransaction() {

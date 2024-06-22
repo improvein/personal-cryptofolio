@@ -14,7 +14,7 @@ interface StoredAssets {
   [ticker: string]: Asset;
 }
 interface StoredTransactions {
-  [ticker: string]: Transaction;
+  [date: string]: Transaction;
 }
 
 class DataStorage {
@@ -143,18 +143,15 @@ class DataStorage {
     asset: Asset,
     amount: number,
     price: number,
-    date: Date | string,
+    date: Date,
     notes: string,
   ) => {
     const {ticker} = asset.coin;
     const transactions = await DataStorage.getAssetTransactions(asset);
 
     // initialize new tx and add it
-    let dateStr = date;
-    if (typeof dateStr !== 'string') {
-      dateStr = dateStr.toISOString();
-    }
-    const tx = {
+    let dateStr = date.toISOString();
+    const tx: Transaction = {
       date,
       amount,
       price,
@@ -309,7 +306,7 @@ class DataStorage {
   /**
    * Get the app settings
    */
-  static getSettings = async () => {
+  static getSettings = async (): Promise<Settings> => {
     let returnedValue = null;
     try {
       returnedValue = (await AsyncStorage.getItem(DATA_SETTINGS)) || '{}';

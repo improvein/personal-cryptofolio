@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   ScrollView,
@@ -9,40 +9,14 @@ import {
   View,
 } from 'react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Header, SecondaryButton} from '../components';
+import {SecondaryButton} from '../components';
 import DataStorage from '../data/DataStorage';
 import {colors} from '../utils';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {MainStackParamList} from '../RouteNav';
+import {Asset} from '../types';
 
 const styles = StyleSheet.create({
-  headerChildren: {
-    flexDirection: 'row',
-    paddingHorizontal: 15,
-    width: '100%',
-  },
-  headerChildrenLeft: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  assetName: {
-    color: colors.WHITE,
-    fontSize: 10,
-    textAlign: 'left',
-    letterSpacing: 2,
-  },
-  currentPrice: {
-    color: colors.WHITE,
-    fontSize: 15,
-    textAlign: 'left',
-    letterSpacing: 2,
-  },
-  deleteButton: {
-    // alignSelf: 'flex-end',
-    // padding: 5,
-    position: 'absolute',
-    top: -30,
-    right: 10,
-  },
   container: {
     flex: 1,
     backgroundColor: colors.WHITE,
@@ -112,88 +86,32 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
   },
+  deleteButton: {
+    // alignSelf: 'flex-end',
+    // padding: 5,
+    position: 'absolute',
+    top: -30,
+    right: 10,
+  },
 });
 
-class AssetTx extends Component {
-  static navigationOptions = ({navigation}) => {
-    const currentPrice = navigation.getParam('currentPrice', 0);
-    const isNew = navigation.getParam('isNew', true);
-    return {
-      header: (
-        <Header
-          title={`${isNew ? 'Add' : 'Edit'} Transaction`}
-          enableBackArrow="true"
-          onBackArrowPress={() => navigation.goBack()}>
-          <View style={styles.headerChildren}>
-            <View style={styles.headerChildrenLeft}>
-              <Text style={styles.assetName}>
-                {navigation.state.params.asset.coin.name}
-              </Text>
-              <Text style={styles.currentPrice}>{`$ ${currentPrice.toFixed(
-                2,
-              )}`}</Text>
-            </View>
-          </View>
-          {isNew ? (
-            <View style={styles.deleteButton} />
-          ) : (
-            <TouchableOpacity style={styles.deleteButton}>
-              <Icon
-                onPress={
-                  navigation.getParam('onRemoveTransaction') || (() => {})
-                }
-                name="delete"
-                size={20}
-                color={colors.WHITE}
-              />
-            </TouchableOpacity>
-          )}
-        </Header>
-      ),
-    };
-  };
+interface AssetTxScreenProps
+  extends NativeStackScreenProps<MainStackParamList, 'AssetTxScreen'> {}
 
-  constructor(props) {
-    super(props);
+export default function AssetTx({navigation, route}: AssetTxScreenProps) {
+  const [asset] = useState<Asset>(route.params.asset);
+  const [isNew, setIsNew] = useState<boolean>();
+  const [date, setDate] = useState<Date>(new Date());
+  const [operation, setOperation] = useState<'buy' | 'sell'>('buy');
+  const [amount, setAmount] = useState<number>(0);
+  const [price, setPrice] = useState<number>(route.params.currentPrice ?? 0);
+  const [notes, setNotes] = useState<string>('');
+  const [isDateTimePickerVisible, setIsDateTimePickerVisible] =
+    useState<boolean>(false);
+  const [amountStr, setAmountStr] = useState<string>('0.0');
+  const [priceStr, setPriceStr] = useState<string>('0.0');
 
-    const asset = this.props.navigation.getParam('asset');
-    const transaction = this.props.navigation.getParam('transaction', null);
-    const currentPrice = this.props.navigation.getParam('currentPrice', 0);
-
-    const newState = {
-      asset,
-      isNew: transaction == null,
-      operation: 'buy',
-      amount: 0,
-      price: currentPrice,
-      date: new Date(),
-      notes: '',
-      isDateTimePickerVisible: false,
-    };
-    // update with transaction values, if there is one
-    if (transaction != null) {
-      newState.date = new Date(transaction.date);
-      newState.operation = transaction.amount >= 0 ? 'buy' : 'sell';
-      newState.amount = Math.abs(transaction.amount);
-      newState.price = transaction.price;
-      newState.notes = transaction.notes;
-    }
-    // format numbers
-    newState.amountStr = newState.amount.toString();
-    newState.priceStr = newState.price.toString();
-
-    // set the state
-    this.state = newState;
-  }
-
-  componentDidMount() {
-    this.props.navigation.setParams({
-      onRemoveTransaction: this.removeTransaction,
-      isNew: this.state.isNew,
-    });
-  }
-
-  removeTransaction = () => {
+  const removeTransaction = useCallback(() => {
     Alert.alert(
       'Remove transaction',
       'Are you sure you want to remove the transaction from the asset history?',
@@ -206,191 +124,201 @@ class AssetTx extends Component {
         {
           text: 'OK',
           onPress: () => {
-            const {asset, transaction} = this.props.navigation.state.params;
-            DataStorage.removeAssetTransaction(asset, transaction.date).then(
-              () => {
-                this.props.navigation.navigate('AssetScreen', {
+            if (route.params.transaction) {
+              DataStorage.removeAssetTransaction(
+                asset,
+                route.params.transaction.date,
+              ).then(() => {
+                navigation.navigate('AssetScreen', {
                   asset,
                   refresh: true,
                 });
-              },
-            );
+              });
+            } else {
+              console.warn('Transaction not defined');
+            }
           },
         },
       ],
       {cancelable: false},
     );
-  };
+  }, [navigation, asset, route.params.transaction]);
 
-  renderRemoveButton = navigation => {
-    if (this.state.isNew) {
-      return <Text />;
+  useEffect(() => {
+    const transaction = route.params.transaction ?? null;
+
+    const startingAsNew = transaction == null;
+    setIsNew(startingAsNew);
+    // update with transaction values, if there is one
+    if (transaction != null) {
+      setDate(new Date(transaction.date));
+      setOperation(transaction.amount >= 0 ? 'buy' : 'sell');
+      setAmount(Math.abs(transaction.amount));
+      setPrice(transaction.price);
+      setNotes(transaction.notes ?? '');
+      // format numbers
+      setAmountStr(transaction.amount.toString());
+      setPriceStr(transaction.price.toString());
     }
-    return (
-      <TouchableOpacity style={styles.deleteButton}>
-        <Icon
-          onPress={navigation.getParam('onRemoveTransaction') || (() => {})}
-          name="delete"
-          size={20}
-          color={colors.WHITE}
-        />
-      </TouchableOpacity>
-    );
-  };
+    navigation.setParams({
+      onRemoveTransaction: removeTransaction,
+      isNew: startingAsNew,
+    });
+  }, [navigation, route, removeTransaction]);
 
-  onSave = async () => {
+  // function renderRemoveButton() {
+  //   if (isNew) {
+  //     return <Text />;
+  //   }
+  //   return (
+  //     <TouchableOpacity style={styles.deleteButton}>
+  //       <Icon
+  //         onPress={route.params.onRemoveTransaction}
+  //         name="delete"
+  //         size={20}
+  //         color={colors.WHITE}
+  //       />
+  //     </TouchableOpacity>
+  //   );
+  // }
+
+  async function onSave() {
     try {
       // Add the transaction to the storage
       // it will also take care of updating the Asset
-      const sign = this.state.operation === 'buy' ? 1 : -1;
+      const sign = operation === 'buy' ? 1 : -1;
       await DataStorage.saveAssetTransaction(
-        this.state.asset,
-        this.state.amount * sign,
-        this.state.price,
-        this.state.date,
-        this.state.notes,
+        asset,
+        amount * sign,
+        price,
+        date,
+        notes,
       );
 
-      this.props.navigation.navigate('AssetScreen', {
-        asset: this.state.asset,
+      navigation.navigate('AssetScreen', {
+        asset: asset,
         refresh: true,
       });
     } catch (error) {
       console.warn(`Cannot add the new transaction. ${error}`, error);
       throw error;
     }
-  };
-
-  parseFloatInput = (text, stateProp, stateStrProp) => {
-    const newState = {};
-
-    if (text.match(/[\d\.]+/)) {
-      newState[stateProp] = parseFloat(text);
-      newState[stateStrProp] = text;
-    }
-
-    this.setState(newState);
-  };
-
-  showDateTimePicker = () => {
-    // only allow changing date if it's a new Tx
-    if (this.state.isNew) {
-      this.setState({isDateTimePickerVisible: true});
-    }
-  };
-
-  hideDateTimePicker = () => this.setState({isDateTimePickerVisible: false});
-
-  handleDatePicked = date => {
-    const newDate = date;
-    newDate.setSeconds(new Date().getSeconds());
-    this.setState({date: newDate});
-
-    this.hideDateTimePicker();
-  };
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <ScrollView>
-          <View style={styles.operationButtons}>
-            <TouchableOpacity
-              style={[
-                styles.operationButton,
-                this.state.operation === 'buy' && styles.operationButtonActive,
-              ]}
-              onPress={() => this.setState({operation: 'buy'})}>
-              <Text
-                style={[
-                  styles.operationButtonText,
-                  this.state.operation === 'buy' &&
-                    styles.operationButtonTextActive,
-                ]}>
-                Buy
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.operationButton,
-                this.state.operation === 'sell' && styles.operationButtonActive,
-              ]}
-              onPress={() => this.setState({operation: 'sell'})}>
-              <Text
-                style={[
-                  styles.operationButtonText,
-                  this.state.operation === 'sell' &&
-                    styles.operationButtonTextActive,
-                ]}>
-                Sell
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.fieldWrapper}>
-            <Text style={styles.fieldLabel}>Amount</Text>
-            <TextInput
-              style={styles.fieldInputNumber}
-              underlineColorAndroid="transparent"
-              keyboardType="numeric"
-              onChangeText={text =>
-                this.parseFloatInput(text, 'amount', 'amountStr')
-              }
-              onSubmitEditing={() =>
-                this.setState(prevState => ({
-                  amountStr: prevState.amount.toString(),
-                }))
-              }
-              value={this.state.amountStr}
-            />
-          </View>
-          <View style={styles.fieldWrapper}>
-            <Text style={styles.fieldLabel}>Price</Text>
-            <TextInput
-              style={styles.fieldInputNumber}
-              underlineColorAndroid="transparent"
-              keyboardType="numeric"
-              onChangeText={text =>
-                this.parseFloatInput(text, 'price', 'priceStr')
-              }
-              onSubmitEditing={() =>
-                this.setState(prevState => ({
-                  priceStr: prevState.price.toString(),
-                }))
-              }
-              value={this.state.priceStr}
-            />
-          </View>
-          <View style={styles.fieldWrapper}>
-            <Text style={styles.fieldLabel}>Date</Text>
-            <TouchableOpacity onPress={this.showDateTimePicker}>
-              <Text style={styles.fieldInputDate}>
-                {this.state.date.toDateString()}
-              </Text>
-            </TouchableOpacity>
-            <DateTimePicker
-              isVisible={this.state.isDateTimePickerVisible}
-              onConfirm={this.handleDatePicked}
-              onCancel={this.hideDateTimePicker}
-              date={this.state.date}
-            />
-          </View>
-          <View style={[styles.fieldWrapper, {flex: 1}]}>
-            <Text style={styles.fieldLabel}>Notes</Text>
-            <TextInput
-              style={styles.fieldInputNotes}
-              multiline
-              underlineColorAndroid="transparent"
-              onChangeText={text => this.setState({notes: text})}
-              value={this.state.notes}
-            />
-          </View>
-
-          <View style={styles.buttonContainer}>
-            <SecondaryButton theme="dark" text="DONE" onPress={this.onSave} />
-          </View>
-        </ScrollView>
-      </View>
-    );
   }
-}
 
-export default AssetTx;
+  function onAmountInputChange(text: string) {
+    if (text.match(/[\d\.]+/)) {
+      setAmount(parseFloat(text));
+      setAmountStr(text);
+    }
+  }
+  function onPriceInputChange(text: string) {
+    if (text.match(/[\d\.]+/)) {
+      setPrice(parseFloat(text));
+      setPriceStr(text);
+    }
+  }
+
+  function showDateTimePicker() {
+    // only allow changing date if it's a new Tx
+    if (isNew) {
+      setIsDateTimePickerVisible(true);
+    }
+  }
+
+  function hideDateTimePicker() {
+    setIsDateTimePickerVisible(false);
+  }
+
+  function handleDatePicked(pickedDate: Date) {
+    const newDate = pickedDate;
+    newDate.setSeconds(new Date().getSeconds());
+    setDate(newDate);
+
+    hideDateTimePicker();
+  }
+
+  return (
+    <View style={styles.container}>
+      <ScrollView>
+        <View style={styles.operationButtons}>
+          <TouchableOpacity
+            style={[
+              styles.operationButton,
+              operation === 'buy' && styles.operationButtonActive,
+            ]}
+            onPress={() => setOperation('buy')}>
+            <Text
+              style={[
+                styles.operationButtonText,
+                operation === 'buy' && styles.operationButtonTextActive,
+              ]}>
+              Buy
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.operationButton,
+              operation === 'sell' && styles.operationButtonActive,
+            ]}
+            onPress={() => setOperation('sell')}>
+            <Text
+              style={[
+                styles.operationButtonText,
+                operation === 'sell' && styles.operationButtonTextActive,
+              ]}>
+              Sell
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.fieldWrapper}>
+          <Text style={styles.fieldLabel}>Amount</Text>
+          <TextInput
+            style={styles.fieldInputNumber}
+            underlineColorAndroid="transparent"
+            keyboardType="numeric"
+            onChangeText={onAmountInputChange}
+            onSubmitEditing={() => setAmountStr(amount.toString())}
+            value={amountStr}
+          />
+        </View>
+        <View style={styles.fieldWrapper}>
+          <Text style={styles.fieldLabel}>Price</Text>
+          <TextInput
+            style={styles.fieldInputNumber}
+            underlineColorAndroid="transparent"
+            keyboardType="numeric"
+            onChangeText={onPriceInputChange}
+            onSubmitEditing={() => setPriceStr(price.toString())}
+            value={priceStr}
+          />
+        </View>
+        <View style={styles.fieldWrapper}>
+          <Text style={styles.fieldLabel}>Date</Text>
+          <TouchableOpacity onPress={showDateTimePicker}>
+            <Text style={styles.fieldInputDate}>{date.toDateString()}</Text>
+          </TouchableOpacity>
+          <DateTimePicker
+            isVisible={isDateTimePickerVisible}
+            onConfirm={handleDatePicked}
+            onCancel={hideDateTimePicker}
+            date={date}
+          />
+        </View>
+        <View style={[styles.fieldWrapper, {flex: 1}]}>
+          <Text style={styles.fieldLabel}>Notes</Text>
+          <TextInput
+            style={styles.fieldInputNotes}
+            multiline
+            underlineColorAndroid="transparent"
+            onChangeText={text => setNotes(text)}
+            value={notes}
+          />
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <SecondaryButton theme="dark" text="DONE" onPress={onSave} />
+        </View>
+      </ScrollView>
+    </View>
+  );
+}

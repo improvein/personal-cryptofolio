@@ -1,5 +1,8 @@
 import * as React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigatorScreenParams,
+} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
   AssetAddListScreen,
@@ -8,7 +11,7 @@ import {
   AssetScreen,
   AssetTx,
   DataImport,
-  Settings,
+  SettingsScreen,
   PINInput,
   Splash,
   Stats,
@@ -16,10 +19,11 @@ import {
 import AssetScreenHeader from './components/AssetScreenHeader';
 import {Asset, Coin, Transaction} from './types';
 import AssetListScreenHeader from './components/AssetListScreenHeader';
+import AssetTxScreenHeader from './components/AssetTxScreenHeader';
 
 export type MainStackParamList = {
   AssetListScreen: {
-    refresh: boolean;
+    refresh?: boolean;
     totalValuation?: number;
   };
   AssetAddListScreen: undefined;
@@ -34,8 +38,10 @@ export type MainStackParamList = {
   };
   AssetTxScreen: {
     asset: Asset;
-    transaction?: Transaction;
     currentPrice: number;
+    transaction?: Transaction;
+    isNew?: boolean;
+    onRemoveTransaction?: () => void;
   };
   SettingsScreen: undefined;
   DataImportScreen: undefined;
@@ -88,8 +94,27 @@ function MainNav() {
           ),
         })}
       />
-      <MainStack.Screen name="AssetTxScreen" component={AssetTx} />
-      <MainStack.Screen name="SettingsScreen" component={Settings} />
+      <MainStack.Screen
+        name="AssetTxScreen"
+        component={AssetTx}
+        options={({navigation, route}) => ({
+          // eslint-disable-next-line react/no-unstable-nested-components
+          headerTitle: props => (
+            <AssetTxScreenHeader
+              navigation={navigation}
+              route={route}
+              {...props}
+            />
+          ),
+        })}
+      />
+      <MainStack.Screen
+        name="SettingsScreen"
+        component={SettingsScreen}
+        options={{
+          title: 'Settings',
+        }}
+      />
       <MainStack.Screen
         name="DataImportScreen"
         component={DataImport}
@@ -97,27 +122,41 @@ function MainNav() {
           title: 'Data import',
         }}
       />
-      <MainStack.Screen name="StatsScreen" component={Stats} />
+      <MainStack.Screen
+        name="StatsScreen"
+        component={Stats}
+        options={{
+          title: 'Portfolio Stats',
+        }}
+      />
     </MainStack.Navigator>
   );
 }
 
-type AuthStackParamList = {
-  PINInputScreen: undefined;
+export type AuthStackParamList = {
+  PINInputScreen: {
+    authMode?: boolean;
+    returnScreen?: 'SettingsScreen' | 'AssetListScreen';
+    enableBack?: boolean;
+  };
 };
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 function AuthNav() {
   return (
     <AuthStack.Navigator>
-      <AuthStack.Screen name="PINInputScreen" component={PINInput} />
+      <AuthStack.Screen
+        name="PINInputScreen"
+        component={PINInput}
+        options={{title: 'Enter PIN'}}
+      />
     </AuthStack.Navigator>
   );
 }
 
-type RootStackParamList = {
+export type RootStackParamList = {
   SplashScreen: undefined;
-  App: undefined;
-  Auth: undefined;
+  App: NavigatorScreenParams<MainStackParamList>;
+  Auth: NavigatorScreenParams<AuthStackParamList>;
 };
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 

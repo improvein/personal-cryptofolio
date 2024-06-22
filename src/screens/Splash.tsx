@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Image, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {colors} from '../utils';
 import DataStorage from '../data/DataStorage';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../RouteNav';
 
 const mainLogoImg = require('../assets/images/main_logo.png');
 
@@ -16,17 +18,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class Splash extends React.Component {
-  // static navigationOptions = {
-  //   title: null,
-  //   header: null,
-  // };
-  constructor(props) {
-    super(props);
-    this.loadSettings();
-  }
+interface SplashScreenProps
+  extends NativeStackScreenProps<RootStackParamList, 'SplashScreen'> {}
 
-  loadSettings = async () => {
+export default function Splash({navigation}: SplashScreenProps) {
+  useEffect(() => {
+    loadSettings();
+  });
+
+  async function loadSettings() {
     const settings = await DataStorage.getSettings();
     global.pinProtection = settings.pinProtection || false;
     if (global.pinProtection) {
@@ -35,28 +35,26 @@ export default class Splash extends React.Component {
       // get the active PIN (if any)
       const activePin = global.activePin || null;
       // if there is no PIN or the PIN is not enabled
-      if (
-        activePin === null ||
-        !(await DataStorage.validatePIN(this.state.pin))
-      ) {
-        this.props.navigation.navigate('PINInputScreen', {authMode: true});
+      if (activePin === null || !(await DataStorage.validatePIN(activePin))) {
+        navigation.navigate('Auth', {
+          screen: 'PINInputScreen',
+          params: {authMode: true},
+        });
         return;
       }
     }
 
     // no need for PIN, or PIN ok
-    this.props.navigation.navigate('AssetListScreen');
-  };
-
-  render() {
-    return (
-      <LinearGradient
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}
-        colors={[colors.WHITE, colors.GRAY]}
-        style={styles.container}>
-        <Image style={styles.logo} source={mainLogoImg} />
-      </LinearGradient>
-    );
+    navigation.navigate('App', {screen: 'AssetListScreen', params: {}});
   }
+
+  return (
+    <LinearGradient
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 0}}
+      colors={[colors.WHITE, colors.GRAY]}
+      style={styles.container}>
+      <Image style={styles.logo} source={mainLogoImg} />
+    </LinearGradient>
+  );
 }
