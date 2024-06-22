@@ -1,87 +1,79 @@
-# Personal CryptoFolio
+This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-![Personal CryptoFolio logo](https://github.com/improvein/personal-cryptofolio/blob/master/src/assets/images/main_logo.png)
+# Getting Started
 
-Personal Portfolio for crypto assets.
+>**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
-This mobile app allows you to track your portfolio registering all the transactions for each asset you have. It is very similar to many others that exists in the market, but with focus on privacy and data availability.
+## Step 1: Start the Metro Server
 
-We think it's worth having a portfolio manager that allows you to keep your information isolated and private from anyone else.
+First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
 
-Download from the stores (Android only for the moment, iOS coming later):
+To start Metro, run the following command from the _root_ of your React Native project:
 
-<a href='https://play.google.com/store/apps/details?id=com.improvein.personalcryptofolio'><img alt='Get it on Google Play' height="50" src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+```bash
+# using npm
+npm start
 
-## Core principles - where we are different
-
-* **Data availability**: export and import your data and allow YOU to be the owner of it
-* **Privacy**: no 3rd parties involved in the storage of your data
-
-## Features
-
-* Track several crypto assets (we will add more)
-* Track each asset's transactions by registering your operations (buy or sell)
-* See your portfolio valuation and profit/loss
-  * You can see it at a portfolio level by clicking on the total valuation amount in the main screen
-  * Or you can see it an asset level in each asset's screen
-* Online price retrieval from different sources:
-  * Binance
-  * Bitfinex
-  * Bitstamp
-  * Bittrex
-  * Kraken
-* Export your entire portfolio in JSON format<br>
-  _(at the moment only available with the "share" option)_
-* Import your entire portfolio in JSON format<br>
-  _(at the moment only by copy-pasting the JSON content)_
-* PIN protection for the app
-
-## Privacy
-Some things to consider regarding your privacy:
-
-* Your entire portfolio data is stored in your device. Nothing is sent to any server.
-* The only contact with the "outside world" is for price retrieval from price sources like exchanges. But in those cases, nothing from your portfolio is revelead except for the coin which you want to fetch the price for.
-* The App can be protected with a PIN.
-* Data is stored non-encrypted in the device. (see [future features](https://github.com/improvein/personal-cryptofolio/issues)).<br/>
-  However, the isolation the modern OS provides protects you from other apps trying to access it in most cases.
-
-## Contribute
-You are more than welcome to contribute!
-
-Just [report an issue](https://github.com/improvein/personal-cryptofolio/issues) or [make a pull request](https://github.com/improvein/personal-cryptofolio/pulls), whatever you want.
-
-## Development
-This is a React Native application.
-
-So after cloning the repo make sure you install all the dependencies:
-```
-npm install
+# OR using Yarn
+yarn start
 ```
 
-Then plug your phone or start an emulator for the OS you want. OS specific instructions below.
+## Step 2: Start your Application
 
-### Android
-Before starting you need to create the file `android/local.properties` with this:
-```
-APP_RELEASE_STORE_FILE=/location/to/your/keystore.file
-APP_RELEASE_STORE_PASSWORD=your_store_password
-APP_RELEASE_KEY_ALIAS=your_key_alias
-APP_RELEASE_KEY_PASSWORD=your_key_password
-```
-(if you have any doubt as for the use of these parameters, check the [android/app/build.grade](https://github.com/improvein/personal-cryptofolio/blob/master/android/app/build.grade) file)
+Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
 
-Then run the project in debug mode in Android:
-```
-react-native run-android --appIdSuffix "debug"
-```
-(the suffix thing is because the app is configured to add a "debug" prefix to the package name when running on debug mode. That way it doesn't run into conflics with your production app that might be installed on the device)
+### For Android
 
-### iOS
-(@TODO: NEED MORE DETAILS HERE)
+```bash
+# using npm
+npm run android
 
-Run the project in iOS:
+# OR using Yarn
+yarn android
 ```
+
+### For iOS
+
+```bash
+# using npm
 npm run ios
+
+# OR using Yarn
+yarn ios
 ```
 
-For more information about how to develop and build using React Native: https://facebook.github.io/react-native/
+If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+
+This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+
+## Step 3: Modifying your App
+
+Now that you have successfully run the app, let's modify it.
+
+1. Open `App.tsx` in your text editor of choice and edit some lines.
+2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+
+   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+
+## Congratulations! :tada:
+
+You've successfully run and modified your React Native App. :partying_face:
+
+### Now what?
+
+- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
+- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+
+# Troubleshooting
+
+If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+
+# Learn More
+
+To learn more about React Native, take a look at the following resources:
+
+- [React Native Website](https://reactnative.dev) - learn more about React Native.
+- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
+- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
+- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
+- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
