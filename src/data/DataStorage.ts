@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import crypto from 'crypto';
+import {sha256} from 'react-native-sha256';
 import coins from './coins';
 import {Asset, Coin, CoinPrice, Settings, Transaction} from '../types';
 
@@ -122,13 +122,25 @@ class DataStorage {
     asset: Asset,
   ): Promise<StoredTransactions> => {
     const {ticker} = asset.coin;
-    let returnedValue = null;
 
-    returnedValue =
+    const storedJSON =
       (await AsyncStorage.getItem(DATA_ASSET_HIST + ticker)) || '{}';
-    returnedValue = JSON.parse(returnedValue);
+    const parsedJSON = JSON.parse(storedJSON);
 
-    return returnedValue;
+    let resultStoredTx: StoredTransactions = {};
+    // now parse the objects to convert the dates
+    const dateKeys: string[] = Object.keys(parsedJSON);
+    for (let k = 0; k < dateKeys.length; k++) {
+      const tx = parsedJSON[dateKeys[k]];
+      resultStoredTx[dateKeys[k]] = {
+        date: new Date(tx.date),
+        amount: tx.amount,
+        price: tx.price,
+        notes: tx.notes,
+      };
+    }
+
+    return resultStoredTx;
   };
 
   /**
@@ -339,7 +351,7 @@ class DataStorage {
    * Also saves a verification of the PIN
    */
   static updatePIN = async (pin: string) => {
-    const hashedPin = crypto.createHash('sha256').update(pin).digest('hex');
+    const hashedPin = await sha256(pin);
 
     try {
       // store updated settings
@@ -377,7 +389,7 @@ class DataStorage {
     }
 
     // calculate the hash of the PIN
-    const hashedHex = crypto.createHash('sha256').update(pin).digest('hex');
+    const hashedHex = await sha256(pin);
     return hashedHex === storedHashedPin;
   };
 

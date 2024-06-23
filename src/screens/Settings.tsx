@@ -110,12 +110,8 @@ export default function SettingsScreen({navigation}: SettingsScreenProps) {
   }
 
   function onPinProtection() {
-    navigation.navigate('Auth', {
-      screen: 'PINInputScreen',
-      params: {
-        enableBack: true,
-        returnScreen: 'SettingsScreen',
-      },
+    navigation.navigate('PINInputScreen', {
+      enableBack: true,
     });
   }
 

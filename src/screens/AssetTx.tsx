@@ -1,6 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -111,39 +110,6 @@ export default function AssetTx({navigation, route}: AssetTxScreenProps) {
   const [amountStr, setAmountStr] = useState<string>('0.0');
   const [priceStr, setPriceStr] = useState<string>('0.0');
 
-  const removeTransaction = useCallback(() => {
-    Alert.alert(
-      'Remove transaction',
-      'Are you sure you want to remove the transaction from the asset history?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => {},
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: () => {
-            if (route.params.transaction) {
-              DataStorage.removeAssetTransaction(
-                asset,
-                route.params.transaction.date,
-              ).then(() => {
-                navigation.navigate('AssetScreen', {
-                  asset,
-                  refresh: true,
-                });
-              });
-            } else {
-              console.warn('Transaction not defined');
-            }
-          },
-        },
-      ],
-      {cancelable: false},
-    );
-  }, [navigation, asset, route.params.transaction]);
-
   useEffect(() => {
     const transaction = route.params.transaction ?? null;
 
@@ -161,26 +127,9 @@ export default function AssetTx({navigation, route}: AssetTxScreenProps) {
       setPriceStr(transaction.price.toString());
     }
     navigation.setParams({
-      onRemoveTransaction: removeTransaction,
       isNew: startingAsNew,
     });
-  }, [navigation, route, removeTransaction]);
-
-  // function renderRemoveButton() {
-  //   if (isNew) {
-  //     return <Text />;
-  //   }
-  //   return (
-  //     <TouchableOpacity style={styles.deleteButton}>
-  //       <Icon
-  //         onPress={route.params.onRemoveTransaction}
-  //         name="delete"
-  //         size={20}
-  //         color={colors.WHITE}
-  //       />
-  //     </TouchableOpacity>
-  //   );
-  // }
+  }, [navigation, route.params.transaction]);
 
   async function onSave() {
     try {

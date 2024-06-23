@@ -95,7 +95,7 @@ export default function AssetTxItem({
           <Text style={styles.fieldLabel}>Date</Text>
           <Text style={styles.fieldContent}>
             {/* TODO: convert the date to local */}
-            {dateFns.format(transaction.date, 'YYYY-MM-dd HH:mm')}
+            {dateFns.format(transaction.date, 'yyyy-MM-dd HH:mm')}
           </Text>
         </View>
       </View>

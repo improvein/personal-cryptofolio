@@ -121,13 +121,13 @@ export default function AssetList({navigation, route}: AssetListProps) {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      if (route.params.refresh) {
+      if (route.params?.refresh) {
         onRefresh();
       }
     });
 
     return unsubscribe;
-  }, [navigation, onRefresh, route.params.refresh]);
+  }, [navigation, onRefresh, route.params?.refresh]);
 
   return (
     <View style={styles.container}>

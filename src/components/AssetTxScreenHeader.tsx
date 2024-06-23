@@ -1,10 +1,11 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Header} from '../components';
 import {MainStackParamList} from '../RouteNav';
 import {colors} from '../utils';
+import DataStorage from '../data/DataStorage';
 
 interface AssetTxScreenHeaderProps
   extends NativeStackScreenProps<MainStackParamList, 'AssetTxScreen'> {}
@@ -47,6 +48,39 @@ export default function AssetTxScreenHeader({
   const currentPrice = route.params.currentPrice ?? 0;
   const isNew = route.params.isNew ?? true;
 
+  function onRemoveTransaction() {
+    Alert.alert(
+      'Remove transaction',
+      'Are you sure you want to remove the transaction from the asset history?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            if (route.params.transaction) {
+              DataStorage.removeAssetTransaction(
+                route.params.asset,
+                route.params.transaction.date,
+              ).then(() => {
+                navigation.navigate('AssetScreen', {
+                  asset: route.params.asset,
+                  refresh: true,
+                });
+              });
+            } else {
+              console.warn('Transaction not defined');
+            }
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  }
+
   return (
     <Header
       title={`${isNew ? 'Add' : 'Edit'} Transaction`}
@@ -65,7 +99,7 @@ export default function AssetTxScreenHeader({
       ) : (
         <TouchableOpacity style={styles.deleteButton}>
           <Icon
-            onPress={route.params.onRemoveTransaction}
+            onPress={onRemoveTransaction}
             name="delete"
             size={20}
             color={colors.WHITE}

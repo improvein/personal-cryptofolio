@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../utils';
 import DataStorage from '../data/DataStorage';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {AuthStackParamList} from '../RouteNav';
+import {MainStackParamList} from '../RouteNav';
 
 const styles = StyleSheet.create({
   container: {
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
 });
 
 interface PINInputScreenProps
-  extends NativeStackScreenProps<AuthStackParamList, 'PINInputScreen'> {}
+  extends NativeStackScreenProps<MainStackParamList, 'PINInputScreen'> {}
 
 export default function PINInput({navigation, route}: PINInputScreenProps) {
   const [pin, setPin] = useState<string>('');
@@ -91,7 +91,6 @@ export default function PINInput({navigation, route}: PINInputScreenProps) {
 
   async function onConfirm() {
     const authMode = route.params.authMode;
-    const returnScreen = route.params.returnScreen ?? 'AssetListScreen';
 
     // if authMode then update global
     if (authMode) {
@@ -104,7 +103,7 @@ export default function PINInput({navigation, route}: PINInputScreenProps) {
       global.activePin = pin;
     }
 
-    navigation.navigate('App', {screen: returnScreen, params: {pin: pin}});
+    global.isAccessGranted = true;
   }
 
   function onClear() {

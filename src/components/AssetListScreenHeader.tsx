@@ -28,7 +28,7 @@ export default function AssetListScreenHeader({
   navigation,
   route,
 }: AssetListScreenHeaderProps) {
-  const totalValuation = route.params.totalValuation ?? 0;
+  const totalValuation = route.params?.totalValuation ?? 0;
 
   return (
     <Header title="Personal CryptoFolio">
@@ -45,7 +45,7 @@ export default function AssetListScreenHeader({
         onPress={() => {
           navigation.navigate('SettingsScreen');
         }}>
-        <Icon name="settings" size={30} color={colors.WHITE} />
+        <Icon name="cog" size={30} color={colors.WHITE} />
       </TouchableOpacity>
     </Header>
   );

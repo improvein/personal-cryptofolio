@@ -1,11 +1,12 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Header} from '../components';
 import PriceOracle from '../data/PriceOracle';
 import {colors} from '../utils';
 import {MainStackParamList} from '../RouteNav';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import DataStorage from '../data/DataStorage';
 
 const styles = StyleSheet.create({
   headerChildren: {
@@ -45,6 +46,31 @@ export default function AssetScreenHeader({
   navigation,
   route,
 }: AssetScreenHeaderProps) {
+  function onRemoveAsset() {
+    Alert.alert(
+      'Remove asset',
+      'Are you sure you want to remove the asset from your portfolio?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {
+            /* do nothing */
+          },
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            DataStorage.removeAsset(route.params.asset.coin.ticker).then(() => {
+              navigation.navigate('AssetListScreen', {refresh: true});
+            });
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  }
+
   const currentPrice = route.params.currentPrice ?? 0;
 
   const priceSources = PriceOracle.getSources();
@@ -70,7 +96,7 @@ export default function AssetScreenHeader({
       </View>
       <TouchableOpacity style={styles.deleteButton}>
         <Icon
-          onPress={route.params.onRemoveAsset || (() => {})}
+          onPress={onRemoveAsset}
           name="delete"
           size={20}
           color={colors.WHITE}

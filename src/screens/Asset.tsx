@@ -1,12 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Alert,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {AssetInfoBox, AssetTxItem} from '../components';
 import DataStorage from '../data/DataStorage';
@@ -128,31 +121,6 @@ export default function AssetScreen({route, navigation}: AssetScreenProps) {
     setRefreshing(false);
   }, [asset, navigation]);
 
-  const removeAsset = useCallback(() => {
-    Alert.alert(
-      'Remove asset',
-      'Are you sure you want to remove the asset from your portfolio?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => {
-            /* do nothing */
-          },
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: () => {
-            DataStorage.removeAsset(asset.coin.ticker).then(() => {
-              navigation.navigate('AssetListScreen', {refresh: true});
-            });
-          },
-        },
-      ],
-      {cancelable: false},
-    );
-  }, [asset.coin.ticker, navigation]);
-
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (route.params.refresh) {
@@ -167,10 +135,9 @@ export default function AssetScreen({route, navigation}: AssetScreenProps) {
   }, [navigation, refreshTransactions, route.params.refresh]);
 
   useEffect(() => {
-    navigation.setParams({onRemoveAsset: removeAsset});
     // load assets from storage
     refreshTransactions();
-  }, [navigation, refreshTransactions, removeAsset]);
+  }, [navigation, refreshTransactions]);
 
   async function onRefresh() {
     setRefreshing(true);

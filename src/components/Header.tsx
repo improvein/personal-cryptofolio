@@ -12,6 +12,7 @@ import {screen, colors} from '../utils';
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
     height: screen.hp(20),
     backgroundColor: colors.PRIMARY_COLOR,
     paddingTop: 20,

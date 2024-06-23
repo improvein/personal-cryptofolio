@@ -6,10 +6,10 @@
  */
 
 import React from 'react';
-import RouteNav from './src/RouteNav';
+import RouteNavContainer from './src/RouteNav';
 
 function App(): React.JSX.Element {
-  return <RouteNav />;
+  return <RouteNavContainer />;
 }
 
 export default App;
