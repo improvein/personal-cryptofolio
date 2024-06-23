@@ -23,9 +23,11 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   fieldLabel: {
+    color: colors.BLACK,
     fontSize: 10,
   },
   fieldContent: {
+    color: colors.BLACK,
     fontSize: 12,
   },
 });

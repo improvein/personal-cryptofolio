@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   fieldLabel: {
+    color: colors.BLACK,
     fontWeight: 'bold',
   },
   fieldInputNumber: {
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     padding: 5,
     borderWidth: 1,
+    color: colors.BLACK,
     borderColor: colors.GRAY,
     borderRadius: 8,
   },
@@ -69,6 +71,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 5,
     borderWidth: 1,
+    color: colors.BLACK,
     borderColor: colors.GRAY,
     borderRadius: 8,
   },
@@ -78,6 +81,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     padding: 5,
     borderWidth: 1,
+    color: colors.BLACK,
     borderColor: colors.GRAY,
     borderRadius: 8,
   },

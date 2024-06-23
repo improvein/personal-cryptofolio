@@ -5,6 +5,7 @@ import {colors} from '../utils';
 const styles = StyleSheet.create({
   container: {
     borderRadius: 8,
+    color: colors.BLACK,
     backgroundColor: colors.WHITE,
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -17,9 +18,11 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   title: {
+    color: colors.BLACK,
     fontWeight: 'bold',
   },
   text: {
+    color: colors.BLACK,
     fontSize: 15,
     textAlign: 'right',
   },

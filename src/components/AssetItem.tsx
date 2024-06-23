@@ -49,9 +49,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   mainText: {
+    color: colors.BLACK,
     fontSize: 20,
   },
   secondaryText: {
+    color: colors.BLACK,
     fontSize: 12,
   },
 });

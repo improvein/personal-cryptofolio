@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     backgroundColor: colors.WHITE,
+    color: colors.BLACK,
     marginVertical: 20,
     height: 40,
     borderRadius: 8,

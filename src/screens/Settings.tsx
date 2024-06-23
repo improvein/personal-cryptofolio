@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   optionText: {
+    color: colors.BLACK,
     textAlign: 'left',
     alignSelf: 'flex-start',
     fontSize: 20,
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   text: {
+    color: colors.BLACK,
     fontSize: 12,
   },
 });

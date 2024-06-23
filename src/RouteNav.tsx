@@ -98,7 +98,7 @@ function AppNavigator() {
             name="AssetAddListScreen"
             component={AssetAddListScreen}
             options={{
-              title: 'Add Asset List',
+              headerShown: false,
             }}
           />
           <MainStack.Screen

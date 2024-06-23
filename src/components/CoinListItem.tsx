@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
   },
   names: {
+    color: colors.BLACK,
     fontSize: 16,
   },
   selectArrowContainer: {
@@ -36,6 +37,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   selectArrow: {
+    color: colors.BLACK,
     textAlign: 'right',
     fontSize: 18,
   },

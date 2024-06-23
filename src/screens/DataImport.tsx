@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   optionText: {
+    color: colors.BLACK,
     textAlign: 'left',
     alignSelf: 'flex-start',
     fontSize: 20,
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     padding: 5,
     borderWidth: 1,
+    color: colors.BLACK,
     borderColor: colors.PRIMARY_COLOR_DARKER,
     borderRadius: 8,
   },
@@ -91,7 +93,7 @@ export default function DataImport({navigation}: DataImportProps) {
           onPress: async () => {
             try {
               await DataStorage.importData(dataJson);
-              navigation.navigate('SettingsScreen');
+              navigation.navigate('SettingsScreen', {});
             } catch (err) {
               console.error('There was an error importing the data.', err);
             }
