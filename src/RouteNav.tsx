@@ -43,13 +43,15 @@ export type MainStackParamList = {
     isNew?: boolean;
     onRemoveTransaction?: () => void;
   };
-  SettingsScreen: undefined;
+  SettingsScreen: {
+    newPin?: string;
+  };
   DataImportScreen: undefined;
   StatsScreen: undefined;
 
   // Security
   PINInputScreen: {
-    authMode?: boolean;
+    authMode: boolean;
     enableBack?: boolean;
   };
 };
@@ -57,18 +59,23 @@ const MainStack = createNativeStackNavigator<MainStackParamList>();
 
 function AppNavigator() {
   const [isAccessGranted, setIsAccessGranted] = React.useState<boolean>(false);
+  const [isCheckingAuth, setIsCheckingAuth] = React.useState<boolean>(false);
 
   React.useEffect(() => {
+    setIsCheckingAuth(true);
     isPINAccessGranted().then(result => {
       setIsAccessGranted(result);
+      setIsCheckingAuth(false);
     });
   }, []);
 
-  if (global.isCheckingAuth) {
+  if (isCheckingAuth) {
     return <MainStack.Screen name="SplashScreen" component={Splash} />;
   }
+  console.debug('isAccessGranted', isAccessGranted);
   return (
     <MainStack.Navigator
+      initialRouteName={isAccessGranted ? 'AssetListScreen' : undefined}
       screenOptions={{
         headerBackButtonMenuEnabled: false,
         headerBackVisible: false,
@@ -98,7 +105,7 @@ function AppNavigator() {
             name="AssetAddDetailScreen"
             component={AssetAddDetail}
             options={{
-              title: 'Add Asset Detail',
+              headerShown: false,
             }}
           />
           <MainStack.Screen
@@ -143,13 +150,19 @@ function AppNavigator() {
               headerShown: false,
             }}
           />
+          <MainStack.Screen
+            name="PINInputScreen"
+            component={PINInput}
+            options={{headerShown: false}}
+            initialParams={{enableBack: true, authMode: false}}
+          />
         </>
       ) : (
         <MainStack.Screen
           name="PINInputScreen"
           component={PINInput}
-          options={{title: 'Enter PIN'}}
-          initialParams={{enableBack: false}}
+          options={{headerShown: false}}
+          initialParams={{enableBack: false, authMode: true}}
         />
       )}
     </MainStack.Navigator>

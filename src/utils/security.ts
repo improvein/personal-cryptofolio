@@ -1,23 +1,22 @@
 import DataStorage from '../data/DataStorage';
 
 export async function isPINAccessGranted(): Promise<boolean> {
-  global.isCheckingAuth = true;
   const settings = await DataStorage.getSettings();
-  global.pinProtection = settings.pinProtection || false;
-  if (global.pinProtection) {
+  const isPinProtected = settings.pinProtection || false;
+  if (isPinProtected) {
     // save the PIN hash
     global.pinHash = await DataStorage.getPINHash();
+    console.debug('Security: Is pin protected. Hash: ', global.pinHash);
     // get the active PIN (if any)
     const activePin = global.activePin || null;
     // if there is no PIN or the PIN is not enabled
     if (activePin === null || !(await DataStorage.validatePIN(activePin))) {
-      global.isCheckingAuth = false;
       global.isAccessGranted = false;
       return false;
     }
   }
 
-  global.isCheckingAuth = false;
+  console.debug('Security: Not pin protected');
   global.isAccessGranted = true;
   return true;
 }

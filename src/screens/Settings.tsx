@@ -68,7 +68,10 @@ const styles = StyleSheet.create({
 interface SettingsScreenProps
   extends NativeStackScreenProps<MainStackParamList, 'SettingsScreen'> {}
 
-export default function SettingsScreen({navigation}: SettingsScreenProps) {
+export default function SettingsScreen({
+  navigation,
+  route,
+}: SettingsScreenProps) {
   const [settings, setSettings] = useState<Settings>();
 
   useEffect(() => {
@@ -78,25 +81,17 @@ export default function SettingsScreen({navigation}: SettingsScreenProps) {
     });
   });
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', payload => {
-  //     // check if came with params
-  //     if (typeof payload.state.params !== 'undefined') {
-  //       // check if came from PIN screen
-  //       if (typeof payload.state.params.pin !== 'undefined') {
-  //         // save the PIN protection
-  //         updateSettings({pinProtection: true}).then(() => {
-  //           // set the PIN to the app and update global
-  //           DataStorage.updatePIN(payload.state.params.pin).then(() => {
-  //             global.pinProtection = true;
-  //           });
-  //         });
-  //       }
-  //     }
-  //   });
-
-  //   return unsubscribe;
-  // }, [navigation]);
+  useEffect(() => {
+    // save the PIN protection if came from calling the PIN screen
+    if (route.params?.newPin) {
+      updateSettings({pinProtection: true}).then(() => {
+        // set the PIN to the app and update global
+        if (route.params.newPin) {
+          DataStorage.updatePIN(route.params.newPin);
+        }
+      });
+    }
+  }, [route.params?.newPin]);
 
   async function updateSettings(newSettings: Settings) {
     try {
@@ -110,9 +105,12 @@ export default function SettingsScreen({navigation}: SettingsScreenProps) {
   }
 
   function onPinProtection() {
-    navigation.navigate('PINInputScreen', {
-      enableBack: true,
-    });
+    Alert.alert('Disabled', 'This feature is disabled for the time being');
+
+    // navigation.navigate('PINInputScreen', {
+    //   enableBack: true,
+    //   authMode: false,
+    // });
   }
 
   async function onPinProtectionSwitch(value: boolean) {
@@ -123,7 +121,6 @@ export default function SettingsScreen({navigation}: SettingsScreenProps) {
     } else {
       // de-activate
       await updateSettings({pinProtection: false});
-      global.pinProtection = false;
     }
   }
 

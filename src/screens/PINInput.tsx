@@ -101,9 +101,11 @@ export default function PINInput({navigation, route}: PINInputScreenProps) {
       }
       // validation went OK
       global.activePin = pin;
+    } else {
+      navigation.navigate('SettingsScreen', {newPin: pin});
     }
 
-    global.isAccessGranted = true;
+    // global.isAccessGranted = true;
   }
 
   function onClear() {
@@ -121,7 +123,7 @@ export default function PINInput({navigation, route}: PINInputScreenProps) {
     );
   }
 
-  const enableBack = route.params.enableBack ?? false;
+  const enableBack = route.params.enableBack;
 
   return (
     <LinearGradient
@@ -137,10 +139,14 @@ export default function PINInput({navigation, route}: PINInputScreenProps) {
             <Icon name="arrow-left" size={30} color={colors.WHITE} />
           </TouchableOpacity>
         )}
-        <Text style={styles.title}>Enter PIN</Text>
+        <Text style={styles.title}>
+          {route.params.authMode ? 'Enter PIN' : 'Setup your PIN'}
+        </Text>
       </View>
       <View style={styles.contentContainer}>
-        <Text style={styles.enteredPin}>{'*'.repeat(pin.length)}</Text>
+        <Text style={styles.enteredPin}>
+          {route.params.authMode ? '*'.repeat(pin.length) : pin}
+        </Text>
         {valid || <Text style={styles.errorMessage}>Invalid PIN</Text>}
         <View style={styles.keypad}>
           <View style={styles.keypadRow}>

@@ -363,7 +363,7 @@ class DataStorage {
   };
 
   /**
-   * Validates if the given PIN corresponds to the one stored
+   * Gets the PIN hash stored in the storage
    * @todo: move this function to a more suitable place
    */
   static getPINHash = async () => {
