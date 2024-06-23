@@ -111,6 +111,12 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFileName = "personalcryptofolio_${defaultConfig.versionName}.apk"
+        }
+    }
 }
 
 dependencies {

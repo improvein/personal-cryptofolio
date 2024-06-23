@@ -6,6 +6,8 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "android:release": "react-native build-android --mode=release",
+    "android:release-apk": "cd android && ./gradlew assembleRelease",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "build": "tsc",
