@@ -1,4 +1,4 @@
-package com.personalcryptofolio
+package com.improvein.personalcryptofolio
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity

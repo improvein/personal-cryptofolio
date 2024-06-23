@@ -74,13 +74,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.personalcryptofolio"
+    namespace "com.improvein.personalcryptofolio"
     defaultConfig {
-        applicationId "com.personalcryptofolio"
+        applicationId "com.improvein.personalcryptofolio"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 100
+        versionName "2.0.0"
     }
     signingConfigs {
         debug {
@@ -89,10 +89,19 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+            storeFile file(properties.getProperty('APP_RELEASE_STORE_FILE'))
+            storePassword properties.getProperty('APP_RELEASE_STORE_PASSWORD')
+            keyAlias properties.getProperty('APP_RELEASE_KEY_ALIAS')
+            keyPassword properties.getProperty('APP_RELEASE_KEY_PASSWORD')
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            applicationIdSuffix ".debug"
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
